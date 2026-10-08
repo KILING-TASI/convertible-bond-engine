@@ -5,6 +5,7 @@ from .engine import diagnose
 from .batch import screen, portfolio, validated_batch
 from .market import fetch_snapshot
 from .report import render
+from .evidence import attach_terms
 
 
 def main():
@@ -12,6 +13,7 @@ def main():
     parser.add_argument("input", type=Path, nargs='?', help="单债、持仓或市场快照 JSON")
     parser.add_argument('--code', help='六位转债代码，显式联网获取当前快照')
     parser.add_argument('--format', choices=['json','markdown','html'], default='json')
+    parser.add_argument('--terms',type=Path,help='附加已人工核对的原始发行条款证据JSON')
     parser.add_argument("--out", type=Path)
     parser.add_argument('--mode', choices=['diagnose','screen','portfolio'], default='diagnose')
     parser.add_argument('--max-price', type=float)
@@ -29,6 +31,9 @@ def main():
         if args.mode != 'screen' and (any(v is not None for v in filters) or args.exclude_call_risk):
             raise ValueError('screen filters require --mode screen')
         market = isinstance(data,dict) and data.get('kind') == 'market_snapshot'
+        if args.terms:
+            if not market: raise ValueError('--terms只支持市场快照')
+            data=attach_terms(data,json.loads(args.terms.read_text(encoding='utf-8-sig')))
         if market and args.mode != 'diagnose': raise ValueError('市场资料不具备现金流及条款证据，不能用于筛选或组合定价')
         if market: result=data
         elif args.mode == 'portfolio': result = portfolio(data)

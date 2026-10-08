@@ -14,7 +14,8 @@ def metric(value, percent=False):
 def render(snapshot, format='markdown'):
     title = f"{snapshot['name']}（{snapshot['code']}）诊断卡"
     lines = [('状态', '获取失败' if snapshot['status']=='failed' else '部分资料已取得'),
-             ('获取时间', snapshot['fetched_at']), ('行情时间','接口未提供'),
+             ('获取时间', snapshot['fetched_at']), ('行情时间',snapshot.get('quote_time') or '接口未提供'),
+             ('行情口径','历史收盘快照' if snapshot.get('quote_mode')=='historical_close' else '即时比价表，时间未知'),
              ('转债报价',metric(snapshot.get('quote_price'))),
              ('正股报价',metric(snapshot.get('stock_price'))),
              ('转股价',metric(snapshot.get('conversion_price'))),
@@ -22,6 +23,23 @@ def render(snapshot, format='markdown'):
              ('转股溢价率',metric(snapshot.get('conversion_premium'),True)),
              ('第三方纯债估值',metric(snapshot.get('provider_estimates',{}).get('bond_floor')))]
     gaps = snapshot.get('gaps',[]) + snapshot.get('errors',[])
+    if 'quote_age_calendar_days' in snapshot:
+        lines.append(('行情距获取日（日历天）',snapshot['quote_age_calendar_days']))
+    evidence=snapshot.get('issue_term_evidence')
+    if evidence:
+        lines += [('原始条款证据核对日期',evidence['reviewed_on']),
+                  ('原始募集说明书PDF页码',str(evidence['pdf_pages'])),
+                  ('原始到期兑付总额',metric(evidence['maturity_total_payment'])),
+                  ('原始末期票息',metric(evidence['final_coupon'])),
+                  ('原始到期兑付是否含末期息','是' if evidence['maturity_includes_final_coupon'] else '否'),
+                  ('原始回售类型',str(evidence.get('put_type','未核对')))]
+        gaps.append('原始发行条款核对说明：'+evidence['review_method'])
+    terms=snapshot.get('provider_terms')
+    if terms:
+        lines += [('第三方评级',str(terms.get('RATING') or '缺失')),
+                  ('第三方到期日',str(terms.get('EXPIRE_DATE') or '缺失'))]
+        for key,label in [('INTEREST_RATE_EXPLAIN','票息'),('REDEEM_CLAUSE','赎回'),('RESALE_CLAUSE','回售')]:
+            if terms.get(key): gaps.append(f'第三方{label}条款摘录（待原文核验）：{str(terms[key])[:250]}')
     provider = snapshot.get('provider_redemption')
     if provider:
         lines += [('第三方强赎状态',str(provider.get('强赎状态') or '缺失')),

@@ -1,0 +1,39 @@
+{
+  "code": "113042",
+  "scope": "original_issue_terms",
+  "document_url": "https://static.cninfo.com.cn/finalpage/2021-01-21/1209154427.PDF",
+  "reviewed_on": "2026-10-09",
+  "review_method": "人工阅读募集说明书第19、23、24页，核对票息、到期兑付和回售限制；不覆盖后续公告。",
+  "pdf_pages": [
+    19,
+    23,
+    24
+  ],
+  "document_sha256": "95fef024bdce692d21fe457803991e3b21ac7c077eb09bf508772b8853b14c95",
+  "face_value": 100,
+  "annual_coupons": [
+    0.3,
+    0.8,
+    1.5,
+    2.8,
+    3.5,
+    4
+  ],
+  "maturity_gross_payment": 112,
+  "final_coupon": 4,
+  "maturity_includes_final_coupon": true,
+  "put_type": "仅改变募集资金用途后的特别回售；无普通价格条件回售",
+  "settlement_timing": "期满后五个交易日内，具体结算日须核对兑付公告",
+  "call_price_condition": {
+    "window": 30,
+    "count": 15,
+    "ratio": 1.3,
+    "inclusive": true
+  },
+  "ordinary_price_put_exists": false,
+  "limitations": [
+    "不是最新有效条款状态",
+    "不填当前转股价",
+    "不构建税后或确定日期现金流"
+  ]
+}

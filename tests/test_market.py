@@ -4,7 +4,7 @@ import sys
 import tempfile
 import json
 from pathlib import Path
-from cbengine.market import normalize, fetch_snapshot, number, code_string
+from cbengine.market import normalize, fetch_snapshot, number, code_string, normalize_history
 from cbengine.report import render
 
 
@@ -41,7 +41,36 @@ class MarketTests(unittest.TestCase):
             return self.rows
         r=fetch_snapshot('113042',fetch)
         self.assertEqual(r['status'],'partial')
-        self.assertEqual(r['errors'],['unavailable'])
+        self.assertIn('unavailable',r['errors'])
+
+    def test_history_uses_latest_complete_not_future_or_missing(self):
+        rows=[{'日期':'2026-10-08','收盘价':117.925,'转股价值':117.485,'纯债价值':111.5},
+              {'日期':'2026-10-09','收盘价':None,'转股价值':120},
+              {'日期':'2026-10-10','收盘价':130,'转股价值':120}]
+        r=normalize_history('113042',rows,'2026-10-09T04:00:00+08:00')
+        self.assertEqual(r['quote_time'],'2026-10-08')
+        self.assertEqual(r['quote_age_calendar_days'],1)
+        self.assertEqual(r['quote_mode'],'historical_close')
+        self.assertIsNone(r['stock_price'])
+        self.assertAlmostEqual(r['conversion_premium'],117.925/117.485-1)
+
+    def test_history_rejects_duplicate_latest(self):
+        row={'日期':'2026-10-08','收盘价':117,'转股价值':116}
+        with self.assertRaises(ValueError): normalize_history('113042',[row,row],'2026-10-09T04:00:00+08:00')
+
+    def test_fallback_never_merges_current_details_prices(self):
+        def fetch(endpoint):
+            if endpoint=='quote': raise ValueError('closed')
+            if endpoint.startswith('history:'): return [{'日期':'2026-10-08','收盘价':117,'转股价值':116}]
+            if endpoint.startswith('info:'): return [{'SECURITY_CODE':'113042','SECURITY_NAME_ABBR':'上银转债','CONVERT_STOCK_PRICE':999,'TRANSFER_PRICE':1}]
+            return []
+        r=fetch_snapshot('113042',fetch)
+        self.assertEqual(r['status'],'partial')
+        self.assertEqual(r['name'],'上银转债')
+        self.assertEqual(r['conversion_value'],116)
+        self.assertIsNone(r['stock_price'])
+        self.assertIsNone(r['conversion_price'])
+        self.assertIn('2026-10-08',render(r))
 
     def test_duplicate_and_unknown_code(self):
         for rows in ([],self.rows*2):
