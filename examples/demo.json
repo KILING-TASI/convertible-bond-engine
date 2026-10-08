@@ -1,0 +1,243 @@
+{
+  "code": "DEMO",
+  "is_demo": true,
+  "as_of": "2026-10-09",
+  "dirty_price": 118.5,
+  "stock_price": 21.04,
+  "conversion_price": 20,
+  "coupon_tax_rate": 0.2,
+  "cashflow_source": "教学现金流：到期110不含末期息",
+  "curve_source": "教学平坦曲线4.5%，非市场报价",
+  "discount_curve": [
+    [
+      0.01,
+      0.045
+    ],
+    [
+      10,
+      0.045
+    ]
+  ],
+  "cashflows": [
+    {
+      "date": "2027-10-09",
+      "coupon": 0.3,
+      "redemption": 0,
+      "redemption_tax": 0
+    },
+    {
+      "date": "2028-10-09",
+      "coupon": 0.5,
+      "redemption": 0,
+      "redemption_tax": 0
+    },
+    {
+      "date": "2029-10-09",
+      "coupon": 1,
+      "redemption": 0,
+      "redemption_tax": 0
+    },
+    {
+      "date": "2030-10-09",
+      "coupon": 1.5,
+      "redemption": 110,
+      "redemption_tax": 0
+    }
+  ],
+  "clauses": {
+    "call": {
+      "source": "教学条款，非真实募集说明书",
+      "window": 30,
+      "count": 15,
+      "ratio": 1.3,
+      "direction": "above",
+      "rolling": true,
+      "active_from": "2026-01-01",
+      "active_until": "2030-10-09",
+      "reset_on": []
+    },
+    "put": {
+      "source": "教学条款，非真实募集说明书",
+      "window": 30,
+      "count": 30,
+      "ratio": 0.7,
+      "direction": "below",
+      "rolling": true,
+      "active_from": "2029-10-09",
+      "active_until": "2030-10-09",
+      "reset_on": []
+    },
+    "reset": {
+      "source": "教学条款，非真实募集说明书",
+      "window": 30,
+      "count": 15,
+      "ratio": 0.85,
+      "direction": "below",
+      "rolling": true,
+      "active_from": "2026-01-01",
+      "active_until": "2030-10-09",
+      "reset_on": []
+    }
+  },
+  "observations": [
+    {
+      "date": "2026-09-10",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-11",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-12",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-13",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-14",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-15",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-16",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-17",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-18",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-19",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-20",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-21",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-22",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-23",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-24",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-25",
+      "stock_price": 21.04,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-26",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-27",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-28",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-29",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-09-30",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-10-01",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-10-02",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-10-03",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-10-04",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-10-05",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-10-06",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-10-07",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-10-08",
+      "stock_price": 27,
+      "conversion_price": 20
+    },
+    {
+      "date": "2026-10-09",
+      "stock_price": 27,
+      "conversion_price": 20
+    }
+  ],
+  "reset_floor_inputs": {
+    "source": "教学假设，适用下限需逐只核对",
+    "applicable_floors": [
+      8,
+      8.2,
+      9.5,
+      1
+    ]
+  }
+}
