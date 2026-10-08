@@ -7,6 +7,10 @@ from .market import fetch_snapshot
 from .report import render
 from .evidence import attach_terms
 from .announcements import discover, attach_reviews
+from .validation import load
+from .pdfverify import verify_pdf
+from .quality import assess
+from .archive import append
 
 
 def main():
@@ -20,6 +24,11 @@ def main():
     parser.add_argument('--start-date',help='公告查询开始日YYYY-MM-DD，默认回溯180日')
     parser.add_argument('--end-date',help='公告查询结束日YYYY-MM-DD，默认快照获取日')
     parser.add_argument('--notice-reviews',type=Path,help='附加公告正文核对底稿JSON，需已有候选列表')
+    parser.add_argument('--terms-pdf',type=Path,help='实际募集说明书PDF，与--terms一起提供')
+    parser.add_argument('--notice-pdf',type=Path,help='实际公告PDF；当前仅支持一份正文底稿')
+    parser.add_argument('--store',type=Path,help='独立本地证据目录，追加版本及已核验PDF')
+    parser.add_argument('--quality-as-of',help='质量评估截止日YYYY-MM-DD，默认北京时间今日')
+    parser.add_argument('--max-lag-days',type=int,default=3,help='历史行情最大日历天滞后，默认3')
     parser.add_argument("--out", type=Path)
     parser.add_argument('--mode', choices=['diagnose','screen','portfolio'], default='diagnose')
     parser.add_argument('--max-price', type=float)
@@ -34,7 +43,10 @@ def main():
             raise ValueError('提供输入文件或--code，两者只能选一个')
         if args.code and args.mode != 'diagnose':
             raise ValueError('--code 当前只支持单债资料卡')
-        data = fetch_snapshot(args.code) if args.code else json.loads(args.input.read_text(encoding="utf-8-sig"))
+        if args.terms_pdf and not args.terms: raise ValueError('--terms-pdf需要--terms')
+        if args.notice_pdf and not args.notice_reviews: raise ValueError('--notice-pdf需要--notice-reviews')
+        data = fetch_snapshot(args.code) if args.code else load(args.input)
+        documents=[]
         filters = (args.max_price, args.max_premium, args.min_net_ytm)
         if args.mode != 'screen' and (any(v is not None for v in filters) or args.exclude_call_risk):
             raise ValueError('screen filters require --mode screen')
@@ -48,11 +60,33 @@ def main():
         if args.terms:
             if not market: raise ValueError('--terms只支持市场快照')
             if data.get('status')!='failed':
-                data=attach_terms(data,json.loads(args.terms.read_text(encoding='utf-8-sig')))
+                terms=load(args.terms)
+                terms.pop('pdf_verification',None)
+                data=attach_terms(data,terms)
+                if args.terms_pdf:
+                    checked=data['issue_term_evidence']
+                    checked['pdf_verification']=verify_pdf(checked,args.terms_pdf)
+                    documents.append({'path':args.terms_pdf,'sha256':checked['pdf_verification']['document_sha256']})
         if args.notice_reviews:
             if market and data.get('status')=='failed':
                 data['gaps'].append('行情获取失败，已跳过正文核对底稿附加。')
-            else: data=attach_reviews(data,json.loads(args.notice_reviews.read_text(encoding='utf-8-sig')))
+            else:
+                reviews=load(args.notice_reviews)
+                verification=None
+                data=attach_reviews(data,reviews)
+                if args.notice_pdf:
+                    if not isinstance(reviews,list) or len(reviews)!=1: raise ValueError('--notice-pdf当前需单份正文底稿')
+                    entry=next(n for n in data['announcements']['entries'] if n['source_url']==reviews[0]['announcement_url'])
+                    verification=verify_pdf(entry['reviewed_evidence'],args.notice_pdf)
+                    documents.append({'path':args.notice_pdf,'sha256':verification['document_sha256']})
+                if verification:
+                    entry=next(n for n in data['announcements']['entries'] if n['source_url']==reviews[0]['announcement_url'])
+                    entry['pdf_verification']=verification
+        if market:
+            data=dict(data,data_quality=assess(data,args.quality_as_of,args.max_lag_days))
+            if args.store: data['archive_receipt']=append(args.store,data,documents)
+        elif args.store or args.quality_as_of or args.max_lag_days!=3:
+            raise ValueError('归档和质量检查参数只支持市场快照')
         if market and args.mode != 'diagnose': raise ValueError('市场资料不具备现金流及条款证据，不能用于筛选或组合定价')
         if market: result=data
         elif args.mode == 'portfolio': result = portfolio(data)

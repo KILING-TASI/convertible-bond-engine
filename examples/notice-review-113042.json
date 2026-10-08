@@ -12,6 +12,26 @@
     "facts": {
       "old_conversion_price": 8.57,
       "new_conversion_price": 8.35
-    }
+    },
+    "document_identity": {
+      "issuer": "上海银行股份有限公司",
+      "title": "关于根据2025年度利润分配方案调整A股可转换公司债券转股价格的公告"
+    },
+    "verification_checks": [
+      {
+        "field": "facts.old_conversion_price",
+        "page": 1,
+        "excerpt": "调整前转股价格：人民币8.57元/股",
+        "mode": "number",
+        "number_token": "8.57"
+      },
+      {
+        "field": "facts.new_conversion_price",
+        "page": 1,
+        "excerpt": "调整后转股价格：人民币8.35元/股",
+        "mode": "number",
+        "number_token": "8.35"
+      }
+    ]
   }
 ]

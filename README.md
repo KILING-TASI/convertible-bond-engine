@@ -1,6 +1,30 @@
 # 可转债定价与博弈引擎
 
-独立实现的 A 股可转债研究工具。v0.5 提供 **L1现金流诊断、快照筛选、持仓汇总、历史行情降级、原始条款证据与后续公告候选时间线**。离线核心不依赖行情账户；代码查询需可选依赖和网络。
+独立实现的 A 股可转债研究工具。v0.6 提供 **L1诊断、市场快照、公告时间线、实际PDF字段匹配、版本化证据归档及行情质量检查**。离线核心不依赖行情账户；代码查询及PDF核验分别按需启用依赖。
+
+## 实际PDF核验与版本归档
+
+```sh
+python -m pip install ".[evidence]"
+cb-engine local-data/notices.json --terms examples/terms-113042.json --terms-pdf /path/to/prospectus.pdf --notice-reviews examples/notice-review-113042.json --notice-pdf /path/to/adjustment.pdf --quality-as-of 2026-10-09 --store local-data/evidence --out local-data/verified.json
+python -m cbengine.archive local-data/evidence --code 113042
+```
+
+需自行取得与样本哈希一致的实际原文，仓库不分发PDF。`--terms-pdf`和`--notice-pdf`分别读取本地原文，核对实际SHA256、前8页主体/标题、明确页码上的唯一摘录及字面数值。正文PDF目前一次只支持一份核对底稿。不安装PDF依赖仍可使用核心诊断及底稿声明；无法读取原生文本的扫描件需要人工复核，不自动OCR。
+
+底稿的`verification_checks`逐项指定field、page、excerpt、mode及number_token。数字核验匹配字面数值；文本核验匹配字面字符串。不把“含息”或“无普通回售”等人工语义判断自动提升为机器核验。每个匹配结果绑定完整底稿摘要，字段更改后不能继续使用旧匹配记录。日期规范化、单位换算、主体与证券代码映射、来源下载真实性及完整法律解释仍需单独核对。
+
+`--store`在用户选择的独立目录下按代码追加版本，保存快照摘要、前版本摘要及引用PDF副本。重复内容不追加；已有记录或PDF修改、版本缺失和并发写入会拒绝继续。核验标记绑定的实际PDF必须提供或已存于同一档案。归档使用锁及临时文件落盘，不写入包目录。版本摘要只用于检测内容一致性，没有外部签名或时间戳，不能称为不可篡改，也不认证源数据真实。只供本地使用，分享前自行检查原文许可。
+
+2026-10-09实文件验收：读取上银转债原始募集说明书，匹配面值100、末期票息字面4.00、含息兑付比例字面112；读取2026-06-02调整公告，匹配转股价8.57与8.35。归档保存两份实际PDF，并通过离线版本链与文件摘要检查。其余未列出的条款、生效日期的语义解释和未读公告不因此升级为机器核验。
+
+## 行情质量检查
+
+所有市场快照输出会附`data_quality`：分别列出可得性、新鲜度、溢价率复算一致性及原始条款PDF检查记录。`--quality-as-of YYYY-MM-DD`指定评估截止日；默认北京时间今日。`--max-lag-days 3`指定允许的日历天滞后，范围0至366。重放旧快照不会悄悄刷新网络。
+
+行情时点未知保持unknown；超出允许滞后标stale；行情或快照取得日期晚于截止日标future。缺报价/平价、溢价率复算不一致都会单列。满足带日期展示策略不代表可用于现金流定价、含权估值、回测或完整交易日判断。本版不重新请求接口作体检，也不承诺数据源在线状态。
+
+输入JSON拒绝重复键、NaN/Infinity和浮点溢出，避免条款或现金流参数被静默覆盖。
 
 ## 后续公告候选与正文核对底稿
 
@@ -123,5 +147,7 @@ cb-engine examples/portfolio.json --mode portfolio --out local-data/portfolio.js
 ## 参考与许可
 
 本仓库独立编写，未复制外部项目代码或上传用户原始设计文件。相关研究参考：[sw1507/convertibleBond](https://github.com/sw1507/convertibleBond)、[QuantLib](https://github.com/lballabio/QuantLib)、[AKShare](https://github.com/akfamily/akshare)。它们的许可不因本仓库 MIT 许可而改变。外部数据使用权由各提供方决定。
+
+v0.6证据和质量流程参考[research-workbench](https://github.com/KILING-TASI/research-workbench)的实际文件核验、版本化知识卡、数据源质量分层与严格JSON理念；本包独立实现这些小型组件，没有导入该仓库的研究工作流依赖。
 
 仅用于研究；结果依赖输入与假设，不执行交易。

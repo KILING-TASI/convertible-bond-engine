@@ -25,6 +25,7 @@ def notice_section(snapshot,format):
                 title=f'<a href="{e(url,quote=True)}">{title}</a>'
             categories='、'.join(CATEGORY_NAMES.get(c,c) for c in n['categories'])
             state='已附核对底稿' if n.get('body_reviewed') else '未核对'
+            if n.get('pdf_verification'): state='实际PDF指定字段已匹配'
             if n.get('effective_date'): state+='；生效日 '+n['effective_date']
             facts=n.get('reviewed_evidence',{}).get('facts',{})
             if 'new_conversion_price' in facts: state+=f'；转股价 {facts["old_conversion_price"]} → {facts["new_conversion_price"]}'
@@ -34,6 +35,7 @@ def notice_section(snapshot,format):
     for n in entries:
         categories='、'.join(CATEGORY_NAMES.get(c,c) for c in n['categories'])
         state='已附正文核对底稿' if n.get('body_reviewed') else '正文未核对'
+        if n.get('pdf_verification'): state='实际PDF指定字段已匹配'
         if n.get('effective_date'): state+='；生效日 '+n['effective_date']
         text+=f'- {markdown_text(n["published_on"])}｜{markdown_text(n["title"])}｜{markdown_text(categories)}｜{markdown_text(state)}\n'
         text+=f'  来源：{markdown_text(n["source_url"])}\n'
@@ -72,6 +74,23 @@ def render(snapshot, format='markdown'):
                   ('原始到期兑付是否含末期息','是' if evidence['maturity_includes_final_coupon'] else '否'),
                   ('原始回售类型',str(evidence.get('put_type','未核对')))]
         gaps.append('原始发行条款核对说明：'+evidence['review_method'])
+        checked=evidence.get('pdf_verification')
+        lines.append(('原始条款实际PDF核验','指定字段已匹配' if checked else '未执行，仅附人工声明'))
+        if checked:
+            lines.append(('实际PDF匹配字段', '、'.join(f['field'] for f in checked['fields'])))
+            gaps.extend(checked['limitations'])
+    quality=snapshot.get('data_quality')
+    if quality:
+        labels={'available':'可得','missing':'缺失','unknown':'未知','future':'晚于截止日',
+                'stale':'超过允许滞后','within-limit':'在滞后限额内','matched':'复算一致',
+                'mismatch':'复算不一致','not-checkable':'无法复算','future-acquisition':'获取日晚于截止日'}
+        lines += [('质量评估截止日',quality['as_of']),
+                  ('行情可得性',labels.get(quality['availability'],quality['availability'])),
+                  ('行情新鲜度',labels.get(quality['freshness'],quality['freshness'])),
+                  ('溢价率一致性',labels.get(quality['consistency'],quality['consistency']))]
+        gaps.extend(quality['issues']+quality['limitations'])
+    receipt=snapshot.get('archive_receipt')
+    if receipt: lines.append(('证据归档版本',receipt['version']))
     notices=snapshot.get('announcements')
     if notices:
         lines.append(('后续公告候选数',len(notices.get('entries',[]))))

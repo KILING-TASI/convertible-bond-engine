@@ -35,5 +35,32 @@
     "不是最新有效条款状态",
     "不填当前转股价",
     "不构建税后或确定日期现金流"
+  ],
+  "document_identity": {
+    "issuer": "上海银行股份有限公司",
+    "title": "公开发行A股可转换公司债券募集说明书"
+  },
+  "verification_checks": [
+    {
+      "field": "face_value",
+      "page": 19,
+      "excerpt": "每张面值人民币100元",
+      "mode": "number",
+      "number_token": "100"
+    },
+    {
+      "field": "final_coupon",
+      "page": 19,
+      "excerpt": "第六年为4.00%",
+      "mode": "number",
+      "number_token": "4.00"
+    },
+    {
+      "field": "maturity_gross_payment",
+      "page": 23,
+      "excerpt": "112%（含最后一期计息年度利息）",
+      "mode": "number",
+      "number_token": "112"
+    }
   ]
 }

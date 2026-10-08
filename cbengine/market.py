@@ -4,6 +4,7 @@ import math
 import re
 import subprocess
 import sys
+from .validation import loads
 from datetime import datetime, timezone, timedelta
 
 SOURCES = {
@@ -52,7 +53,7 @@ def fetch_rows(endpoint, timeout=30):
         raise ValueError(f'{endpoint} 接口超时（{timeout}秒）') from None
     if process.returncode:
         raise ValueError(f'{endpoint} 接口失败，请检查网络或安装可选依赖：pip install ".[market]"')
-    try: rows = json.loads(process.stdout)
+    try: rows = loads(process.stdout)
     except ValueError: raise ValueError(f'{endpoint} 返回非JSON数据') from None
     if not isinstance(rows, list): raise ValueError(f'{endpoint} 返回结构异常')
     return rows
