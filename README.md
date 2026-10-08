@@ -1,6 +1,6 @@
 # 可转债定价与博弈引擎
 
-独立实现的 A 股可转债研究工具。v0.1 提供 **L1 现金流与条款诊断**，支持单债和批量 JSON 输入，不依赖行情账户或作者本地环境。
+独立实现的 A 股可转债研究工具。v0.2 提供 **L1 现金流与条款诊断、快照筛选和持仓汇总**，支持单债和批量 JSON 输入，不依赖行情账户或作者本地环境。
 
 ## 快速开始
 
@@ -14,6 +14,19 @@ python -m unittest discover -s tests -v
 
 也可直接运行 `python -m cbengine.cli examples/demo.json`。示例全部是教学假设，不是实际证券行情。批量诊断将输入改为对象列表；任一输入无效时整批拒绝输出。
 
+## 批量筛选与持仓汇总
+
+```sh
+cb-engine examples/portfolio.json --mode screen --max-price 110 --max-premium 0.30 --min-net-ytm 0 --exclude-call-risk
+cb-engine examples/portfolio.json --mode portfolio --out local-data/portfolio.json
+```
+
+批量输入必须非空、代码唯一、估值日一致。筛选结果保留入选诊断与每只未入选的原因，阈值包含等号；收益率与溢价率参数均为小数。强赎过滤排除状态未知及满足条件且无有效不强赎承诺的债券，不能排除所有未来风险。
+
+持仓汇总增加 `quantity`，表示每张面值100元的持有张数，要求大于零。按数量累加现金价值和债底；组合溢价按总市值与总平价/债底之比计算，不平均个券溢价。DV01只汇总纯债部分，集中度用市值权重的平方和倒数表示。
+
+条款返回 `status`：inactive、condition_met、condition_not_met 或 unknown。历史不足且计数未达到门槛，或者末条历史不是估值日时，状态为unknown、`trigger_condition_met`为null。观测日是否为交易日及中间缺漏仍需上游核对；估值日在休市日且仅提供上一交易日数据时，本版保守标记unknown。
+
 ## 已实现
 
 - 按实际付息日计算纯债现值：ACT/365F、年复利零息曲线、逐期限线性插值，拒绝曲线外推。
@@ -24,6 +37,7 @@ python -m unittest discover -s tests -v
 - 不强赎承诺日期展示与来源要求，强赎条件提示。
 - 基于使用者提供的适用下限测算下修下限及对应平价。
 - 输入来源保留、异常拒绝、教学与缺口警示；持续集成测试。
+- 快照筛选及排除原因、持仓总值、组合溢价、纯债DV01和集中度。
 
 ## 输入口径
 

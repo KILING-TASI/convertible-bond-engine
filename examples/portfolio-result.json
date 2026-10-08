@@ -1,0 +1,153 @@
+{
+  "as_of": "2026-10-09",
+  "market_value": 3285.0,
+  "bond_floor_value": 2853.281910557228,
+  "conversion_value": 3156.0,
+  "distance_to_floor": 0.13142103179384232,
+  "conversion_premium": 0.040874524714829,
+  "bond_premium": 0.15130579556313806,
+  "dv01": 1.0852947007495697,
+  "effective_holdings": 1.8560040246120506,
+  "holdings": [
+    {
+      "code": "DEMO",
+      "quantity": 10.0,
+      "market_value": 1185.0,
+      "weight": 0.3607305936073059,
+      "clauses": {
+        "call": {
+          "count": 14,
+          "required": 15,
+          "window": 30,
+          "observations": 30,
+          "trigger_condition_met": false,
+          "status": "condition_not_met",
+          "active": true,
+          "latest_observation": "2026-10-09",
+          "history_current": true,
+          "history_complete": true,
+          "days_to_fill_window": 0,
+          "oldest_observation": "2026-09-10",
+          "next_observation_expels_oldest": true,
+          "source": "教学条款，非真实募集说明书",
+          "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"
+        },
+        "put": {
+          "count": 0,
+          "required": 30,
+          "window": 30,
+          "observations": 0,
+          "trigger_condition_met": false,
+          "status": "inactive",
+          "active": false,
+          "latest_observation": null,
+          "history_current": false,
+          "history_complete": false,
+          "days_to_fill_window": 30,
+          "oldest_observation": null,
+          "next_observation_expels_oldest": false,
+          "source": "教学条款，非真实募集说明书",
+          "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"
+        },
+        "reset": {
+          "count": 0,
+          "required": 15,
+          "window": 30,
+          "observations": 30,
+          "trigger_condition_met": false,
+          "status": "condition_not_met",
+          "active": true,
+          "latest_observation": "2026-10-09",
+          "history_current": true,
+          "history_complete": true,
+          "days_to_fill_window": 0,
+          "oldest_observation": "2026-09-10",
+          "next_observation_expels_oldest": true,
+          "source": "教学条款，非真实募集说明书",
+          "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"
+        }
+      },
+      "warnings": [
+        "教学数据",
+        "债底不是保证兑付价；本版未建模违约、流动性和转股期权。",
+        "条款计数依赖输入交易日记录完整性，本版不核验交易所日历。",
+        "退出场景不全，YTW仅为已提供场景最小值，不是完整最差收益率。",
+        "条款窗口历史不足，未达门槛不能据此认定未触发。"
+      ]
+    },
+    {
+      "code": "DEMO2",
+      "quantity": 20.0,
+      "market_value": 2100.0,
+      "weight": 0.639269406392694,
+      "clauses": {
+        "call": {
+          "count": 14,
+          "required": 15,
+          "window": 30,
+          "observations": 30,
+          "trigger_condition_met": false,
+          "status": "condition_not_met",
+          "active": true,
+          "latest_observation": "2026-10-09",
+          "history_current": true,
+          "history_complete": true,
+          "days_to_fill_window": 0,
+          "oldest_observation": "2026-09-10",
+          "next_observation_expels_oldest": true,
+          "source": "教学条款，非真实募集说明书",
+          "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"
+        },
+        "put": {
+          "count": 0,
+          "required": 30,
+          "window": 30,
+          "observations": 0,
+          "trigger_condition_met": false,
+          "status": "inactive",
+          "active": false,
+          "latest_observation": null,
+          "history_current": false,
+          "history_complete": false,
+          "days_to_fill_window": 30,
+          "oldest_observation": null,
+          "next_observation_expels_oldest": false,
+          "source": "教学条款，非真实募集说明书",
+          "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"
+        },
+        "reset": {
+          "count": 0,
+          "required": 15,
+          "window": 30,
+          "observations": 30,
+          "trigger_condition_met": false,
+          "status": "condition_not_met",
+          "active": true,
+          "latest_observation": "2026-10-09",
+          "history_current": true,
+          "history_complete": true,
+          "days_to_fill_window": 0,
+          "oldest_observation": "2026-09-10",
+          "next_observation_expels_oldest": true,
+          "source": "教学条款，非真实募集说明书",
+          "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"
+        }
+      },
+      "warnings": [
+        "教学数据",
+        "债底不是保证兑付价；本版未建模违约、流动性和转股期权。",
+        "条款计数依赖输入交易日记录完整性，本版不核验交易所日历。",
+        "退出场景不全，YTW仅为已提供场景最小值，不是完整最差收益率。",
+        "条款窗口历史不足，未达门槛不能据此认定未触发。"
+      ]
+    }
+  ],
+  "warning_counts": {
+    "教学数据": 2,
+    "债底不是保证兑付价；本版未建模违约、流动性和转股期权。": 2,
+    "条款计数依赖输入交易日记录完整性，本版不核验交易所日历。": 2,
+    "退出场景不全，YTW仅为已提供场景最小值，不是完整最差收益率。": 2,
+    "条款窗口历史不足，未达门槛不能据此认定未触发。": 2
+  },
+  "note": "数量按每张面值100元；组合溢价按总价值之比；DV01仅为纯债部分。"
+}

@@ -3,6 +3,18 @@ import math
 from datetime import date
 
 
+def iso_date(value):
+    if not isinstance(value, str) or date.fromisoformat(value).isoformat() != value:
+        raise ValueError("dates must use YYYY-MM-DD")
+    return value
+
+
+def source(value):
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError("source must be a nonempty string")
+    return value
+
+
 def finite(value, name, positive=False):
     if isinstance(value, bool):
         raise ValueError(f"{name}: boolean is not a number")
@@ -13,7 +25,7 @@ def finite(value, name, positive=False):
 
 
 def year_fraction(start, end):
-    return (date.fromisoformat(end) - date.fromisoformat(start)).days / 365
+    return (date.fromisoformat(iso_date(end)) - date.fromisoformat(iso_date(start))).days / 365
 
 
 def spot(curve, t):
@@ -36,7 +48,8 @@ def present_value(flows, rate):
 
 def yield_rate(price, flows):
     """Unique IRR for strictly positive future cashflows; annual effective yield."""
-    finite(price, "price", True)
+    price = finite(price, "price", True)
+    flows = [(finite(t, "cashflow time", True), finite(a, "cashflow amount", True)) for t, a in flows]
     if not flows or any(t <= 0 or amount <= 0 for t, amount in flows):
         raise ValueError("IRR requires positive future cashflows")
     # Solve in log(1+y), avoiding singularity at y=-1.
@@ -74,8 +87,9 @@ def yield_rate(price, flows):
 def clause_state(clause, observations, as_of):
     required = ("source", "window", "count", "ratio", "direction", "rolling",
                 "active_from", "active_until", "reset_on")
-    if any(k not in clause for k in required) or not str(clause["source"]).strip():
+    if any(k not in clause for k in required):
         raise ValueError("clause missing source or explicit parameters")
+    source(clause['source'])
     w, c = clause["window"], clause["count"]
     if type(w) is not int or type(c) is not int or not 1 <= c <= w:
         raise ValueError("clause requires integer 1 <= count <= window")
@@ -86,14 +100,14 @@ def clause_state(clause, observations, as_of):
     ratio = finite(clause["ratio"], "ratio", True)
     start, end = clause["active_from"], clause["active_until"]
     for d in (start, end, as_of):
-        date.fromisoformat(d)
+        iso_date(d)
     if start > end:
         raise ValueError("clause active dates reversed")
     resets = clause["reset_on"]
     if not isinstance(resets, list):
         raise ValueError("reset_on must be explicit date list")
     for d in resets:
-        date.fromisoformat(d)
+        iso_date(d)
     boundary = max([start] + [d for d in resets if d <= as_of])
     relevant = [o for o in observations if boundary <= o["date"] <= min(as_of, end)]
     window = relevant[-w:]
@@ -105,8 +119,17 @@ def clause_state(clause, observations, as_of):
         hits.append(s >= k*ratio if clause["direction"] == "above" else s <= k*ratio)
     n = sum(hits)
     active = start <= as_of <= end
+    # Counts are conditional on supplied history. Never turn missing history
+    # into a definitive negative result or treat stale history as current.
+    fresh = bool(window) and window[-1]['date'] == as_of
+    met = (n >= c) if active and fresh else False if not active else None
+    if active and fresh and n < c and len(window) < w:
+        met = None
+    status = 'inactive' if not active else 'condition_met' if met is True else 'unknown' if met is None else 'condition_not_met'
     return {"count": n, "required": c, "window": w, "observations": len(window),
-            "trigger_condition_met": active and n >= c, "active": active,
+            "trigger_condition_met": met, "status": status, "active": active,
+            "latest_observation": window[-1]['date'] if window else None,
+            "history_current": fresh,
             "history_complete": len(window) == w,
             "days_to_fill_window": w-len(window),
             "oldest_observation": window[0]["date"] if window else None,
@@ -116,13 +139,17 @@ def clause_state(clause, observations, as_of):
 
 
 def diagnose(data):
+    if not isinstance(data, dict):
+        raise ValueError('security input must be an object')
     as_of = data["as_of"]
-    date.fromisoformat(as_of)
+    iso_date(as_of)
+    if not isinstance(data['code'], str) or not data['code'].strip():
+        raise ValueError('code must be a nonempty string')
     price = finite(data["dirty_price"], "dirty_price", True)
     stock = finite(data["stock_price"], "stock_price", True)
     conversion = finite(data["conversion_price"], "conversion_price", True)
-    if not data.get("cashflow_source") or not data.get("curve_source"):
-        raise ValueError("cashflow_source and curve_source required")
+    source(data.get('cashflow_source'))
+    source(data.get('curve_source'))
     tax = finite(data["coupon_tax_rate"], "coupon_tax_rate")
     if not 0 <= tax <= 1:
         raise ValueError("coupon_tax_rate outside [0,1]")
@@ -165,7 +192,7 @@ def diagnose(data):
     observations = data.get("observations", [])
     last = ""
     for o in observations:
-        date.fromisoformat(o["date"])
+        iso_date(o["date"])
         finite(o["stock_price"], "historical stock price", True)
         finite(o["conversion_price"], "historical conversion price", True)
         if not last < o["date"] <= as_of:
@@ -178,8 +205,11 @@ def diagnose(data):
               {"absent": True} for name, c in clauses.items()}
     yields = {"maturity": {"gross": yield_rate(price, flows), "net": yield_rate(price, taxed)}}
     for name, scenario in data.get("exit_scenarios", {}).items():
-        if name not in ("call", "put") or not scenario.get("source"):
+        if name not in ("call", "put"):
             raise ValueError("exit scenarios require call/put name and source")
+        source(scenario.get('source'))
+        if clauses[name] is None:
+            raise ValueError('exit scenario conflicts with absent clause')
         t = year_fraction(as_of, scenario["date"])
         if not 0 < t <= rows[-1]["years"]:
             raise ValueError("exit scenario must be future and before maturity")
@@ -200,18 +230,18 @@ def diagnose(data):
         warnings.append("退出场景不全，YTW仅为已提供场景最小值，不是完整最差收益率。")
     if any(not s.get("history_complete", True) for s in states.values()):
         warnings.append("条款窗口历史不足，未达门槛不能据此认定未触发。")
+    if any(s.get('status') == 'unknown' for s in states.values()):
+        warnings.append('条款状态未知：历史不足或末条观测不是估值日；计数仅供核对。')
     promise = data.get("no_call_until")
     if promise:
-        date.fromisoformat(promise)
-        if not data.get("no_call_source"):
-            raise ValueError("no_call_source required")
+        iso_date(promise)
+        source(data.get('no_call_source'))
     if states["call"].get("trigger_condition_met") and not (promise and as_of <= promise):
         warnings.append("强赎条件已满足且无有效不强赎承诺；核对公告及操作期限。")
     lower = None
     if data.get("reset_floor_inputs"):
         p = data["reset_floor_inputs"]
-        if not p.get("source"):
-            raise ValueError("reset floor source required")
+        source(p.get('source'))
         lower = max(finite(v, "reset floor", True) for v in p["applicable_floors"])
         lower = {"minimum_conversion_price": lower, "parity_if_reset_to_floor": 100*stock/lower,
                  "reduction_possible": lower < conversion, "source": p["source"]}
