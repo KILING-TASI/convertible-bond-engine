@@ -16,3 +16,4 @@ jobs:
       - run: cb-engine examples/demo.json --out local-data/result.json
       - run: cb-engine examples/portfolio.json --mode portfolio --out local-data/portfolio.json
       - run: cb-engine examples/portfolio.json --mode screen --max-price 110 --exclude-call-risk --out local-data/screen.json
+      - run: cb-engine examples/market-demo.json --format html --out local-data/card.html

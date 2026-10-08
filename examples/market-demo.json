@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "market_snapshot",
+  "status": "partial",
+  "code": "113042",
+  "name": "教学快照（非实际证券数据）",
+  "fetched_at": "2026-10-09T00:00:00+08:00",
+  "quote_time": null,
+  "sources": {
+    "quote": "https://quote.eastmoney.com/center/fullscreenlist.html#convertible_comparison",
+    "redemption": "https://www.jisilu.cn/data/cbnew/#redeem"
+  },
+  "quote_price": 118.5,
+  "stock_price": 21.04,
+  "conversion_price": 20.0,
+  "conversion_value": 105.2,
+  "conversion_premium": 0.12642585551330798,
+  "provider_estimates": {
+    "bond_floor": 95.0,
+    "note": "东方财富第三方估值；方法和曲线未核实，不是本引擎计算。"
+  },
+  "provider_redemption": null,
+  "gaps": [
+    "现金流与到期兑付含息口径未从募集说明书核实：不计算债底与YTM。",
+    "零息信用曲线缺失：不输出引擎债底、久期或DV01。",
+    "逐只条款原文、历史有效转股价及交易日记录缺失：不计算条款触发状态。",
+    "报价时间未由接口提供；获取时间不代表行情时间，可能是休市或延迟报价。",
+    "报价净全价口径未核实：展示行情报价，不送入现金流定价引擎。"
+  ],
+  "errors": [],
+  "raw_quote": {
+    "转债代码": "113042",
+    "转债名称": "教学快照（非实际证券数据）",
+    "转债最新价": "118.5",
+    "正股最新价": 21.04,
+    "转股价": 20,
+    "纯债价值": 95
+  },
+  "is_demo": true
+}
