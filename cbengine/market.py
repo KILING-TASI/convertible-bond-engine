@@ -35,6 +35,10 @@ def worker(endpoint):
         frame = ak.bond_zh_cov_value_analysis(symbol=code_string(endpoint.split(':')[1]))
     elif endpoint.startswith('info:'):
         frame = ak.bond_zh_cov_info(symbol=code_string(endpoint.split(':')[1]),indicator='基本信息')
+    elif endpoint.startswith('notices:'):
+        _,issuer,start,end=endpoint.split(':')
+        frame=ak.stock_zh_a_disclosure_report_cninfo(symbol=code_string(issuer),
+                category='',start_date=start,end_date=end)
     else: raise ValueError('unknown endpoint')
     # Pandas serialization replaces NaN with null and preserves unicode.
     return json.loads(frame.to_json(orient='records', force_ascii=False, date_format='iso'))
@@ -119,6 +123,7 @@ def fetch_snapshot(code, fetcher=fetch_rows):
         if len(matches)!=1: raise ValueError('详情无法唯一匹配代码')
         row=matches[0]
         snapshot['name']=str(row.get('SECURITY_NAME_ABBR') or snapshot['name'])
+        snapshot['underlying_code']=str(row.get('CONVERT_STOCK_CODE') or '') or None
         snapshot['sources']['details']=f'https://data.eastmoney.com/kzz/detail/{code}.html'
         snapshot['provider_terms']={k:row.get(k) for k in (
             'INTEREST_RATE_EXPLAIN','REDEEM_CLAUSE','RESALE_CLAUSE','VALUE_DATE',

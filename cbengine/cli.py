@@ -6,6 +6,7 @@ from .batch import screen, portfolio, validated_batch
 from .market import fetch_snapshot
 from .report import render
 from .evidence import attach_terms
+from .announcements import discover, attach_reviews
 
 
 def main():
@@ -14,6 +15,11 @@ def main():
     parser.add_argument('--code', help='六位转债代码，显式联网获取当前快照')
     parser.add_argument('--format', choices=['json','markdown','html'], default='json')
     parser.add_argument('--terms',type=Path,help='附加已人工核对的原始发行条款证据JSON')
+    parser.add_argument('--announcements',action='store_true',help='显式联网查询发行人后续公告候选')
+    parser.add_argument('--issuer-code',help='发行人股票代码；已有映射时必须一致')
+    parser.add_argument('--start-date',help='公告查询开始日YYYY-MM-DD，默认回溯180日')
+    parser.add_argument('--end-date',help='公告查询结束日YYYY-MM-DD，默认快照获取日')
+    parser.add_argument('--notice-reviews',type=Path,help='附加公告正文核对底稿JSON，需已有候选列表')
     parser.add_argument("--out", type=Path)
     parser.add_argument('--mode', choices=['diagnose','screen','portfolio'], default='diagnose')
     parser.add_argument('--max-price', type=float)
@@ -22,6 +28,8 @@ def main():
     parser.add_argument('--exclude-call-risk', action='store_true')
     args = parser.parse_args()
     try:
+        if args.mode!='diagnose' and any((args.announcements,args.terms,args.notice_reviews)):
+            raise ValueError('公告及证据附加只支持单债资料卡模式')
         if bool(args.code) == bool(args.input):
             raise ValueError('提供输入文件或--code，两者只能选一个')
         if args.code and args.mode != 'diagnose':
@@ -31,9 +39,20 @@ def main():
         if args.mode != 'screen' and (any(v is not None for v in filters) or args.exclude_call_risk):
             raise ValueError('screen filters require --mode screen')
         market = isinstance(data,dict) and data.get('kind') == 'market_snapshot'
+        if not args.announcements and any((args.issuer_code,args.start_date,args.end_date)):
+            raise ValueError('公告日期与发行人参数需要--announcements')
+        if args.announcements:
+            if market and data.get('status')=='failed':
+                data['gaps'].append('行情获取失败，已跳过后续公告查询。')
+            else: data=discover(data,args.start_date,args.end_date,args.issuer_code)
         if args.terms:
             if not market: raise ValueError('--terms只支持市场快照')
-            data=attach_terms(data,json.loads(args.terms.read_text(encoding='utf-8-sig')))
+            if data.get('status')!='failed':
+                data=attach_terms(data,json.loads(args.terms.read_text(encoding='utf-8-sig')))
+        if args.notice_reviews:
+            if market and data.get('status')=='failed':
+                data['gaps'].append('行情获取失败，已跳过正文核对底稿附加。')
+            else: data=attach_reviews(data,json.loads(args.notice_reviews.read_text(encoding='utf-8-sig')))
         if market and args.mode != 'diagnose': raise ValueError('市场资料不具备现金流及条款证据，不能用于筛选或组合定价')
         if market: result=data
         elif args.mode == 'portfolio': result = portfolio(data)
