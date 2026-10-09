@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "convertible-bond-engine"
 version = "0.11.0"
 description = "Auditable A-share convertible bond cashflows and clause diagnostics"
+readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 
@@ -21,3 +22,10 @@ include = ["cbengine*"]
 
 [tool.setuptools.package-data]
 cbengine = ["data/*.json"]
+
+[tool.setuptools.data-files]
+"share/convertible-bond-engine" = ["README.md", "DISCLAIMER.md", "ROADMAP.md", "CHANGELOG.md", "LICENSE"]
+"share/convertible-bond-engine/docs" = ["docs/*.md", "docs/rule-corrections.json"]
+"share/convertible-bond-engine/examples" = ["examples/*.json"]
+"share/convertible-bond-engine/scripts" = ["scripts/compare_workbench.py"]
+"share/convertible-bond-engine/cbengine/data" = ["cbengine/data/market_rules.json"]

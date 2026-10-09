@@ -1,0 +1,4 @@
+include README.md DISCLAIMER.md ROADMAP.md CHANGELOG.md LICENSE
+recursive-include docs *.md *.json
+recursive-include examples *.json
+recursive-include scripts *.py

@@ -1,218 +1,93 @@
 # 可转债定价与博弈引擎
 
-独立实现的 A 股可转债研究工具。v0.10 提供 **L1诊断、独立收益率、自建观察计数、条款证据链及可选固定现金流外部对照**。离线核心不依赖行情账户；代码查询及PDF核验分别按需启用依赖。
+独立实现的 A 股可转债研究工具，用于可审计现金流、收益率、条款观察与证据诊断。
 
-## 可选外部交叉验证
+## 当前版本
 
-```sh
-python -m cbengine.crosscheck examples/crosscheck-flat.json --out local-data/check.json
-# 仅在自行准备的QuantLib验证环境中运行
-python -m cbengine.crosscheck examples/crosscheck-flat.json --quantlib --out local-data/quantlib-check.json
-```
+已发布 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)，源码要求 Python 3.10+。当前主分支另含说明整理与打包元信息维护，版本号仍为 0.11.0。原设计中的含权定价与博弈模型尚未实现。
 
-首批对齐固定税前现金流、ACT/365F、年有效复利、平坦零息率及信用口径，复用已有L1价格/久期/DV01。缺库或未运行不写成验证通过，没有新增强制依赖。实际QuantLib 1.43对照匹配，不代表中国转债含权模型已验证。FinancePy为GPL-3.0，本批仅读许可及接口，未复制、导入或运行其代码。设计、许可、差异解释与未闭环范围见[交叉验证说明](docs/EXTERNAL_CROSSCHECK.md)。
+## 快速使用
 
-L1可显式填写discount_curve_kind=zero_spot、discount_compounding=annual_effective；其他声明拒绝，旧输入未声明时保留假设警示。到期收益率曲线不能直接冒充零息曲线。
-
-## 原始条款与当前事件链
-
-市场快照诊断自动附event_chain，单列原始募集说明书与后续公告，分开公开日和实施日。晚于评估截止日的公告被排除；实施前的调价不进入有效价候选。正文底稿确认的调价仍仅是候选，除非另行证明全部变更覆盖，否则当前转股价、强赎、不强赎、下修和回售状态保持unknown。标题候选不激活权利，事件链不回写计数输入。冲突或不衔接的调价记录作为缺口。
-
-计数底稿新增calendar_complete和halted_days（date/source/reason）。日历完整性未声明时正式状态未知。停牌记录允许对应日无价格，但禁止填入可交易收盘价；当前尚不自动解释停牌如何进入滚动窗口，因此出现显式停牌时暂停计数，其他缺日仍拒绝。
-
-首批仅复用113042真实原文与目录样本；设计、验收边界和固收分层路线见[事件链设计](docs/EVENT_CHAIN_DESIGN.md)。没有全市场或完整法律条款覆盖承诺。
-
-## 收益率与自建条款观察
-
-```sh
-cb-engine local-data/snapshot.json --analysis-input analysis-input.json --out local-data/analysis.json
-cb-engine local-data/analysis.json --format html --out local-data/analysis.html
-```
-
-底稿须与行情代码及行情日期一致。收益率直接求现金流IRR，不需要零息曲线；债底才需要贴现曲线。`cashflows`逐项填写date、date_status（confirmed/assumed）、coupon与redemption，后两者不能重复含息。`price_basis`为confirmed_dirty、assumed_dirty或confirmed_clean，均要说明price_basis_source。净价需要显式accrued_interest与来源转换为全价；税后计算需要每期net_payment及tax_source，缺失则不算税后。资料为调用者声明，不自动证明来源已核验。任何日期或全价假设都标记为scenario，不包装成已公告YTM。
-
-自建条款观察需提供未复权正股收盘价、明确交易日列表和来源、转股价历史effective_on/price/source及完整性声明。观察日期必须与所提供日历严格匹配，缺日拒绝计算，不补价；每个交易日按当日生效转股价计数。每条条款明确窗口、门槛、比例、比较符、适用期及重置。conversion_history_complete=false时只输出条件观察计数，正式触发结果保持unknown。完整性声明仍需外部原文核验；本功能不会自动发现全部调价、停牌或不赎回公告。
-
-2026-10-09上银转债验证：腾讯接口请求未复权行情，2026-08-21至2026-10-09共30日，与该窗口周末和中秋国庆休市清单核对。按已核对的8.35转股价记录，观察计数0/15；尚未核验全部变更记录，因此正式状态仍未知。报价116.977、假定全价且假定2027-01-25总兑付112时，税前情景年化-13.6655%；具体兑付日及税后口径没有确认，不称为确定YTM或收益预测。真实样本底稿在本地保存，不随教学包分发。
-
-数据错误现在区分依赖缺失、连接失败、超时、HTTP错误、空数据和结构变化，保留source_failures及所选报价来源；连接失败不再误导为需重新安装依赖。公告空目录不自动等于没有公告。
-
-规则上下文purpose默认convertible，单债页不显示IPO检查；需IPO算例时显式设置ipo或all。中文卡片突出结果与阻断项，详细公告、规则和来源折叠展示。
-
-## 纠错后的结构化规则
-
-```sh
-python -m cbengine.rules examples/rule-context-demo.json --out local-data/rules.json
-cb-engine examples/demo.json --rule-context examples/rule-context-demo.json
-cb-engine local-data/verified.json --rule-context examples/rule-context-113042.json --quality-as-of 2026-10-09 --format html --out local-data/rule-card.html
-```
-
-参考用户提供的cn-market-rules-v0.1.0整理14项纠错登记，见[纠错清单](docs/rule-corrections.json)。包内[规则文件](cbengine/data/market_rules.json)有14条记录，明确官方参考、公司专属条款、研究政策和待核事项，并保留来源、核对日期、生效时间及适用范围。只包含重写的事实整理和检查逻辑，没有安装上传包的Skill或导入其指令。
-
-纠正股票印花税参数、沪深IPO资格与单位、创业板普通转股权限及退市整理例外、北交所920身份识别；撤销未转股比例等于损失等错误推论。未核实的历史案例、临停与转股时段、交易单位和费用细节保持待核，不进入自动决策。
-
-`--rule-context`只用于单债诊断，须提供同一代码与截止日、明确市场SSE/SZSE/BSE、板块main/star/chinext/bse及阶段ordinary/delisting_period。创业板权限须显式声明，缺失不当作已具备。市场不能由代码前缀猜测。示例金额均为教学算例，不是用户实际持仓或建议。
-
-IPO参考区分1万元参与门槛和每5000元市值/500股单位；提供当期网上上限及来源时才计算给定上限下的数量。股票税额仅算减半印花税，不含其他费用和券商舍入。公司强赎/下修/回售没有通用默认阈值，只返回证据需求。信用筛选阈值不是监管规则。
-
-截止日不能晚于核对日2026-10-09；未确证历史生效日保留null并只支持核对日参考。已知生效日期也不证明拥有当时冻结的资料。部分官方正文访问超时，相关记录明确标为官方索引摘录核对，不是全文核验。未来使用须重新核对来源并升级参考库。
-
-L1条款新增`inclusive`布尔值：above/below方向分别对应严格大于/小于；inclusive=true改为大于等于/小于等于。示例输入已显式填写。旧输入暂保留含等号行为并输出legacy-inclusive-assumption警示，须根据原文补参数。不会用通用参考库覆盖逐只条款。
-
-## 实际PDF核验与版本归档
-
-```sh
-python -m pip install ".[evidence]"
-cb-engine local-data/notices.json --terms examples/terms-113042.json --terms-pdf /path/to/prospectus.pdf --notice-reviews examples/notice-review-113042.json --notice-pdf /path/to/adjustment.pdf --quality-as-of 2026-10-09 --store local-data/evidence --out local-data/verified.json
-python -m cbengine.archive local-data/evidence --code 113042
-```
-
-需自行取得与样本哈希一致的实际原文，仓库不分发PDF。`--terms-pdf`和`--notice-pdf`分别读取本地原文，核对实际SHA256、前8页主体/标题、明确页码上的唯一摘录及字面数值。正文PDF目前一次只支持一份核对底稿。不安装PDF依赖仍可使用核心诊断及底稿声明；无法读取原生文本的扫描件需要人工复核，不自动OCR。
-
-底稿的`verification_checks`逐项指定field、page、excerpt、mode及number_token。数字核验匹配字面数值；文本核验匹配字面字符串。不把“含息”或“无普通回售”等人工语义判断自动提升为机器核验。每个匹配结果绑定完整底稿摘要，字段更改后不能继续使用旧匹配记录。日期规范化、单位换算、主体与证券代码映射、来源下载真实性及完整法律解释仍需单独核对。
-
-`--store`在用户选择的独立目录下按代码追加版本，保存快照摘要、前版本摘要及引用PDF副本。重复内容不追加；已有记录或PDF修改、版本缺失和并发写入会拒绝继续。核验标记绑定的实际PDF必须提供或已存于同一档案。归档使用锁及临时文件落盘，不写入包目录。版本摘要只用于检测内容一致性，没有外部签名或时间戳，不能称为不可篡改，也不认证源数据真实。只供本地使用，分享前自行检查原文许可。
-
-2026-10-09实文件验收：读取上银转债原始募集说明书，匹配面值100、末期票息字面4.00、含息兑付比例字面112；读取2026-06-02调整公告，匹配转股价8.57与8.35。归档保存两份实际PDF，并通过离线版本链与文件摘要检查。其余未列出的条款、生效日期的语义解释和未读公告不因此升级为机器核验。
-
-## 行情质量检查
-
-所有市场快照输出会附`data_quality`：分别列出可得性、新鲜度、溢价率复算一致性及原始条款PDF检查记录。`--quality-as-of YYYY-MM-DD`指定评估截止日；默认北京时间今日。`--max-lag-days 3`指定允许的日历天滞后，范围0至366。重放旧快照不会悄悄刷新网络。
-
-行情时点未知保持unknown；超出允许滞后标stale；行情或快照取得日期晚于截止日标future。缺报价/平价、溢价率复算不一致都会单列。满足带日期展示策略不代表可用于现金流定价、含权估值、回测或完整交易日判断。本版不重新请求接口作体检，也不承诺数据源在线状态。
-
-输入JSON拒绝重复键、NaN/Infinity和浮点溢出，避免条款或现金流参数被静默覆盖。
-
-## 后续公告候选与正文核对底稿
-
-```sh
-cb-engine --code 113042 --announcements --start-date 2026-01-01 --end-date 2026-10-09 --out local-data/notices.json
-cb-engine local-data/notices.json --notice-reviews examples/notice-review-113042.json --format html --out local-data/reviewed-notices.html
-```
-
-代码和日期是验收示例，不代表当前仍存续或任何投资结论。`--announcements`是显式联网查询；已有快照无发行人映射时可指定`--issuer-code 601229`，已有映射时必须一致。缺少参数的旧快照不会猜发行人身份。默认从快照获取日回溯180日，最大区间366日，结束日不晚于快照获取日。
-
-查询巨潮全部类别发行人公告，再以标题中的转债名称、代码或转债相关词筛选；元数据保留公告日、链接、候选分类和身份匹配程度。泛称“可转债”的标题可能对应其他券。查询失败、未找到候选、正文未核对是不同状态；均不能推断无风险。标题分类只发现线索，不激活强赎、回售或不赎回承诺，也不改转股价。
-
-`--notice-reviews`附加人工正文核对底稿，要求对应已发现链接、同一转债代码和公告日，明确原文来源、核对日期、事件类型与生效日。标记依赖调用者声明，不是自动法律鉴定。转股价调整需给出旧价、新价及生效日；底稿不会自动改变定价输入。公告日与生效日分开，尚未附底稿的公告仍是候选。
-
-2026-10-09真实查询验收：601229发行人在2026-01-01至2026-10-09区间返回69条元数据，其中11条标题含转债相关词。另人工阅读[转股价调整原文](https://static.cninfo.com.cn/finalpage/2026-06-02/1225343748.PDF)第1至2页，核对113042从8.57调整至8.35，公告日2026-06-02、生效日2026-06-08。此底稿不代表其余10份公告正文已核对。查询可能包含历史行情日之后的公告，不能直接作为历史行情日的回测信息集；元数据也不能证明当日具体公开时刻。
-
-## 输入代码生成中文资料卡
-
-```sh
-python -m pip install ".[market]"
-cb-engine --code 113042 --out local-data/snapshot.json
-cb-engine local-data/snapshot.json --format markdown --out local-data/report.md
-cb-engine local-data/snapshot.json --format html --out local-data/report.html
-```
-
-`--code` 显式联网查询东方财富比价表；失败或关键字段不全时，降级到东方财富单债历史估值接口。另尝试取得集思录强赎信息和东方财富单债条款转录。代码只是调用示例，不代表该债仍存续。单接口最多等待30秒；最多四个接口合计约120秒。获取时间使用北京时间，但不是报价时间。查询不自动更新历史输入，不自动覆写现金流，也不将行情报价当作已核实全价。
-
-状态 `partial` 表示资料卡仅展示可得字段；债底、YTM、条款判断缺证据时不计算。东方财富纯债价值列为第三方估值；集思录强赎状态列为第三方信息，不冒充原文核验。即时及历史接口都失败时保存 `failed` 记录并返回退出码3；本地输入错误返回2。快照可离线重放，提供JSON底稿及Markdown/HTML卡片。
-
-2026-10-09真实联网验收：比价表连接被远端关闭；历史估值、单债详情及集思录强赎接口均取得数据。113042（上银转债）最新有效历史收盘日期为2026-10-08，报价117.925、第三方转股价值117.4850299401。此为当次成功验收，不保证长期可用或所有代码覆盖。
-
-历史快照选择不晚于获取日的最新完整行，价格和平价来自同一行；拒绝最新日期重复，不用较新但缺价格的行。`quote_age_calendar_days`表示日历天，不是交易日滞后。降级后不将详情中的当前正股价/转股价拼到历史行。其他第三方条款和强赎字段自身时点仍未知，与历史行情应分开理解。
-
-示例卡片可离线运行：
-
-```sh
-cb-engine examples/market-demo.json --format html --out local-data/demo-card.html
-```
-
-市场快照不能直接用于原L1批量筛选或持仓定价：它缺少已核实现金流与条款。完整定价仍使用原有输入契约。
-
-## 原始募集说明书证据
-
-```sh
-cb-engine local-data/snapshot.json --terms examples/terms-113042.json --format html --out local-data/reviewed-card.html
-```
-
-`--terms`附加明确的人工核对底稿，要求代码匹配、来源、PDF页码、核对日期和范围，检查末期利息是否包含在到期兑付总额中。它是调用者提供的证据声明，不是自动PDF解析或真实性鉴定。原始条款与当前有效状态分开。
-
-113042样本已经人工阅读[原始募集说明书](https://static.cninfo.com.cn/finalpage/2021-01-21/1209154427.PDF)第19、23、24页：六期票息为0.3/0.8/1.5/2.8/3.5/4元；到期总兑付112元包含末期4元利息，现金流组件应是4+108，而非4+112。兑付在期满后五个交易日内，具体日须查兑付公告。其回售是募集资金用途变更后的特别回售，没有普通低价回售。证据文件保存原PDF的SHA256，不分发完整原文件。未完成全量后续公告核验，不能据此生成当前触发状态、确定日期YTM或完整含权价。
-
-## 快速开始
-
-需要 Python 3.10+，计算核心无第三方运行依赖。
+在仓库根目录运行；计算核心无第三方运行依赖。
 
 ```sh
 python -m pip install .
 cb-engine examples/demo.json --out local-data/result.json
-python -m unittest discover -s tests -v
+cb-engine examples/market-demo.json --format html --out local-data/demo-card.html
 ```
 
-也可直接运行 `python -m cbengine.cli examples/demo.json`。示例全部是教学假设，不是实际证券行情。批量诊断将输入改为对象列表；任一输入无效时整批拒绝输出。
+以上均为离线教学输入，不是真实行情。也可用 `python -m cbengine.cli` 替代 `cb-engine`。完整诊断输出 JSON；市场快照支持 Markdown 和中文 HTML 资料卡。
 
-## 批量筛选与持仓汇总
+显式联网查询需可选依赖，接口可用性与证券存续状态须自行核对：
 
 ```sh
-cb-engine examples/portfolio.json --mode screen --max-price 110 --max-premium 0.30 --min-net-ytm 0 --exclude-call-risk
-cb-engine examples/portfolio.json --mode portfolio --out local-data/portfolio.json
+python -m pip install ".[market]"
+cb-engine --code 113042 --out local-data/snapshot.json
 ```
 
-批量输入必须非空、代码唯一、估值日一致。筛选结果保留入选诊断与每只未入选的原因，阈值包含等号；收益率与溢价率参数均为小数。强赎过滤排除状态未知及满足条件且无有效不强赎承诺的债券，不能排除所有未来风险。
+113042 是历史验收代码，不代表当前仍存续。网络失败会记录来源与缺口，不以缺失数据推断安全。更多操作见[使用与验收详解](docs/USAGE_AND_EVIDENCE.md)。
 
-持仓汇总增加 `quantity`，表示每张面值100元的持有张数，要求大于零。按数量累加现金价值和债底；组合溢价按总市值与总平价/债底之比计算，不平均个券溢价。DV01只汇总纯债部分，集中度用市值权重的平方和倒数表示。
+## 已实现与边界
 
-条款返回 `status`：inactive、condition_met、condition_not_met 或 unknown。历史不足且计数未达到门槛，或者末条历史不是估值日时，状态为unknown、`trigger_condition_met`为null。观测日是否为交易日及中间缺漏仍需上游核对；估值日在休市日且仅提供上一交易日数据时，本版保守标记unknown。
+| 已实现 | 使用边界 |
+| --- | --- |
+| 按日期现金流的纯债现值、税前/税后收益率、条件退出收益率 | 显式现金流与税额；已提供情景最小收益率不等于完整 YTW |
+| 转股价值、溢价率、曲线平移久期、DV01、凸性与重估 | 债底取决于给定信用曲线及兑付假设，不承诺本金或流动性保护 |
+| 批量筛选、排除原因与持仓汇总 | 需要完整 L1 输入；市场快照不能直接代替定价输入 |
+| 原始条款、公告候选、正文底稿、PDF 字段匹配与本地档案 | 字面匹配及摘要不认证原文真实性或完整法律解释 |
+| 自建条款观察、事件链与公告分页证据 | 条件计数与正式权利分离；自声明完整不能确认当前条款状态 |
+| 可选 QuantLib 固定现金流对照 | 不包含中国转债含权模型；非平坦只验证现金流与零息节点重合处 |
 
-## 已实现
+尚未实现含权理论价、OAS、BS Greeks、隐含波动率、评级迁移、Merton PD、LSM、交易回测或交易执行。实际应计息、完整调价链与停牌计数约定仍待核验。
 
-- 按实际付息日计算纯债现值：ACT/365F、年复利零息曲线、逐期限线性插值，拒绝曲线外推。
-- 税前/税后 YTM，显式退出场景的条件 YTP/YTC，以及已提供场景最小收益率。
-- 转股价值、纯债和转股溢价率、到债底距离。
-- 曲线平行变动的修正久期、DV01、凸性，±100/200bp 精确重估及近似误差。
-- 强赎、下修、回售共用滚动计数；每条历史记录采用当日有效转股价；显式生效区间和重置日期。
-- 不强赎承诺日期展示与来源要求，强赎条件提示。
-- 基于使用者提供的适用下限测算下修下限及对应平价。
-- 输入来源保留、异常拒绝、教学与缺口警示；持续集成测试。
-- 快照筛选及排除原因、持仓总值、组合溢价、纯债DV01和集中度。
+## 输入与关键口径
 
-## 输入口径
+完整字段见[教学单债输入](examples/demo.json)和[接入契约草案](docs/INTEGRATION_CONTRACT.md)。
 
-完整字段见 [examples/demo.json](examples/demo.json)。所有金额按每100元面值；`dirty_price` 是全价，调用者须核对报价口径并转换。所有利率使用小数，如 `0.045`。
+- 金额按每 100 元面值；`dirty_price` 为全价。净价必须加显式应计息，不能把第三方报价自动视为已核实全价。
+- 利率、收益率与溢价率参数用小数，例如 `0.045` 为 4.5%。现金流按实际支付日和 ACT/365F 计算；日期统一 `YYYY-MM-DD`。
+- `coupon` 与 `redemption` 不得重复含息。例如含末期息 4 元的总兑付 112 元，应拆为 4＋108，而非 4＋112。税率及税额由调用者明确提供。
+- L1 曲线为包含信用因素的年有效零息曲线，逐期限线性插值、拒绝外推；未经转换的到期收益率曲线不能直接替代。独立现金流 IRR 不需要曲线。
+- 条款逐只提供来源、有效期、窗口、门槛、严格或含等号比较及历史有效转股价，不使用通用默认阈值。强赎条件满足不等于发行人已执行。
+- 公告日、生效日、行情日、取得日和评估截止日分别保留。缺交易日、未核实调价历史或停牌约定时，不补价、不补正式权利结论。
 
-`cashflows` 的每期 `coupon` 与 `redemption` **必须互不重复**。若到期兑付110已经包含末期息1.5，填 coupon=1.5、redemption=108.5；若110不含末期息，填 coupon=1.5、redemption=110。`redemption_tax` 是显式税额，不能默认把全部溢价视为应税或免税。示例零税额仅为教学假设。`coupon_tax_rate` 由调用者根据身份与实际结算确定。
+## 输出、来源与缺失状态
 
-`discount_curve` 必须是包含信用因素的零息贴现曲线；市场到期收益率曲线不能未经转换冒充零息曲线。每个现金流期限必须在节点范围内。
+JSON 保留输入来源、假设与缺口；市场资料卡区分第三方报价/估值、人工底稿、实际 PDF 字段检查和自建观察。`unknown` 不等于安全，`partial` 不等于完整覆盖。目录 `pagination_observed` 只说明本次发行人和区间的返回分页一致，法律事件覆盖仍可能未知。
 
-条款三项键 `call`、`put`、`reset` 必须全部提供；确认不存在的条款填 null。其他条款必须明确来源、窗口、门槛、方向、滚动、生效日期及 `reset_on` 列表。不存在统一默认条款。`observations` 必须按日期递增，每行填写当日正股价和有效转股价。日历完整性及停牌处理需要上游核验，本版不自行补缺。
+市场查询失败返回退出码 3，本地无效输入返回 2；具体模块的拒绝条件见详解。JSON 拒绝重复键、NaN、Infinity 及溢出。归档摘要用于检测内容一致性，没有外部签名或可信时间戳。
 
-`exit_scenarios` 可提供 `call` 和 `put`，每项包含 date、gross_payment、net_payment、source。退出日现金流须完整包含当日票息或应计息，避免遗漏/重复。这些是**条件现金收益率**，并非预测、并非自动转股后收益。未提供全部适用场景时，不称为完整 YTW。
+- [公告分页覆盖](docs/DIRECTORY_COVERAGE.md)：请求区间、逐页原始响应、数量及失败记录。
+- [事件链设计](docs/EVENT_CHAIN_DESIGN.md)：原始条款与当前状态、截止日和生效日。
+- [规则纠错登记](docs/rule-corrections.json)：14 项纠错及待核事项；规则参考核对日为 2026-10-09，未来使用需重新核对。
 
-`reset_floor_inputs.applicable_floors` 仅填写该债募集说明书实际适用的下限，净资产下限不是本引擎对所有转债的统一假设。
+## 验证范围
 
-## 与原设计的差异
+```sh
+python -m unittest discover -s tests -v
+python -m cbengine.crosscheck examples/crosscheck-flat.json --out local-data/check.json
+```
 
-原方案是长期蓝图，不是当前功能承诺。首版没有含权理论价、OAS、BS Greeks、隐含波动率、评级迁移、Merton PD、LSM、交易回测、自动公告解析、实时数据或交易执行。债底只是给定曲线与兑付假设下的现金流现值，不是信用或流动性保护承诺。
+v0.11.0 本地 90 项测试通过；GitHub 检查覆盖 Python 3.10、3.12、3.13，另设可选 QuantLib 1.43 检查。核心未安装 QuantLib 时外部测试跳过，未运行的对照标记为 `not-run`。
 
-修正了几个建模口径：
+QuantLib 实际验证平坦曲线、非平坦零息节点及同日支付边界；应计息仍为输入声明。FinancePy 仅读取许可和公开接口，未复制、导入或执行其代码。见[外部交叉验证说明](docs/EXTERNAL_CROSSCHECK.md)。
 
-1. 滚动窗口满后每天移出最旧记录，不能解释为固定窗口倒计时后归零。`days_to_fill_window` 仅表示尚缺多少历史记录。
-2. 强赎条件满足不等于发行人已公告执行；投资者可能转股。未来含权模型需处理通知期及可执行动作，不能全部按100元结束路径。
-3. 历史条款判断使用历史有效转股价，不能用当前转股价重算全历史。
-4. 曲线下久期/凸性使用逐期导数；二阶近似有截断误差，±100bp误差超过固定阈值不自动判定为实现错误。
-5. 深度虚值 Delta 不保证在任意波动率和期限下都小于固定阈值；强赎退出也不天然等同于损失。
-6. 原方案整数年现金流0.3/0.5/1.0/111.5在4.5%贴现下的精确债底为95.12083273，显示为95.12，原95.13测试值应修正。日期版还应计入闰年造成的ACT/365F差异。
+2026-10-09 上银真实样本曾取得公告 69 条、3 页，核对两份实际 PDF 的指定字段；这不代表全量条款、其他证券或接口长期可用。详细日期、数值与限制保留在[验收详解](docs/USAGE_AND_EVIDENCE.md)。
 
 ## 后续路线
 
-见 [ROADMAP.md](ROADMAP.md)。先补可信数据和历史事件，再做含权模型及样本外回测。每个模型独立标注假设、版本和验证结果。
+见[实施路线与验收边界](ROADMAP.md)及[更新记录](CHANGELOG.md)。优先补真实数据与历史事件，再做含权模型及样本外验证。
 
-## 参考与许可
+## 与其他仓库的关系
 
-本仓库独立编写，未复制外部项目代码或上传用户原始设计文件。相关研究参考：[sw1507/convertibleBond](https://github.com/sw1507/convertibleBond)、[QuantLib](https://github.com/lballabio/QuantLib)、[AKShare](https://github.com/akfamily/akshare)。它们的许可不因本仓库 MIT 许可而改变。外部数据使用权由各提供方决定。
+参考 [research-workbench](https://github.com/KILING-TASI/research-workbench) 的证据留存、版本化知识卡与数据质量分层思路，核心独立实现。接入契约与本地脚本同输入对照已提供，尚未修改或完成工作台仓库迁移；本地参考脚本不代表其 GitHub 主分支。
 
-v0.6证据和质量流程参考[research-workbench](https://github.com/KILING-TASI/research-workbench)的实际文件核验、版本化知识卡、数据源质量分层与严格JSON理念；本包独立实现这些小型组件，没有导入该仓库的研究工作流依赖。
+研究参考包括 [QuantLib](https://github.com/lballabio/QuantLib)、[AKShare](https://github.com/akfamily/akshare) 和 [sw1507/convertibleBond](https://github.com/sw1507/convertibleBond)，不表示兼容其全部能力。
 
-仅用于研究；结果依赖输入与假设，不执行交易。
+## 许可与第三方数据
+
+本仓库沿用 [MIT 许可](LICENSE)。第三方组件分别遵循各自许可，行情、公告和 PDF 的使用权由提供方决定；代码许可不授予第三方数据使用权。仓库不分发用户原设计或真实 PDF，本地归档分享前须核对资料权限。
 
 ## 免责声明
 
-本项目仅供学习与研究，不构成投资建议或交易指令，不保证收益或结果准确性。请在使用前阅读[免责声明与使用边界](DISCLAIMER.md)，并结合本次数据来源、假设与缺口独立判断。代码许可不包含第三方数据使用授权。
-
-### v0.11 证据与对照
-
-见[公告覆盖](docs/DIRECTORY_COVERAGE.md)、[外部对照](docs/EXTERNAL_CROSSCHECK.md)、[接入契约草案](docs/INTEGRATION_CONTRACT.md)。目录分页一致仍不认证全部条款事件。
+仅供学习与研究，不构成投资建议或交易指令，不保证收益或准确性。请阅读[免责声明与使用边界](DISCLAIMER.md)，结合来源、假设与缺口独立判断。
