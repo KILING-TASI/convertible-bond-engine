@@ -1,0 +1,26 @@
+{
+  "checked_on": "2026-10-09",
+  "scope": "actual local optional gateway calls; pending workbench PR, no merge/release",
+  "cases": [
+    {
+      "case": "flat",
+      "status": "native-response-preserved",
+      "exact_engine_response": "matched",
+      "engineCommit": "2e8b293d0552e3ddb330fc4ce7f47bd2a3959570",
+      "workbenchCommit": "add664afe56e38d1ac681577289f9b282afc906d"
+    },
+    {
+      "case": "nonflat",
+      "status": "native-response-preserved",
+      "exact_engine_response": "matched",
+      "engineCommit": "2e8b293d0552e3ddb330fc4ce7f47bd2a3959570",
+      "workbenchCommit": "add664afe56e38d1ac681577289f9b282afc906d"
+    },
+    {
+      "case": "missing-tax",
+      "status": "blocked",
+      "nativeReturnCode": 2,
+      "engine_response": null
+    }
+  ]
+}

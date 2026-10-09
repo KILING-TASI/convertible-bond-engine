@@ -1,0 +1,68 @@
+{
+  "schema_version": "cb-fixed-cashflow-1",
+  "code": "DEMO",
+  "as_of": "2026-10-09",
+  "settlement_date": "2026-10-09",
+  "currency": "CNY",
+  "face_value": 100,
+  "source": "独立教学现金流，非市场资料",
+  "price_basis": "clean",
+  "price": 116.5,
+  "accrued_interest": 2,
+  "accrued_interest_source": "教学显式应计息，未验证真实计息区间",
+  "day_count": "ACT/365F",
+  "compounding": "annual_effective",
+  "curve_kind": "zero_spot",
+  "credit_basis": "included_in_rate",
+  "curve_source": "教学4.5%信用包含零息率",
+  "discount_curve": [
+    [
+      0.01,
+      0.045
+    ],
+    [
+      10,
+      0.045
+    ]
+  ],
+  "cashflows": [
+    {
+      "date": "2027-10-09",
+      "coupon": 0.3,
+      "redemption": 0,
+      "coupon_tax": 0.06,
+      "redemption_tax": 0,
+      "source": "教学金额及税额，未推断投资者身份"
+    },
+    {
+      "date": "2028-10-09",
+      "coupon": 0.5,
+      "redemption": 0,
+      "coupon_tax": 0.1,
+      "redemption_tax": 0,
+      "source": "教学金额及税额，未推断投资者身份"
+    },
+    {
+      "date": "2029-10-09",
+      "coupon": 1,
+      "redemption": 0,
+      "coupon_tax": 0.2,
+      "redemption_tax": 0,
+      "source": "教学金额及税额，未推断投资者身份"
+    },
+    {
+      "date": "2030-10-09",
+      "coupon": 1.5,
+      "redemption": 110,
+      "coupon_tax": 0.30000000000000004,
+      "redemption_tax": 0,
+      "source": "教学金额及税额，未推断投资者身份"
+    }
+  ],
+  "maturity_payment": {
+    "includes_final_coupon": true,
+    "quoted_amount": 111.5,
+    "source": "教学含末息总兑付"
+  },
+  "is_demo": true
+}

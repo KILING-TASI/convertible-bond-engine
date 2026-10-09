@@ -1,6 +1,6 @@
 # 有界工作台可选桥接
 
-状态：引擎侧接口与当前工作台脚本同输入对照已实现；主分支增量，未发新版。工作台侧可选入口由其任务负责，不在此仓库替换或删除内置入口。教学联调不认证真实条款或数据。
+状态：引擎侧接口与当前工作台脚本同输入对照已实现；主分支增量，未发新版。工作台侧可选入口由其任务负责，本地原生调用已完成端到端验收；该工作树内容待其任务纳入PR #6，不在此仓库替换或删除内置入口。教学联调不认证真实条款或数据。
 
 ## 显式接口
 
@@ -37,3 +37,20 @@ python scripts/compare_bridge_workbench.py /path/to/convertible_review.py --inpu
 ```
 
 输出目录必须新建，保存input.json/result.json。该联调是数学适配检查，不是合同、法律或真实数据认证。方法与原许可见[方法卡](FIXED_INCOME_METHOD_CARDS.md)和[第三方清单](../THIRD_PARTY_NOTICES.md)。
+
+
+## 工作台入口端到端回执（另存，不覆盖旧记录）
+
+2026-10-09实际执行当前工作台 `scripts/bounded_engine_gateway.py` 的 `run('convertible', project_dir, input_path, new_out_dir)`，使用独立子进程原生入口。工作台git HEAD为add664afe56e38d1ac681577289f9b282afc906d，引擎调用HEAD为2e8b293d0552e3ddb330fc4ce7f47bd2a3959570。工作树可能含尚未提交入口；回执另记gateway实际源码SHA256和引擎方法文件哈希，不以git HEAD单独认证工作树版本。
+
+- [平坦原生回执](native-bridge-v1/flat-result.json)及[实际输入](native-bridge-v1/flat-input.json)：status=native-response-preserved，原生退出码0；engine_response与直接calculate逐字段相同。
+- [非平坦原生回执](native-bridge-v1/nonflat-result.json)及[实际输入](native-bridge-v1/nonflat-input.json)：透传一致；这不是与工作台单一discountYield风险的等价认证。
+- [缺税额拒绝回执](native-bridge-v1/missing-tax-result.json)及[实际输入](native-bridge-v1/missing-tax-input.json)：保留原生退出码2、status=blocked、engine_response=null及错误原因；没有升级为成功。
+
+三组检查输入字节SHA、gateway源码SHA及bridge.py方法文件SHA。成功结果中的权利状态均保留unknown。汇总见[本地端到端验收](native-bridge-v1/summary.json)。旧bridge-acceptance数学对照和历史预览保持冻结。可使用对应工作台入口复跑：
+
+```sh
+python /path/to/research-workbench/scripts/bounded_engine_gateway.py convertible --project-dir /path/to/convertible-bond-engine --input /path/to/convertible-bond-engine/examples/bridge-fixed-demo.json --out-dir /path/to/new-result-directory
+```
+
+上述是本地可选桥接验收。工作台PR #6仍由该任务提交与审核，不在此仓库合并；没有发布新版本或完整模块迁移。这里只证明原生输入/响应透传与既有数学交集，不能证明合同、数据、账户或实际退出等价。
