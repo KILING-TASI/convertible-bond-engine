@@ -130,5 +130,16 @@
   "real_network_data": "not requested",
   "old_release": "not tested in this batch",
   "initial_source_commit": "579febe970a2f35f9b60f3056d82cc2b00580fa6",
-  "current_test_scope": "same algorithm; pending standalone verification/docs additions in working tree"
+  "current_test_scope": "same algorithm; pending standalone verification/docs additions in working tree",
+  "initial_source_archive": {
+    "commit": "579febe970a2f35f9b60f3056d82cc2b00580fa6",
+    "archive_sha256": "12f8ff10ec4566dcefd07c319813bd14fcf964635fd6543e2921aa067fae9491",
+    "wheel_sha256": "815739b2618d9b8f08ff314c9ccc6d36b32c6701db2dc36d151e6bbd62a9ed82",
+    "status": "passed; original local receipt preserved"
+  },
+  "build_dependencies": {
+    "declared": "setuptools>=77",
+    "resolved_version": null,
+    "reason": "earlier pip build output did not retain resolved build dependency version; not inferred from host installation"
+  }
 }
