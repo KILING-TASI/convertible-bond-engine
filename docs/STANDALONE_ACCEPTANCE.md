@@ -31,7 +31,7 @@ python -m cbengine.preview /path/to/venv/share/convertible-bond-engine/examples/
 python scripts/verify_standalone.py --wheel /path/to/package.whl --work-dir /path/to/new-isolated-directory
 ```
 
-CI新增isolated-wheel-demo：只checkout本仓库，构建wheel，另建venv并从安装包资源跑最短流程，验收结果作为CI artifact保存。CI状态以PR检查为准，不提前声明成功。它不安装工作台或其他自家库。
+CI新增isolated-wheel-demo：只checkout本仓库，构建wheel，另建venv并从安装包资源跑最短流程，验收结果作为CI artifact保存。本批远端[运行37972409567](https://github.com/KILING-TASI/convertible-bond-engine/actions/runs/37972409567)已通过，[原回执摘要](STANDALONE_CI_ACCEPTANCE.json)保留模块来源、包摘要、依赖及命令；测试提交pin为9b6f175，后续只补验收记录。它不安装工作台或其他自家库。
 
 ## 版本与未验收范围
 
