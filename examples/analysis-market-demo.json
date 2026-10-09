@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "kind": "market_snapshot",
+  "status": "partial",
+  "code": "DEMO",
+  "name": "教学收益率算例",
+  "fetched_at": "2026-10-09T00:00:00+08:00",
+  "quote_time": "2026-10-09",
+  "sources": {
+    "demo": "教学输入，非实际行情"
+  },
+  "quote_price": 100,
+  "stock_price": 10,
+  "conversion_price": 10,
+  "conversion_value": 100,
+  "conversion_premium": 0,
+  "provider_estimates": {
+    "bond_floor": null,
+    "note": "教学，不提供债底"
+  },
+  "provider_redemption": null,
+  "gaps": [
+    "现金流与到期兑付含息口径未从募集说明书核实：不计算债底与YTM。",
+    "零息信用曲线缺失：不输出引擎债底、久期或DV01。",
+    "逐只条款原文、历史有效转股价及交易日记录缺失：不计算条款触发状态。",
+    "报价时间未由接口提供；获取时间不代表行情时间，可能是休市或延迟报价。",
+    "报价净全价口径未核实：展示行情报价，不送入现金流定价引擎。"
+  ],
+  "errors": [],
+  "raw_quote": {},
+  "is_demo": true
+}

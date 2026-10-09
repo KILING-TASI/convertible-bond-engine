@@ -25,10 +25,13 @@ def evaluate(context):
         raise ValueError('市场与板块冲突')
     if phase not in ('ordinary','delisting_period'): raise ValueError('阶段须明确ordinary/delisting_period')
     permission=context.get('stock_permission')
+    purpose=context.get('purpose','convertible')
+    if purpose not in ('convertible','ipo','all'): raise ValueError('purpose须为convertible/ipo/all')
     if permission is not None and type(permission) is not bool: raise ValueError('stock_permission须为布尔值或省略')
     data=catalog(); checks=[]
     for r in data['rules']:
         applies=market in r['scope']['markets'] and board in r['scope']['boards']
+        if r['id'] in ('SSE-IPO-QUOTA','SZSE-IPO-QUOTA') and purpose=='convertible': applies=False
         row={'rule_id':r['id'],'title':r['title'],'category':r['category'],
              'scope':r['scope'],'sources':r['sources'],'verified_on':r['verified_on'],
              'effective_from':r['effective_from'],'status':'not_applicable','result':None}

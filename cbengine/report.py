@@ -83,6 +83,20 @@ def metric(value, percent=False):
     return f'{value*100:.2f}%' if percent else f'{value:.2f}'
 
 
+def blockers(snapshot,format):
+    a=snapshot.get('independent_analysis',{}); rows=['债底：仍需可信零息信用曲线，第三方估值不替代模型计算。']
+    if not a.get('yield'): rows.append('收益率：需现金流日期、含息拆分及净/全价口径。')
+    else:
+        if a['yield']['status']=='scenario': rows.append('收益率含日期或全价假设，仅展示情景。')
+        if a['yield']['net'] is None: rows.append('税后收益率：税后现金流未核实，暂不计算。')
+    if not a.get('clauses'): rows.append('自建条款计数：需未复权正股、交易日历和历史转股价。')
+    elif any(s.get('evidence_status')=='conditional-conversion-history' for s in a['clauses']['states'].values()):
+        rows.append('正式条款状态：转股价变更覆盖尚未确认完整，观察计数不升级为确定结论。')
+    if format=='html':
+        return '<h2>仍阻断哪些结论</h2><ul>'+''.join('<li>'+html.escape(r)+'</li>' for r in rows)+'</ul>'
+    return '\n## 仍阻断哪些结论\n\n'+''.join('- '+r+'\n' for r in rows)
+
+
 def render(snapshot, format='markdown'):
     title = f"{snapshot['name']}（{snapshot['code']}）诊断卡"
     lines = [('状态', '获取失败' if snapshot['status']=='failed' else '部分资料已取得'),
@@ -94,7 +108,23 @@ def render(snapshot, format='markdown'):
              ('转股价值',metric(snapshot.get('conversion_value'))),
              ('转股溢价率',metric(snapshot.get('conversion_premium'),True)),
              ('第三方纯债估值',metric(snapshot.get('provider_estimates',{}).get('bond_floor')))]
+    analysis=snapshot.get('independent_analysis',{})
+    if analysis.get('yield'):
+        y=analysis['yield']; scenario=y['status']=='scenario'
+        lines += [('情景到期收益率（税前）' if scenario else '按声明输入计算到期收益率（税前）',metric(y['gross'],True)),
+                  ('税后收益率',metric(y['net'],True)),
+                  ('收益率日期口径','含假定日期；不是已公告兑付结果' if scenario else '底稿声明日期，需核对原文')]
+    if analysis.get('clauses'):
+        names={'call':'强赎','put':'回售','reset':'下修'}
+        for name,s in analysis['clauses']['states'].items():
+            if not s.get('absent'):
+                lines.append((names[name]+'自建观察计数',f'{s["count"]}/{s["required"]}，窗口{s["window"]}日；'+(
+                    '转股价历史覆盖未确认，正式状态未知' if s['evidence_status']=='conditional-conversion-history' else '基于所提供历史和日历')))
     gaps = snapshot.get('gaps',[]) + snapshot.get('errors',[])
+    if analysis.get('yield'):
+        gaps.append(analysis['yield']['note'])
+        gaps=[g for g in gaps if not g.startswith('现金流与到期兑付含息口径未')]
+    if analysis.get('clauses'): gaps.append(analysis['clauses']['note'])
     if 'quote_age_calendar_days' in snapshot:
         lines.append(('行情距获取日（日历天）',snapshot['quote_age_calendar_days']))
     evidence=snapshot.get('issue_term_evidence')
@@ -146,11 +176,12 @@ def render(snapshot, format='markdown'):
         rows = ''.join(f'<tr><th>{e(a)}</th><td>{e(str(b))}</td></tr>' for a,b in lines)
         items = ''.join(f'<li>{e(str(g))}</li>' for g in gaps)
         sources = ''.join(f'<li>{e(k)}：{e(v)}</li>' for k,v in snapshot['sources'].items())
-        return f'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>{e(title)}</title><style>body{{max-width:1000px;margin:40px auto;padding:0 20px;font:16px/1.7 system-ui;color:#183044;background:#f6f8fb}}table{{width:100%;border-collapse:collapse;background:white}}th,td{{text-align:left;padding:10px;border-bottom:1px solid #dde4ec;overflow-wrap:anywhere}}.notice{{padding:16px;background:#fff2cf}}li{{overflow-wrap:anywhere}}</style><h1>{e(title)}</h1><p class="notice">{e(caution)}</p><table>{rows}</table>{notice_section(snapshot,"html")}{rule_section(snapshot,"html")}<h2>资料缺口</h2><ul>{items}</ul><h2>来源</h2><ul>{sources}</ul></html>'
+        return f'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>{e(title)}</title><style>body{{max-width:1000px;margin:40px auto;padding:0 20px;font:16px/1.7 system-ui;color:#183044;background:#f6f8fb}}table{{width:100%;border-collapse:collapse;background:white}}th,td{{text-align:left;padding:10px;border-bottom:1px solid #dde4ec;overflow-wrap:anywhere}}.notice{{padding:16px;background:#fff2cf}}li{{overflow-wrap:anywhere}}</style><h1>{e(title)}</h1><p class="notice">{e(caution)}</p><table>{rows}</table>{blockers(snapshot,"html")}<details><summary>公告与规则检查</summary>{notice_section(snapshot,"html")}{rule_section(snapshot,"html")}</details><details><summary>资料缺口与口径明细</summary><ul>{items}</ul></details><details><summary>数据来源</summary><ul>{sources}</ul></details></html>'
     text = f'# {markdown_text(title)}\n\n{caution}\n\n| 项目 | 结果 |\n|---|---|\n'
     text += ''.join(f'| {markdown_text(a)} | {markdown_text(b)} |\n' for a,b in lines)
     text += notice_section(snapshot,'markdown')
     text += rule_section(snapshot,'markdown')
+    text += blockers(snapshot,'markdown')
     text += '\n## 资料缺口\n\n' + ''.join(f'- {markdown_text(g)}\n' for g in gaps)
     text += '\n## 来源\n\n' + ''.join(f'- {markdown_text(k)}：{markdown_text(v)}\n' for k,v in snapshot['sources'].items())
     return text

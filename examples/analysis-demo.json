@@ -1,0 +1,17 @@
+{
+  "code": "DEMO",
+  "as_of": "2026-10-09",
+  "cashflow_source": "教学现金流",
+  "price_basis_source": "教学全价",
+  "price_basis": "confirmed_dirty",
+  "cashflows": [
+    {
+      "date": "2027-10-09",
+      "date_status": "confirmed",
+      "coupon": 5,
+      "redemption": 100,
+      "net_payment": 104,
+      "tax_source": "教学税额"
+    }
+  ]
+}

@@ -1,6 +1,23 @@
 # 可转债定价与博弈引擎
 
-独立实现的 A 股可转债研究工具。v0.7 提供 **L1诊断、市场快照、公告时间线、PDF字段匹配、证据归档、质量检查及结构化规则参考**。离线核心不依赖行情账户；代码查询及PDF核验分别按需启用依赖。
+独立实现的 A 股可转债研究工具。v0.8 提供 **L1诊断、曲线无关收益率、自建观察计数、市场快照、证据归档与规则参考**。离线核心不依赖行情账户；代码查询及PDF核验分别按需启用依赖。
+
+## 收益率与自建条款观察
+
+```sh
+cb-engine local-data/snapshot.json --analysis-input analysis-input.json --out local-data/analysis.json
+cb-engine local-data/analysis.json --format html --out local-data/analysis.html
+```
+
+底稿须与行情代码及行情日期一致。收益率直接求现金流IRR，不需要零息曲线；债底才需要贴现曲线。`cashflows`逐项填写date、date_status（confirmed/assumed）、coupon与redemption，后两者不能重复含息。`price_basis`为confirmed_dirty、assumed_dirty或confirmed_clean，均要说明price_basis_source。净价需要显式accrued_interest与来源转换为全价；税后计算需要每期net_payment及tax_source，缺失则不算税后。资料为调用者声明，不自动证明来源已核验。任何日期或全价假设都标记为scenario，不包装成已公告YTM。
+
+自建条款观察需提供未复权正股收盘价、明确交易日列表和来源、转股价历史effective_on/price/source及完整性声明。观察日期必须与所提供日历严格匹配，缺日拒绝计算，不补价；每个交易日按当日生效转股价计数。每条条款明确窗口、门槛、比例、比较符、适用期及重置。conversion_history_complete=false时只输出条件观察计数，正式触发结果保持unknown。完整性声明仍需外部原文核验；本功能不会自动发现全部调价、停牌或不赎回公告。
+
+2026-10-09上银转债验证：腾讯接口请求未复权行情，2026-08-21至2026-10-09共30日，与该窗口周末和中秋国庆休市清单核对。按已核对的8.35转股价记录，观察计数0/15；尚未核验全部变更记录，因此正式状态仍未知。报价116.977、假定全价且假定2027-01-25总兑付112时，税前情景年化-13.6655%；具体兑付日及税后口径没有确认，不称为确定YTM或收益预测。真实样本底稿在本地保存，不随教学包分发。
+
+数据错误现在区分依赖缺失、连接失败、超时、HTTP错误、空数据和结构变化，保留source_failures及所选报价来源；连接失败不再误导为需重新安装依赖。公告空目录不自动等于没有公告。
+
+规则上下文purpose默认convertible，单债页不显示IPO检查；需IPO算例时显式设置ipo或all。中文卡片突出结果与阻断项，详细公告、规则和来源折叠展示。
 
 ## 纠错后的结构化规则
 

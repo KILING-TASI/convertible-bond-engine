@@ -5,7 +5,7 @@ from cbengine.engine import clause_state
 
 class RuleTests(unittest.TestCase):
     def setUp(self):
-        self.context={'as_of':'2026-10-09','market':'SZSE','board':'chinext','phase':'ordinary'}
+        self.context={'as_of':'2026-10-09','market':'SZSE','board':'chinext','phase':'ordinary','purpose':'all'}
 
     def get(self,id,context=None):
         return next(r for r in evaluate(context or self.context)['checks'] if r['rule_id']==id)

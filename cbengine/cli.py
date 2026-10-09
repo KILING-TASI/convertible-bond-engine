@@ -12,6 +12,7 @@ from .pdfverify import verify_pdf
 from .quality import assess
 from .archive import append
 from .rules import evaluate
+from .analysis import enrich
 
 
 def main():
@@ -31,6 +32,7 @@ def main():
     parser.add_argument('--quality-as-of',help='质量评估截止日YYYY-MM-DD，默认北京时间今日')
     parser.add_argument('--max-lag-days',type=int,default=3,help='历史行情最大日历天滞后，默认3')
     parser.add_argument('--rule-context',type=Path,help='明确市场、板块、阶段与权限的规则检查JSON')
+    parser.add_argument('--analysis-input',type=Path,help='独立收益率/正股条款计数底稿JSON')
     parser.add_argument("--out", type=Path)
     parser.add_argument('--mode', choices=['diagnose','screen','portfolio'], default='diagnose')
     parser.add_argument('--max-price', type=float)
@@ -47,7 +49,7 @@ def main():
             raise ValueError('--code 当前只支持单债资料卡')
         if args.terms_pdf and not args.terms: raise ValueError('--terms-pdf需要--terms')
         if args.notice_pdf and not args.notice_reviews: raise ValueError('--notice-pdf需要--notice-reviews')
-        data = fetch_snapshot(args.code) if args.code else load(args.input)
+        data = fetch_snapshot(args.code,require_dated=bool(args.analysis_input)) if args.code else load(args.input)
         documents=[]
         filters = (args.max_price, args.max_premium, args.min_net_ytm)
         if args.mode != 'screen' and (any(v is not None for v in filters) or args.exclude_call_risk):
@@ -85,6 +87,7 @@ def main():
                     entry=next(n for n in data['announcements']['entries'] if n['source_url']==reviews[0]['announcement_url'])
                     entry['pdf_verification']=verification
         if market:
+            if args.analysis_input: data=enrich(data,load(args.analysis_input))
             data=dict(data,data_quality=assess(data,args.quality_as_of,args.max_lag_days))
             if args.rule_context:
                 context=load(args.rule_context)
@@ -92,7 +95,7 @@ def main():
                     raise ValueError('规则上下文代码/截止日须与当前诊断一致')
                 data['rule_checks']=evaluate(context)
             if args.store: data['archive_receipt']=append(args.store,data,documents)
-        elif args.store or args.quality_as_of or args.max_lag_days!=3:
+        elif args.store or args.quality_as_of or args.analysis_input or args.max_lag_days!=3:
             raise ValueError('归档和质量检查参数只支持市场快照')
         if market and args.mode != 'diagnose': raise ValueError('市场资料不具备现金流及条款证据，不能用于筛选或组合定价')
         if market: result=data

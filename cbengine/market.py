@@ -13,6 +13,22 @@ SOURCES = {
 }
 
 
+class DataSourceError(ValueError):
+    def __init__(self,endpoint,category,message):
+        self.endpoint=endpoint; self.category=category
+        super().__init__(message)
+
+
+def classify_error(exc):
+    name=type(exc).__name__
+    if isinstance(exc,ModuleNotFoundError): return 'missing_dependency','可选行情依赖缺失，请安装 .[market]。'
+    if 'Timeout' in name: return 'timeout','数据源连接或读取超时。'
+    if 'Connection' in name or isinstance(exc,ConnectionError): return 'connection_failure','数据源连接失败或被远端关闭。'
+    if name=='HTTPError': return 'http_failure','数据源返回HTTP错误，未继续重试。'
+    if name in ('JSONDecodeError','KeyError','IndexError'): return 'schema_failure','数据源返回内容或字段结构异常。'
+    return 'upstream_failure','数据源处理失败；依赖安装不是已确认的原因。'
+
+
 def code_string(value):
     text = str(value).strip()
     if not re.fullmatch(r'[0-9]{6}', text):
@@ -40,6 +56,10 @@ def worker(endpoint):
         _,issuer,start,end=endpoint.split(':')
         frame=ak.stock_zh_a_disclosure_report_cninfo(symbol=code_string(issuer),
                 category='',start_date=start,end_date=end)
+    elif endpoint.startswith('stock:'):
+        _,symbol,start,end=endpoint.split(':')
+        if not re.fullmatch(r'(sh|sz)[0-9]{6}',symbol): raise ValueError('stock symbol invalid')
+        frame=ak.stock_zh_a_hist_tx(symbol=symbol,start_date=start,end_date=end,adjust='',timeout=10)
     else: raise ValueError('unknown endpoint')
     # Pandas serialization replaces NaN with null and preserves unicode.
     return json.loads(frame.to_json(orient='records', force_ascii=False, date_format='iso'))
@@ -50,12 +70,17 @@ def fetch_rows(endpoint, timeout=30):
         process = subprocess.run([sys.executable, '-X', 'utf8', '-m', 'cbengine.market', endpoint],
                                  capture_output=True, text=True, encoding='utf-8', timeout=timeout)
     except subprocess.TimeoutExpired:
-        raise ValueError(f'{endpoint} 接口超时（{timeout}秒）') from None
+        raise DataSourceError(endpoint,'timeout',f'{endpoint} 接口超时（{timeout}秒）') from None
     if process.returncode:
-        raise ValueError(f'{endpoint} 接口失败，请检查网络或安装可选依赖：pip install ".[market]"')
+        try: error=loads(process.stderr.strip().splitlines()[-1])
+        except (ValueError,IndexError): error={'category':'worker_failure','message':'数据获取进程失败，未确定原因。'}
+        if not isinstance(error,dict): error={'category':'worker_failure','message':'数据获取进程失败，未确定原因。'}
+        raise DataSourceError(endpoint,error.get('category','worker_failure'),f'{endpoint}：'+error.get('message','数据源失败'))
     try: rows = loads(process.stdout)
-    except ValueError: raise ValueError(f'{endpoint} 返回非JSON数据') from None
-    if not isinstance(rows, list): raise ValueError(f'{endpoint} 返回结构异常')
+    except ValueError: raise DataSourceError(endpoint,'schema_failure',f'{endpoint} 返回非JSON数据') from None
+    if not isinstance(rows, list): raise DataSourceError(endpoint,'schema_failure',f'{endpoint} 返回结构异常')
+    if not rows and not endpoint.startswith('notices:'):
+        raise DataSourceError(endpoint,'empty_data',f'{endpoint} 返回空数据，不能生成行情或条款结果。')
     return rows
 
 
@@ -90,29 +115,33 @@ def normalize(code, quote_rows, redemption_rows, fetched_at, errors=None):
             'gaps':gaps, 'errors':errors or [], 'raw_quote':row}
 
 
-def fetch_snapshot(code, fetcher=fetch_rows):
+def fetch_snapshot(code, fetcher=fetch_rows, require_dated=False):
     code = code_string(code)
     timestamp = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec='seconds')
     errors = []
+    failures=[]
+    def failed(endpoint,exc):
+        errors.append(str(exc)); failures.append({'endpoint':endpoint,'category':getattr(exc,'category','data_failure'),'message':str(exc)})
     snapshot = None
     try:
         quotes = fetcher('quote')
         candidate = normalize(code,quotes,[],timestamp)
+        if require_dated: raise DataSourceError('quote','undated_quote','独立计算需要带日期的报价，采用历史收盘接口。')
         if candidate['quote_price'] is None or candidate['conversion_value'] is None:
             raise ValueError('即时比价表关键字段不全，尝试历史快照')
         snapshot = candidate
         snapshot['quote_mode'] = 'undated_comparison'
-    except ValueError as exc: errors.append(str(exc))
+    except ValueError as exc: failed('quote',exc)
     if snapshot is None:
         try: snapshot = normalize_history(code,fetcher('history:'+code),timestamp)
-        except ValueError as exc: errors.append(str(exc))
+        except ValueError as exc: failed('history:'+code,exc)
     if snapshot is None:
         return {'schema_version':1,'kind':'market_snapshot','status':'failed','code':code,
                 'name':code,'fetched_at':timestamp,'quote_time':None,'sources':dict(SOURCES),
-                'errors':errors,'gaps':['即时及历史行情均不可用，未生成估值结果。']}
+                'errors':errors,'source_failures':failures,'gaps':['即时及历史行情均不可用，未生成估值结果。']}
     try: redemption = fetcher('redemption')
     except ValueError as exc:
-        redemption=[]; errors.append(str(exc))
+        redemption=[]; failed('redemption',exc)
     matches = [r for r in redemption if str(r.get('代码','')).strip() == code]
     snapshot['provider_redemption'] = matches[0] if len(matches)==1 else None
     if len(matches)>1: errors.append('强赎记录不唯一，不展示冲突记录')
@@ -130,8 +159,10 @@ def fetch_snapshot(code, fetcher=fetch_rows):
             'INTEREST_RATE_EXPLAIN','REDEEM_CLAUSE','RESALE_CLAUSE','VALUE_DATE',
             'EXPIRE_DATE','TRANSFER_START_DATE','TRANSFER_END_DATE','RATING')}
         snapshot['gaps'].append('详情条款为第三方转录，尚未自动核对募集说明书及后续公告；不据此生成可执行条款。')
-    except ValueError as exc: errors.append(str(exc))
+    except ValueError as exc: failed('info:'+code,exc)
     snapshot['errors']=errors
+    snapshot['source_failures']=failures
+    snapshot['selected_quote_source']=snapshot['quote_mode']
     return snapshot
 
 
@@ -169,5 +200,7 @@ def normalize_history(code, rows, fetched_at):
 if __name__ == '__main__':
     try:
         print(json.dumps(worker(sys.argv[1]), ensure_ascii=False, allow_nan=False))
-    except Exception:
+    except Exception as exc:
+        category,message=classify_error(exc)
+        print(json.dumps({'category':category,'message':message},ensure_ascii=False),file=sys.stderr)
         sys.exit(1)

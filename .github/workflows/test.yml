@@ -20,3 +20,4 @@ jobs:
       - run: cb-engine examples/market-demo.json --terms examples/terms-113042.json --format html --out local-data/evidence-card.html
       - run: python -m cbengine.rules examples/rule-context-demo.json --out local-data/rules.json
       - run: cb-engine examples/demo.json --rule-context examples/rule-context-demo.json --out local-data/rule-diagnosis.json
+      - run: cb-engine examples/analysis-market-demo.json --analysis-input examples/analysis-demo.json --quality-as-of 2026-10-09 --out local-data/analysis.json
