@@ -9,11 +9,14 @@ from .market import code_string, fetch_rows
 
 def title_categories(title):
     categories=[]
+    no_reset=any(x in title for x in ('不下修','不向下修正','不提出向下修正'))
+    if no_reset: categories.append('no_reset_candidate')
+    elif '下修' in title or '向下修正' in title: categories.append('reset_candidate')
     if any(x in title for x in ('不提前赎回','不赎回','不行使赎回','不强赎')):
         categories.append('no_call_candidate')
     elif '赎回' in title or '强赎' in title:
         categories.append('redemption_candidate')
-    if '转股' in title and any(x in title for x in ('价格','价调整','下修','向下修正')):
+    if not no_reset and '转股' in title and any(x in title for x in ('价格','价调整','下修','向下修正')):
         categories.append('conversion_price_candidate')
     if '停止转股' in title or '暂停转股' in title:
         categories.append('conversion_suspension_candidate')
@@ -115,7 +118,7 @@ def attach_reviews(snapshot,reviews):
             raise ValueError('正文底稿公告日与元数据冲突')
         effective=review.get('effective_on')
         if effective is not None: iso_date(effective)
-        if review.get('event_type') not in ('conversion_price_adjustment','payment','redemption','no_call','rating','put','other'):
+        if review.get('event_type') not in ('conversion_price_adjustment','payment','redemption','no_call','reset','no_reset','rating','put','other'):
             raise ValueError('未知正文事件类型')
         facts=dict(review.get('facts',{}))
         if review['event_type']=='conversion_price_adjustment':

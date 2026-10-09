@@ -13,6 +13,7 @@ from .quality import assess
 from .archive import append
 from .rules import evaluate
 from .analysis import enrich
+from .event_chain import build as build_event_chain
 
 
 def main():
@@ -89,6 +90,7 @@ def main():
         if market:
             if args.analysis_input: data=enrich(data,load(args.analysis_input))
             data=dict(data,data_quality=assess(data,args.quality_as_of,args.max_lag_days))
+            data['event_chain']=build_event_chain(data,data['data_quality']['as_of'])
             if args.rule_context:
                 context=load(args.rule_context)
                 if context.get('code')!=data['code'] or context.get('as_of')!=data['data_quality']['as_of']:

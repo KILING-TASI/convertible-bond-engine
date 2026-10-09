@@ -3,6 +3,7 @@ import html
 from urllib.parse import urlparse
 
 CATEGORY_NAMES={'no_call_candidate':'不赎回承诺候选','redemption_candidate':'赎回候选',
+    'reset_candidate':'下修候选','no_reset_candidate':'不下修承诺候选',
     'conversion_price_candidate':'转股价变化候选','conversion_suspension_candidate':'转股暂停候选',
     'put_candidate':'回售候选','payment_candidate':'付息兑付候选','rating_candidate':'评级候选',
     'conversion_result_candidate':'转股结果候选','other_bond_candidate':'其他转债候选'}
@@ -118,9 +119,12 @@ def render(snapshot, format='markdown'):
         names={'call':'强赎','put':'回售','reset':'下修'}
         for name,s in analysis['clauses']['states'].items():
             if not s.get('absent'):
-                lines.append((names[name]+'自建观察计数',f'{s["count"]}/{s["required"]}，窗口{s["window"]}日；'+(
-                    '转股价历史覆盖未确认，正式状态未知' if s['evidence_status']=='conditional-conversion-history' else '基于所提供历史和日历')))
+                lines.append((names[name]+'自建观察计数',('停牌计数约定未核实，暂停计数' if s['count'] is None else f'{s["count"]}/{s["required"]}，窗口{s["window"]}日；')+(
+                    '正式状态未知' if s['status']=='unknown' else '基于所提供历史和日历')))
+    if snapshot.get('event_chain'):
+        lines.append(('当前有效条款事件链','部分证据；当前权利状态未知'))
     gaps = snapshot.get('gaps',[]) + snapshot.get('errors',[])
+    if snapshot.get('event_chain'): gaps.extend(snapshot['event_chain']['gaps'])
     if analysis.get('yield'):
         gaps.append(analysis['yield']['note'])
         gaps=[g for g in gaps if not g.startswith('现金流与到期兑付含息口径未')]

@@ -25,6 +25,7 @@ class AnnouncementTests(unittest.TestCase):
     def test_no_call_negation_precedes_redemption(self):
         self.assertEqual(title_categories('关于不提前赎回可转债的公告'),['no_call_candidate'])
         self.assertEqual(title_categories('关于停止转股的公告'),['conversion_suspension_candidate'])
+        self.assertEqual(title_categories('关于不向下修正转股价格的公告'),['no_reset_candidate'])
 
     def test_wrong_issuer_future_date_and_unsafe_link_filtered(self):
         a=dict(self.row,代码='123456')

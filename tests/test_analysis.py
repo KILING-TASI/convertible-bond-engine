@@ -30,7 +30,7 @@ class AnalysisTests(unittest.TestCase):
 
     def count_spec(self):
         return {'code':'113042','as_of':'2026-10-09','stock_price_basis':'unadjusted','observation_source':'教学未复权行情','calendar_source':'教学日历',
-                'conversion_history_source':'教学调价记录','conversion_history_complete':True,
+                'conversion_history_source':'教学调价记录','conversion_history_complete':True,'calendar_complete':True,
                 'trading_days':['2026-10-08','2026-10-09'],
                 'observations':[{'date':'2026-10-08','stock_price':12},{'date':'2026-10-09','stock_price':12}],
                 'conversion_history':[{'effective_on':'2026-01-01','price':10,'source':'教学'},
@@ -50,6 +50,23 @@ class AnalysisTests(unittest.TestCase):
     def test_missing_day_and_missing_conversion_history_rejected(self):
         spec=self.count_spec(); spec['observations'].pop()
         with self.assertRaises(ValueError): enrich(self.snapshot,spec)
+
+    def test_halt_day_is_not_filled_or_implicitly_excluded(self):
+        spec=self.count_spec()
+        spec['halted_days']=[{'date':'2026-10-08','source':'教学停牌公告','reason':'教学停牌'}]
+        with self.assertRaises(ValueError): enrich(self.snapshot,spec)
+        spec['observations']=spec['observations'][1:]
+        r=enrich(self.snapshot,spec)['independent_analysis']['clauses']
+        self.assertEqual(r['coverage']['expected_sessions'],2)
+        self.assertEqual(r['coverage']['observed_sessions'],1)
+        self.assertIsNone(r['states']['call']['count'])
+        self.assertIsNone(r['states']['call']['trigger_condition_met'])
+
+    def test_calendar_coverage_is_an_explicit_requirement(self):
+        spec=self.count_spec(); del spec['calendar_complete']
+        state=enrich(self.snapshot,spec)['independent_analysis']['clauses']['states']['call']
+        self.assertEqual(state['status'],'unknown')
+        self.assertEqual(state['evidence_status'],'calendar-coverage-unconfirmed')
         spec=self.count_spec(); spec['conversion_history'][0]['effective_on']='2026-10-09'
         with self.assertRaises(ValueError): enrich(self.snapshot,spec)
 

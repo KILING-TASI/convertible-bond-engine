@@ -47,10 +47,22 @@ def enrich(snapshot,spec):
         if spec.get('stock_price_basis')!='unadjusted': raise ValueError('条款观察需明确未复权正股收盘价')
         source(spec.get('observation_source')); source(spec.get('calendar_source')); source(spec.get('conversion_history_source'))
         days=spec['trading_days']; obs=spec['observations']; changes=spec['conversion_history']
-        if not days or not obs or not changes: raise ValueError('交易日、正股记录和转股价历史不得为空')
+        if not days or not isinstance(obs,list) or not changes: raise ValueError('交易日和转股价历史不得为空，正股记录须为列表')
         if any(iso_date(d)>as_of for d in days) or days!=sorted(set(days)):
             raise ValueError('交易日须有序、唯一且不晚于截止日')
-        if [o['date'] for o in obs]!=days: raise ValueError('正股记录与所提供交易日不完整匹配，禁止补价或跳过缺日')
+        halts=spec.get('halted_days',[])
+        if not isinstance(halts,list): raise ValueError('halted_days须为列表')
+        halted=set()
+        for h in halts:
+            day=iso_date(h['date']); source(h.get('source')); source(h.get('reason'))
+            if day not in days or day in halted: raise ValueError('停牌记录重复或不在交易日覆盖中')
+            halted.add(day)
+        observed=[o['date'] for o in obs]
+        if observed!=days and observed!=[d for d in days if d not in halted]:
+            raise ValueError('正股记录与所提供交易日不完整匹配，禁止补价或跳过缺日')
+        if halted.intersection(observed): raise ValueError('已声明停牌日不能同时提供可交易收盘价，禁止填价')
+        calendar_complete=spec.get('calendar_complete')
+        if calendar_complete is not None and type(calendar_complete) is not bool: raise ValueError('calendar_complete须为布尔值')
         for o in obs: finite(o['stock_price'],'stock close',True)
         dates=[iso_date(c['effective_on']) for c in changes]
         if dates!=sorted(set(dates)): raise ValueError('转股价变更日期须唯一且递增')
@@ -74,9 +86,18 @@ def enrich(snapshot,spec):
             if not complete:
                 s['conditional_observed_result']=s['trigger_condition_met']
                 s['trigger_condition_met']=None; s['status']='unknown'
+            if calendar_complete is not True:
+                s.setdefault('conditional_observed_result',s['trigger_condition_met'])
+                s.update(trigger_condition_met=None,status='unknown',evidence_status='calendar-coverage-unconfirmed')
+            if halted:
+                s.update(count=None,conditional_observed_result=None,trigger_condition_met=None,status='unknown',
+                         evidence_status='halt-count-policy-unverified')
             states[name]=s
         findings['clauses']={'states':states,'observations':merged,
                              'calendar_status':'matched-to-supplied-calendar','source':spec['observation_source'],
+                             'coverage':{'start':days[0],'end':days[-1],'declared_calendar_complete':calendar_complete,
+                                         'expected_sessions':len(days),'observed_sessions':len(obs),
+                                         'halted_days':halts,'halt_count_policy':'not-implemented' if halts else 'not-required-for-declared-input'},
                              'note':'自行按当日有效转股价逐日计算；完整性声明和交易日历来源由底稿提供，不认证未披露变化。'}
     result['independent_analysis']=findings
     result['analysis_input']=deepcopy(spec)
