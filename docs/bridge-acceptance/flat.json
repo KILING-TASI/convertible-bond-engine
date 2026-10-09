@@ -1,0 +1,180 @@
+{
+  "type": "fixed-cashflow-workbench-comparison",
+  "method_version": "bridge-reference-check-1.0",
+  "input_sha256": "399475e419c4d6269e169067f8b54b4ff50aaab32315d3e56a9c22ca3cf67f0e",
+  "engine": {
+    "type": "fixed-cashflow-bridge",
+    "schema_version": "cb-fixed-cashflow-1",
+    "method_version": "fixed-cashflow-bridge-1.0",
+    "engine_version": "0.11.0",
+    "input_sha256": "399475e419c4d6269e169067f8b54b4ff50aaab32315d3e56a9c22ca3cf67f0e",
+    "as_of": "2026-10-09",
+    "currency": "CNY",
+    "face_value": 100,
+    "is_demo": true,
+    "dirty_price": 118.5,
+    "clean_price": 116.5,
+    "accrued_interest": 2.0,
+    "price_basis": "clean",
+    "source": "独立教学现金流，非市场资料",
+    "curve_source": "教学4.5%信用包含零息率",
+    "cashflows": [
+      {
+        "date": "2027-10-09",
+        "years": 1.0,
+        "gross": 0.3,
+        "net": 0.24,
+        "spot": 0.045,
+        "pv": 0.28708133971291866,
+        "coupon_tax": 0.06,
+        "redemption_tax": 0,
+        "source": "教学金额及税额，未推断投资者身份"
+      },
+      {
+        "date": "2028-10-09",
+        "years": 2.0027397260273974,
+        "gross": 0.5,
+        "net": 0.4,
+        "spot": 0.045,
+        "pv": 0.4578097630844385,
+        "coupon_tax": 0.1,
+        "redemption_tax": 0,
+        "source": "教学金额及税额，未推断投资者身份"
+      },
+      {
+        "date": "2029-10-09",
+        "years": 3.0027397260273974,
+        "gross": 1.0,
+        "net": 0.8,
+        "spot": 0.045,
+        "pv": 0.8761909341328967,
+        "coupon_tax": 0.2,
+        "redemption_tax": 0,
+        "source": "教学金额及税额，未推断投资者身份"
+      },
+      {
+        "date": "2030-10-09",
+        "years": 4.002739726027397,
+        "gross": 111.5,
+        "net": 111.2,
+        "spot": 0.045,
+        "pv": 93.48831498164401,
+        "coupon_tax": 0.30000000000000004,
+        "redemption_tax": 0,
+        "source": "教学金额及税额，未推断投资者身份"
+      }
+    ],
+    "bond_present_value": 95.10939701857427,
+    "yield_gross": -0.011218746052657966,
+    "yield_net": -0.012654334701858191,
+    "zero_curve_parallel_duration": 3.8036714729587247,
+    "discount_weighted_average_time": 3.9748366892418665,
+    "convexity_parallel": 18.158070406714657,
+    "dv01": 0.03617649002498565,
+    "sensitivity_bps": {
+      "-200": {
+        "price": 102.70375798569991,
+        "approximation": 102.69009564905208,
+        "approximation_error": -0.013662336647826123
+      },
+      "-100": {
+        "price": 98.8150750294021,
+        "approximation": 98.813396177443,
+        "approximation_error": -0.0016788519590988926
+      },
+      "100": {
+        "price": 91.57647458822342,
+        "approximation": 91.57809817244588,
+        "approximation_error": 0.0016235842224574526
+      },
+      "200": {
+        "price": 88.20672216928318,
+        "approximation": 88.21949963905783,
+        "approximation_error": 0.012777469774647443
+      }
+    },
+    "risk_method_version": "zero-parallel-1",
+    "risk_basis": "annual-effective-zero-curve-parallel-shift",
+    "yield_basis": "annual-effective-positive-fixed-cashflow-irr",
+    "current_rights": {
+      "call": "unknown",
+      "put": "unknown",
+      "reset": "unknown",
+      "conversion_price": "unknown"
+    },
+    "actual_exit": "unknown",
+    "limitations": [
+      "Only explicit fixed cashflow mathematics; sources are caller declarations, not authenticated.",
+      "No equivalence for clause rights, issuer discretion, actual exits, conversion value or complete YTW.",
+      "Clean price/accrual remains unknown when not supplied; no tax inference or real credit calibration."
+    ]
+  },
+  "reference_sha256": "1c0c3f12788900a224ab780bbf1a0197b777603dc21329304a6152852423d5a8",
+  "reference_commit": "8ba3cb3f49aeba1d972b488cfa80468e8252c2e9",
+  "reference_scope": "explicit local working tree; may include uncommitted changes or pending PR",
+  "status": "matched-compatible-fields",
+  "flat_curve": true,
+  "comparisons": {
+    "yield_gross": {
+      "status": "matched",
+      "engine": -0.011218746052657966,
+      "reference": -0.011218746052657966,
+      "difference": 0.0,
+      "tolerance": 1e-08,
+      "reference_method": "reference calculate yieldPct / 100"
+    },
+    "yield_net": {
+      "status": "matched",
+      "engine": -0.012654334701858191,
+      "reference": -0.012654334701858191,
+      "difference": 0.0,
+      "tolerance": 1e-08,
+      "reference_method": "reference yield_rate helper with explicit net cashflows"
+    },
+    "bond_present_value": {
+      "status": "matched",
+      "engine": 95.10939701857427,
+      "reference": 95.10939701857423,
+      "difference": -4.263256414560601e-14,
+      "tolerance": 1e-08,
+      "reference_method": "reference calculate flat annual discountYield"
+    },
+    "zero_curve_parallel_duration": {
+      "status": "matched",
+      "engine": 3.8036714729587247,
+      "reference": 3.8036714729587247,
+      "difference": 0.0,
+      "tolerance": 1e-08,
+      "reference_method": "reference calculate flat annual discountYield"
+    },
+    "convexity_parallel": {
+      "status": "matched",
+      "engine": 18.158070406714657,
+      "reference": 18.15807040671466,
+      "difference": 3.552713678800501e-15,
+      "tolerance": 1e-08,
+      "reference_method": "reference calculate flat annual discountYield"
+    },
+    "dv01": {
+      "status": "matched",
+      "engine": 0.03617649002498565,
+      "reference": 0.036176490024985644,
+      "difference": -6.938893903907228e-18,
+      "tolerance": 1e-08,
+      "reference_method": "reference calculate flat annual discountYield"
+    }
+  },
+  "not_equivalent": [
+    "current clause rights",
+    "actual exits",
+    "complete YTW",
+    "conversion value"
+  ],
+  "not_provided_by_reference": [
+    "discount_weighted_average_time"
+  ],
+  "limitations": [
+    "Reference net yield uses its helper with explicit net cashflows; built-in diagnosis has no explicit tax fields.",
+    "Clean/dirty price is normalized before reference calculation; no reference accrual algorithm is validated."
+  ]
+}

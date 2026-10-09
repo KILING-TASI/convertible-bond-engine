@@ -1,0 +1,47 @@
+{
+  "type": "teaching-bridge-failure-check",
+  "checked_on": "2026-10-09",
+  "method_version": "fixed-cashflow-bridge-1.0",
+  "cases": [
+    {
+      "case": "clean-no-accrual",
+      "status": "rejected",
+      "error": "accrued source without amount"
+    },
+    {
+      "case": "double-final-coupon",
+      "status": "rejected",
+      "error": "maturity amount conflicts with split; final coupon must not be counted twice"
+    },
+    {
+      "case": "tax-missing",
+      "status": "rejected",
+      "error": "cashflow requires date, split components, explicit taxes and source"
+    },
+    {
+      "case": "curve-extrapolation",
+      "status": "rejected",
+      "error": "cashflow tenor outside curve: extrapolation refused"
+    },
+    {
+      "case": "wrong-compounding",
+      "status": "rejected",
+      "error": "explicit annual effective credit-inclusive zero curve and ACT/365F required"
+    },
+    {
+      "case": "same-day-rights",
+      "status": "rejected",
+      "error": "cashflows must be strictly ordered and future; same-day rights not bridged"
+    },
+    {
+      "case": "actual-exit-field",
+      "status": "rejected",
+      "error": "missing or unsupported bridge fields"
+    },
+    {
+      "case": "wrong-face",
+      "status": "rejected",
+      "error": "bridge only supports CNY per 100 face value"
+    }
+  ]
+}

@@ -80,7 +80,7 @@ QuantLib 实际验证平坦曲线、非平坦零息节点及同日支付边界�
 
 ## 与其他仓库的关系
 
-参考 [research-workbench](https://github.com/KILING-TASI/research-workbench) 的证据留存、版本化知识卡与数据质量分层思路，核心独立实现。接入契约与本地脚本同输入对照已提供，尚未修改或完成工作台仓库迁移；本地参考脚本不代表其 GitHub 主分支。
+参考 [research-workbench](https://github.com/KILING-TASI/research-workbench) 的证据留存、版本化知识卡与数据质量分层思路，核心独立实现。[有界可选桥接与同输入联调](docs/BOUNDED_WORKBENCH_BRIDGE.md)已提供，工作台侧入口由其任务负责；未完成完整模块迁移。本地参考脚本不代表其 GitHub 主分支。
 
 研究参考包括 [QuantLib](https://github.com/lballabio/QuantLib)、[AKShare](https://github.com/akfamily/akshare) 和 [sw1507/convertibleBond](https://github.com/sw1507/convertibleBond)，不表示兼容其全部能力。
 
