@@ -188,3 +188,7 @@ cb-engine examples/portfolio.json --mode portfolio --out local-data/portfolio.js
 v0.6证据和质量流程参考[research-workbench](https://github.com/KILING-TASI/research-workbench)的实际文件核验、版本化知识卡、数据源质量分层与严格JSON理念；本包独立实现这些小型组件，没有导入该仓库的研究工作流依赖。
 
 仅用于研究；结果依赖输入与假设，不执行交易。
+
+## 免责声明
+
+本项目仅供学习与研究，不构成投资建议或交易指令，不保证收益或结果准确性。请在使用前阅读[免责声明与使用边界](DISCLAIMER.md)，并结合本次数据来源、假设与缺口独立判断。代码许可不包含第三方数据使用授权。
