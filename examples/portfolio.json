@@ -55,7 +55,8 @@
         "rolling": true,
         "active_from": "2026-01-01",
         "active_until": "2030-10-09",
-        "reset_on": []
+        "reset_on": [],
+        "inclusive": true
       },
       "put": {
         "source": "教学条款，非真实募集说明书",
@@ -66,7 +67,8 @@
         "rolling": true,
         "active_from": "2029-10-09",
         "active_until": "2030-10-09",
-        "reset_on": []
+        "reset_on": [],
+        "inclusive": false
       },
       "reset": {
         "source": "教学条款，非真实募集说明书",
@@ -77,7 +79,8 @@
         "rolling": true,
         "active_from": "2026-01-01",
         "active_until": "2030-10-09",
-        "reset_on": []
+        "reset_on": [],
+        "inclusive": false
       }
     },
     "observations": [
@@ -299,7 +302,8 @@
         "rolling": true,
         "active_from": "2026-01-01",
         "active_until": "2030-10-09",
-        "reset_on": []
+        "reset_on": [],
+        "inclusive": true
       },
       "put": {
         "source": "教学条款，非真实募集说明书",
@@ -310,7 +314,8 @@
         "rolling": true,
         "active_from": "2029-10-09",
         "active_until": "2030-10-09",
-        "reset_on": []
+        "reset_on": [],
+        "inclusive": false
       },
       "reset": {
         "source": "教学条款，非真实募集说明书",
@@ -321,7 +326,8 @@
         "rolling": true,
         "active_from": "2026-01-01",
         "active_until": "2030-10-09",
-        "reset_on": []
+        "reset_on": [],
+        "inclusive": false
       }
     },
     "observations": [

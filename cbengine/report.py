@@ -42,6 +42,38 @@ def notice_section(snapshot,format):
     return text
 
 
+def rule_section(snapshot,format):
+    result=snapshot.get('rule_checks')
+    if not result: return ''
+    labels={'date_unverified':'日期范围未核对','pending_review':'待核查','issuer_evidence_required':'需个案条款证据',
+            'policy_reference':'研究政策参考','reference_only':'规则参考','calculated':'条件算例已计算',
+            'missing_input':'缺少输入','exception_reference':'例外范围需核对',
+            'permission_condition_met':'所提供权限条件满足','permission_condition_not_met':'所提供权限条件不满足'}
+    rows=[r for r in result['checks'] if r['status']!='not_applicable']
+    summary=f"参考库版本 {result['catalog_version']}；截止日 {result['as_of']}。公司条款缺证据不判定，研究政策不当作法规。"
+    def result_note(row):
+        value=row.get('result')
+        if value is None: return ''
+        if row['rule_id']=='STOCK-SELL-STAMP':
+            return f' 税额算例：税率{value["rate"]*1000:g}‰，税额{value["tax_before_broker_rounding"]:.2f}元，其他费用及结算舍入另计。'
+        return f' 按输入合资格日均市值计算额度{value["market_value_quota_shares"]}股；'+(
+            f'给定上限下数量{value["quantity_under_provided_limit"]}股。' if value['provided_limit'] is not None else '未提供发行上限，不确认最终数量。')
+    if format=='html':
+        e=html.escape; body=''
+        for r in rows:
+            note=r.get('note','')
+            note+=result_note(r)
+            refs=' '.join(f'<a href="{e(s["url"],quote=True)}">{e(s["title"])}</a>' for s in r['sources'] if urlparse(s['url']).scheme=='https')
+            body+=f'<tr><td>{e(r["title"])}</td><td>{e(labels[r["status"]])}</td><td>{e(note)}<br>{refs}</td></tr>'
+        return f'<h2>结构化规则检查</h2><p>{e(summary)}</p><table><tr><th>检查项</th><th>状态</th><th>依据与缺口</th></tr>{body}</table>'
+    text='\n## 结构化规则检查\n\n'+markdown_text(summary)+'\n\n'
+    for r in rows:
+        text+=f'- {markdown_text(r["title"])}：{markdown_text(labels[r["status"]])}。{markdown_text(r.get("note",""))}\n'
+        if r.get('result') is not None: text+='  '+markdown_text(result_note(r))+'\n'
+        for s in r['sources']: text+='  来源：'+markdown_text(s['url'])+'\n'
+    return text
+
+
 def markdown_text(value):
     return html.escape(str(value)).replace('\n', ' ').replace('\r', ' ').replace('|', '&#124;').replace('`','&#96;').replace('*','&#42;').replace('[','&#91;').replace(']','&#93;')
 
@@ -95,6 +127,7 @@ def render(snapshot, format='markdown'):
     if notices:
         lines.append(('后续公告候选数',len(notices.get('entries',[]))))
         gaps.extend(notices.get('errors',[]))
+    if snapshot.get('rule_checks'): gaps.extend(snapshot['rule_checks']['limitations'])
     terms=snapshot.get('provider_terms')
     if terms:
         lines += [('第三方评级',str(terms.get('RATING') or '缺失')),
@@ -113,10 +146,11 @@ def render(snapshot, format='markdown'):
         rows = ''.join(f'<tr><th>{e(a)}</th><td>{e(str(b))}</td></tr>' for a,b in lines)
         items = ''.join(f'<li>{e(str(g))}</li>' for g in gaps)
         sources = ''.join(f'<li>{e(k)}：{e(v)}</li>' for k,v in snapshot['sources'].items())
-        return f'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>{e(title)}</title><style>body{{max-width:1000px;margin:40px auto;padding:0 20px;font:16px/1.7 system-ui;color:#183044;background:#f6f8fb}}table{{width:100%;border-collapse:collapse;background:white}}th,td{{text-align:left;padding:10px;border-bottom:1px solid #dde4ec;overflow-wrap:anywhere}}.notice{{padding:16px;background:#fff2cf}}li{{overflow-wrap:anywhere}}</style><h1>{e(title)}</h1><p class="notice">{e(caution)}</p><table>{rows}</table>{notice_section(snapshot,"html")}<h2>资料缺口</h2><ul>{items}</ul><h2>来源</h2><ul>{sources}</ul></html>'
+        return f'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>{e(title)}</title><style>body{{max-width:1000px;margin:40px auto;padding:0 20px;font:16px/1.7 system-ui;color:#183044;background:#f6f8fb}}table{{width:100%;border-collapse:collapse;background:white}}th,td{{text-align:left;padding:10px;border-bottom:1px solid #dde4ec;overflow-wrap:anywhere}}.notice{{padding:16px;background:#fff2cf}}li{{overflow-wrap:anywhere}}</style><h1>{e(title)}</h1><p class="notice">{e(caution)}</p><table>{rows}</table>{notice_section(snapshot,"html")}{rule_section(snapshot,"html")}<h2>资料缺口</h2><ul>{items}</ul><h2>来源</h2><ul>{sources}</ul></html>'
     text = f'# {markdown_text(title)}\n\n{caution}\n\n| 项目 | 结果 |\n|---|---|\n'
     text += ''.join(f'| {markdown_text(a)} | {markdown_text(b)} |\n' for a,b in lines)
     text += notice_section(snapshot,'markdown')
+    text += rule_section(snapshot,'markdown')
     text += '\n## 资料缺口\n\n' + ''.join(f'- {markdown_text(g)}\n' for g in gaps)
     text += '\n## 来源\n\n' + ''.join(f'- {markdown_text(k)}：{markdown_text(v)}\n' for k,v in snapshot['sources'].items())
     return text

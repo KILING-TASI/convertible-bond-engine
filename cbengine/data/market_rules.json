@@ -1,0 +1,423 @@
+{
+  "schema_version": 1,
+  "version": "0.2.0",
+  "reviewed_on": "2026-10-09",
+  "source_package": "cn-market-rules-v0.1.0.zip",
+  "temporal_policy": "截止日不得晚于核对日；无确证生效日的条目仅支持核对日参考，历史生效日不猜填。",
+  "rules": [
+    {
+      "id": "STOCK-SELL-STAMP",
+      "title": "股票卖出证券交易印花税参考",
+      "category": "official_reference",
+      "statement": "原1‰税率按减半征收计算为0.5‰；仅税额算例，佣金、过户费及结算舍入另计。",
+      "scope": {
+        "markets": [
+          "SSE",
+          "SZSE",
+          "BSE"
+        ],
+        "boards": [
+          "main",
+          "star",
+          "chinext",
+          "bse"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": "2023-08-28",
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "official-reference-excerpt-checked",
+      "parameters": {
+        "rate": 0.0005,
+        "currency": "CNY"
+      },
+      "sources": [
+        {
+          "title": "财政部税务总局公告2023年第39号",
+          "url": "https://jiangsu.chinatax.gov.cn/art/2023/8/28/art_8349_432258.html",
+          "section": "自2023-08-28减半征收",
+          "check_method": "primary-page"
+        }
+      ],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "SSE-IPO-QUOTA",
+      "title": "沪市新股市值资格与单位",
+      "category": "official_reference",
+      "statement": "1万元为参与资格门槛；每5000元合资格日均市值对应500股申购单位。",
+      "scope": {
+        "markets": [
+          "SSE"
+        ],
+        "boards": [
+          "main",
+          "star"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": "2025-03-28",
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "official-reference-excerpt-checked",
+      "parameters": {
+        "entry_market_value": 10000,
+        "unit_market_value": 5000,
+        "shares_per_unit": 500
+      },
+      "sources": [
+        {
+          "title": "上海市场首次公开发行股票网上发行实施细则（2025年3月修订）",
+          "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/stocks/issue/c/c_20250515_10778982.shtml",
+          "section": "市值门槛及第十条",
+          "check_method": "primary-rule-page-and-official-index-excerpt"
+        }
+      ],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "SZSE-IPO-QUOTA",
+      "title": "深市新股市值资格与单位",
+      "category": "official_reference",
+      "statement": "1万元为参与资格门槛；每5000元市值对应500股，5000元不是参与门槛。",
+      "scope": {
+        "markets": [
+          "SZSE"
+        ],
+        "boards": [
+          "main",
+          "chinext"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "official-reference-excerpt-checked",
+      "parameters": {
+        "entry_market_value": 10000,
+        "unit_market_value": 5000,
+        "shares_per_unit": 500
+      },
+      "sources": [
+        {
+          "title": "深交所投教：主板新股申购",
+          "url": "https://investor.szse.cn/knowledge/qa/t20230327_599471.html",
+          "section": "1万元资格门槛；每5000元市值一个单位",
+          "check_method": "official-index-excerpt; direct-page-timeout"
+        }
+      ],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "CHINEXT-CONVERSION",
+      "title": "创业板普通阶段转股权限",
+      "category": "official_reference",
+      "statement": "普通阶段参与创业板转股须符合对应适当性要求，不能表述为未开权限也能转股但不能卖。",
+      "scope": {
+        "markets": [
+          "SZSE"
+        ],
+        "boards": [
+          "chinext"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "official-reference-excerpt-checked",
+      "parameters": {},
+      "sources": [
+        {
+          "title": "参与创业板可转债申购、交易及转股的权限要求",
+          "url": "https://investor.szse.cn/index/update/t20201111_583030.html",
+          "section": "转股参照创业板适当性要求",
+          "check_method": "official-index-excerpt"
+        }
+      ],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "CHINEXT-DELISTING-EXCEPTION",
+      "title": "创业板退市整理阶段例外",
+      "category": "official_reference",
+      "statement": "退市整理期间不符合创业板适当性要求的投资者可申请转股，所得股票仅可卖出、不得买入；需确认阶段及个案条件。",
+      "scope": {
+        "markets": [
+          "SZSE"
+        ],
+        "boards": [
+          "chinext"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "official-reference-excerpt-checked",
+      "parameters": {},
+      "sources": [
+        {
+          "title": "创业板可转债退市整理期间转股适当性问答",
+          "url": "https://investor.szse.cn/knowledge/bond/convert/t20230823_602864.html",
+          "section": "可申请转股，所得股票仅可卖出",
+          "check_method": "official-index-excerpt; direct-page-timeout"
+        }
+      ],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "BSE-CODE-MAPPING",
+      "title": "北交所证券身份与920映射",
+      "category": "official_reference",
+      "statement": "支持920号段与历史代码映射；不得仅凭8开头判定北交所上市股票身份。",
+      "scope": {
+        "markets": [
+          "BSE"
+        ],
+        "boards": [
+          "bse"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": "2024-04-22",
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "official-reference-excerpt-checked",
+      "parameters": {},
+      "sources": [
+        {
+          "title": "北交所启用920号段",
+          "url": "https://www.bse.cn/important_news/200021629.html",
+          "section": "2024-04-22新增上市公司启用920",
+          "check_method": "official-index-excerpt"
+        },
+        {
+          "title": "北交所新旧代码对照表",
+          "url": "https://www.bse.cn/service/code_mapping.html",
+          "section": "逐只查询新旧证券代码",
+          "check_method": "official-index-excerpt"
+        }
+      ],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "CB-BALANCE-CALL",
+      "title": "余额触发赎回",
+      "category": "issuer_specific",
+      "statement": "需取得该期募集说明书的余额门槛、币种单位及比较符号。3000万元不得作为全市场默认。",
+      "scope": {
+        "markets": [
+          "SSE",
+          "SZSE",
+          "BSE"
+        ],
+        "boards": [
+          "main",
+          "star",
+          "chinext",
+          "bse"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "requires-issuer-evidence",
+      "parameters": {},
+      "sources": [],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "CB-PRICE-CALL",
+      "title": "价格触发赎回",
+      "category": "issuer_specific",
+      "statement": "需逐只取得窗口、满足日数、比例、严格或含等号比较、适用期及重置规则；满足条件不等于已公告执行。",
+      "scope": {
+        "markets": [
+          "SSE",
+          "SZSE",
+          "BSE"
+        ],
+        "boards": [
+          "main",
+          "star",
+          "chinext",
+          "bse"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "requires-issuer-evidence",
+      "parameters": {},
+      "sources": [],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "CB-RESET-FLOOR",
+      "title": "下修下限",
+      "category": "issuer_specific",
+      "statement": "只使用该债实际适用的价格下限；净资产不能作为所有发行人的统一法规参数。破净不必然等于毫无下修空间。",
+      "scope": {
+        "markets": [
+          "SSE",
+          "SZSE",
+          "BSE"
+        ],
+        "boards": [
+          "main",
+          "star",
+          "chinext",
+          "bse"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "requires-issuer-evidence",
+      "parameters": {},
+      "sources": [],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "CB-NO-RESET-PROMISE",
+      "title": "不下修承诺与计数",
+      "category": "issuer_specific",
+      "statement": "需核对承诺覆盖权利、起止日期、重新起算方式与后续公告；承诺期不能解释为整体投资安全期。",
+      "scope": {
+        "markets": [
+          "SSE",
+          "SZSE",
+          "BSE"
+        ],
+        "boards": [
+          "main",
+          "star",
+          "chinext",
+          "bse"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "requires-issuer-evidence",
+      "parameters": {},
+      "sources": [],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "CB-PUT-SCOPE",
+      "title": "普通及特别回售适用性",
+      "category": "issuer_specific",
+      "statement": "先确认是否存在价格条件回售；不得套用最后两年、连续30日或70%。上银转债原始发行条款仅特别回售。",
+      "scope": {
+        "markets": [
+          "SSE",
+          "SZSE",
+          "BSE"
+        ],
+        "boards": [
+          "main",
+          "star",
+          "chinext",
+          "bse"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "requires-issuer-evidence",
+      "parameters": {},
+      "sources": [],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "CB-REDEMPTION-DATES",
+      "title": "赎回日期与操作边界",
+      "category": "issuer_specific",
+      "statement": "分别取得最后交易日、最后转股日、登记日、赎回日及暂停转股安排；不固定推定还有3个交易日。",
+      "scope": {
+        "markets": [
+          "SSE",
+          "SZSE",
+          "BSE"
+        ],
+        "boards": [
+          "main",
+          "star",
+          "chinext",
+          "bse"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "requires-issuer-evidence",
+      "parameters": {},
+      "sources": [],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "CREDIT-SCREEN-POLICY",
+      "title": "信用排查研究政策",
+      "category": "research_policy",
+      "statement": "ST、审计意见、现金债务比、评级及集中度可作为研究预警。70%负债率或一票否决不是统一监管规则，金融与非金融行业不可直接套同一阈值。",
+      "scope": {
+        "markets": [
+          "SSE",
+          "SZSE",
+          "BSE"
+        ],
+        "boards": [
+          "main",
+          "star",
+          "chinext",
+          "bse"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "not-a-universal-market-rule",
+      "parameters": {},
+      "sources": [],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    },
+    {
+      "id": "TRADING-OPERATIONS",
+      "title": "交易时段、数量及费用细则待核项",
+      "category": "pending_review",
+      "statement": "原包交易单位前后矛盾、集合竞价转股、临停撤单及申报、首日/退市机制、费用与资金可取时点须按交易所和券商现行文件逐条核对，暂不执行。",
+      "scope": {
+        "markets": [
+          "SSE",
+          "SZSE",
+          "BSE"
+        ],
+        "boards": [
+          "main",
+          "star",
+          "chinext",
+          "bse"
+        ],
+        "instrument": "listed-stock-or-convertible-as-specified"
+      },
+      "effective_from": null,
+      "effective_until": null,
+      "verified_on": "2026-10-09",
+      "verification_status": "not-a-universal-market-rule",
+      "parameters": {},
+      "sources": [],
+      "exceptions": "适用对象、阶段和未列明条件须另行核对；不自动外推未来或任意历史日期。"
+    }
+  ]
+}

@@ -1,6 +1,26 @@
 # 可转债定价与博弈引擎
 
-独立实现的 A 股可转债研究工具。v0.6 提供 **L1诊断、市场快照、公告时间线、实际PDF字段匹配、版本化证据归档及行情质量检查**。离线核心不依赖行情账户；代码查询及PDF核验分别按需启用依赖。
+独立实现的 A 股可转债研究工具。v0.7 提供 **L1诊断、市场快照、公告时间线、PDF字段匹配、证据归档、质量检查及结构化规则参考**。离线核心不依赖行情账户；代码查询及PDF核验分别按需启用依赖。
+
+## 纠错后的结构化规则
+
+```sh
+python -m cbengine.rules examples/rule-context-demo.json --out local-data/rules.json
+cb-engine examples/demo.json --rule-context examples/rule-context-demo.json
+cb-engine local-data/verified.json --rule-context examples/rule-context-113042.json --quality-as-of 2026-10-09 --format html --out local-data/rule-card.html
+```
+
+参考用户提供的cn-market-rules-v0.1.0整理14项纠错登记，见[纠错清单](docs/rule-corrections.json)。包内[规则文件](cbengine/data/market_rules.json)有14条记录，明确官方参考、公司专属条款、研究政策和待核事项，并保留来源、核对日期、生效时间及适用范围。只包含重写的事实整理和检查逻辑，没有安装上传包的Skill或导入其指令。
+
+纠正股票印花税参数、沪深IPO资格与单位、创业板普通转股权限及退市整理例外、北交所920身份识别；撤销未转股比例等于损失等错误推论。未核实的历史案例、临停与转股时段、交易单位和费用细节保持待核，不进入自动决策。
+
+`--rule-context`只用于单债诊断，须提供同一代码与截止日、明确市场SSE/SZSE/BSE、板块main/star/chinext/bse及阶段ordinary/delisting_period。创业板权限须显式声明，缺失不当作已具备。市场不能由代码前缀猜测。示例金额均为教学算例，不是用户实际持仓或建议。
+
+IPO参考区分1万元参与门槛和每5000元市值/500股单位；提供当期网上上限及来源时才计算给定上限下的数量。股票税额仅算减半印花税，不含其他费用和券商舍入。公司强赎/下修/回售没有通用默认阈值，只返回证据需求。信用筛选阈值不是监管规则。
+
+截止日不能晚于核对日2026-10-09；未确证历史生效日保留null并只支持核对日参考。已知生效日期也不证明拥有当时冻结的资料。部分官方正文访问超时，相关记录明确标为官方索引摘录核对，不是全文核验。未来使用须重新核对来源并升级参考库。
+
+L1条款新增`inclusive`布尔值：above/below方向分别对应严格大于/小于；inclusive=true改为大于等于/小于等于。示例输入已显式填写。旧输入暂保留含等号行为并输出legacy-inclusive-assumption警示，须根据原文补参数。不会用通用参考库覆盖逐只条款。
 
 ## 实际PDF核验与版本归档
 

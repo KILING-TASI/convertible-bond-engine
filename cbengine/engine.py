@@ -1,5 +1,6 @@
 """Explicit dated cashflows, ACT/365F annual compounding, clause evidence."""
 import math
+from decimal import Decimal
 from datetime import date
 
 
@@ -98,6 +99,8 @@ def clause_state(clause, observations, as_of):
     if clause["direction"] not in ("above", "below"):
         raise ValueError("direction must be above or below")
     ratio = finite(clause["ratio"], "ratio", True)
+    inclusive=clause.get('inclusive',True)
+    if type(inclusive) is not bool: raise ValueError('inclusive must be boolean')
     start, end = clause["active_from"], clause["active_until"]
     for d in (start, end, as_of):
         iso_date(d)
@@ -116,7 +119,10 @@ def clause_state(clause, observations, as_of):
         # Each historical observation carries the conversion price valid THAT day.
         s = finite(o["stock_price"], "stock_price", True)
         k = finite(o["conversion_price"], "conversion_price", True)
-        hits.append(s >= k*ratio if clause["direction"] == "above" else s <= k*ratio)
+        barrier=Decimal(str(k))*Decimal(str(ratio))
+        observed=Decimal(str(s))
+        hits.append((observed>=barrier if inclusive else observed>barrier) if clause['direction']=='above'
+                    else (observed<=barrier if inclusive else observed<barrier))
     n = sum(hits)
     active = start <= as_of <= end
     # Counts are conditional on supplied history. Never turn missing history
@@ -131,6 +137,8 @@ def clause_state(clause, observations, as_of):
             "latest_observation": window[-1]['date'] if window else None,
             "history_current": fresh,
             "history_complete": len(window) == w,
+            "comparison": ('>=' if inclusive else '>') if clause['direction']=='above' else ('<=' if inclusive else '<'),
+            "comparison_basis":'explicit' if 'inclusive' in clause else 'legacy-inclusive-assumption',
             "days_to_fill_window": w-len(window),
             "oldest_observation": window[0]["date"] if window else None,
             "next_observation_expels_oldest": len(window) == w,
@@ -232,6 +240,8 @@ def diagnose(data):
         warnings.append("条款窗口历史不足，未达门槛不能据此认定未触发。")
     if any(s.get('status') == 'unknown' for s in states.values()):
         warnings.append('条款状态未知：历史不足或末条观测不是估值日；计数仅供核对。')
+    if any(s.get('comparison_basis')=='legacy-inclusive-assumption' for s in states.values()):
+        warnings.append('旧输入未声明是否包含等号，暂按含等号计算；须核对原文并补inclusive参数。')
     promise = data.get("no_call_until")
     if promise:
         iso_date(promise)

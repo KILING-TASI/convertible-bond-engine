@@ -1,0 +1,10 @@
+{
+  "code": "DEMO",
+  "as_of": "2026-10-09",
+  "market": "SZSE",
+  "board": "chinext",
+  "phase": "ordinary",
+  "stock_permission": false,
+  "ipo_market_value": 5000,
+  "stock_sale_amount": 100000
+}

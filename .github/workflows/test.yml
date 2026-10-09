@@ -18,3 +18,5 @@ jobs:
       - run: cb-engine examples/portfolio.json --mode screen --max-price 110 --exclude-call-risk --out local-data/screen.json
       - run: cb-engine examples/market-demo.json --format html --out local-data/card.html
       - run: cb-engine examples/market-demo.json --terms examples/terms-113042.json --format html --out local-data/evidence-card.html
+      - run: python -m cbengine.rules examples/rule-context-demo.json --out local-data/rules.json
+      - run: cb-engine examples/demo.json --rule-context examples/rule-context-demo.json --out local-data/rule-diagnosis.json

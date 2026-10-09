@@ -11,6 +11,7 @@ from .validation import load
 from .pdfverify import verify_pdf
 from .quality import assess
 from .archive import append
+from .rules import evaluate
 
 
 def main():
@@ -29,6 +30,7 @@ def main():
     parser.add_argument('--store',type=Path,help='独立本地证据目录，追加版本及已核验PDF')
     parser.add_argument('--quality-as-of',help='质量评估截止日YYYY-MM-DD，默认北京时间今日')
     parser.add_argument('--max-lag-days',type=int,default=3,help='历史行情最大日历天滞后，默认3')
+    parser.add_argument('--rule-context',type=Path,help='明确市场、板块、阶段与权限的规则检查JSON')
     parser.add_argument("--out", type=Path)
     parser.add_argument('--mode', choices=['diagnose','screen','portfolio'], default='diagnose')
     parser.add_argument('--max-price', type=float)
@@ -37,7 +39,7 @@ def main():
     parser.add_argument('--exclude-call-risk', action='store_true')
     args = parser.parse_args()
     try:
-        if args.mode!='diagnose' and any((args.announcements,args.terms,args.notice_reviews)):
+        if args.mode!='diagnose' and any((args.announcements,args.terms,args.notice_reviews,args.rule_context)):
             raise ValueError('公告及证据附加只支持单债资料卡模式')
         if bool(args.code) == bool(args.input):
             raise ValueError('提供输入文件或--code，两者只能选一个')
@@ -84,6 +86,11 @@ def main():
                     entry['pdf_verification']=verification
         if market:
             data=dict(data,data_quality=assess(data,args.quality_as_of,args.max_lag_days))
+            if args.rule_context:
+                context=load(args.rule_context)
+                if context.get('code')!=data['code'] or context.get('as_of')!=data['data_quality']['as_of']:
+                    raise ValueError('规则上下文代码/截止日须与当前诊断一致')
+                data['rule_checks']=evaluate(context)
             if args.store: data['archive_receipt']=append(args.store,data,documents)
         elif args.store or args.quality_as_of or args.max_lag_days!=3:
             raise ValueError('归档和质量检查参数只支持市场快照')
@@ -92,6 +99,12 @@ def main():
         elif args.mode == 'portfolio': result = portfolio(data)
         elif args.mode == 'screen': result = screen(data,*filters,args.exclude_call_risk)
         else: result = validated_batch(data) if isinstance(data,list) else diagnose(data)
+        if args.rule_context and not market:
+            if not isinstance(result,dict): raise ValueError('规则上下文仅支持单债诊断')
+            context=load(args.rule_context)
+            if context.get('code')!=result['code'] or context.get('as_of')!=result['as_of']:
+                raise ValueError('规则上下文代码/截止日须与诊断一致')
+            result['rule_checks']=evaluate(context)
         if args.format != 'json' and not market:
             raise ValueError('中文卡片格式当前仅支持市场快照')
         output = json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False) if args.format=='json' else render(result,args.format)

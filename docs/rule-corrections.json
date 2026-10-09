@@ -1,0 +1,119 @@
+{
+  "source_sha256": "6bfa1fe30bd60afa42752a2a0a3cf7de9739a1b11dc8c5b7deb57a96f0871f4d",
+  "reviewed_on": "2026-10-09",
+  "revision": "0.2.0",
+  "items": [
+    {
+      "id": "C01",
+      "file": "trading-rules",
+      "original_claim": "股票卖出1‰及10万元税100元",
+      "resolution": "更正为减半后的0.5‰及50元，其他费用另计",
+      "status": "corrected",
+      "rule_id": "STOCK-SELL-STAMP"
+    },
+    {
+      "id": "C02",
+      "file": "ipo-rules",
+      "original_claim": "深市参与门槛5000元",
+      "resolution": "资格门槛1万元；5000元是单位换算",
+      "status": "corrected",
+      "rule_id": "SZSE-IPO-QUOTA"
+    },
+    {
+      "id": "C03",
+      "file": "ipo-rules",
+      "original_claim": "沪市主板1000股单位",
+      "resolution": "现行500股单位，资格门槛和换算单位分开",
+      "status": "corrected",
+      "rule_id": "SSE-IPO-QUOTA"
+    },
+    {
+      "id": "C04",
+      "file": "trading-rules/redemption-traps",
+      "original_claim": "未开创业板权限转股成功但不能卖",
+      "resolution": "普通阶段转股需适当性；退市整理例外仅可卖",
+      "status": "corrected",
+      "rule_id": "CHINEXT-CONVERSION"
+    },
+    {
+      "id": "C05",
+      "file": "trading-rules/ipo-rules",
+      "original_claim": "北交所仅8开头",
+      "resolution": "支持920及官方新旧映射，明确市场身份",
+      "status": "corrected",
+      "rule_id": "BSE-CODE-MAPPING"
+    },
+    {
+      "id": "C06",
+      "file": "redemption-traps",
+      "original_claim": "未转股比例之差等于损失",
+      "resolution": "比例变化是转股数量信息，不能推导损益金额",
+      "status": "corrected",
+      "rule_id": null
+    },
+    {
+      "id": "C07",
+      "file": "redemption-traps",
+      "original_claim": "市价与赎回价差为实际已实现亏损",
+      "resolution": "改为给定持有和价格条件下的情景损失",
+      "status": "corrected",
+      "rule_id": null
+    },
+    {
+      "id": "C08",
+      "file": "redemption-traps",
+      "original_claim": "強赎只因忘记操作才亏损",
+      "resolution": "增加溢价压缩和正股变化风险，删除绝对结论",
+      "status": "corrected",
+      "rule_id": null
+    },
+    {
+      "id": "C09",
+      "file": "cb-clause-rules",
+      "original_claim": "通用3000万、130%及70%默认",
+      "resolution": "改为逐只条款参数，缺证据不判触发",
+      "status": "issuer-evidence-required",
+      "rule_id": "CB-BALANCE-CALL"
+    },
+    {
+      "id": "C10",
+      "file": "cb-clause-rules",
+      "original_claim": "净资产为所有转债下修统一法规下限",
+      "resolution": "删除统一法规断言，逐只核验适用下限",
+      "status": "issuer-evidence-required",
+      "rule_id": "CB-RESET-FLOOR"
+    },
+    {
+      "id": "C11",
+      "file": "cb-defaults",
+      "original_claim": "个案走势因果、首例和金额均已核验",
+      "resolution": "历史案例保留待核状态，不作因果或回测证据",
+      "status": "pending-review",
+      "rule_id": null
+    },
+    {
+      "id": "C12",
+      "file": "ipo-rules",
+      "original_claim": "科创盘后时段可申购IPO等时间推断",
+      "resolution": "删除盘后交易时段等于IPO申购时段的推断；以发行公告核对",
+      "status": "pending-review",
+      "rule_id": null
+    },
+    {
+      "id": "C13",
+      "file": "trading-rules",
+      "original_claim": "深市1张起与后文10张起矛盾等操作细节",
+      "resolution": "标为待交易所原文核验，不进入可执行规则",
+      "status": "pending-review",
+      "rule_id": "TRADING-OPERATIONS"
+    },
+    {
+      "id": "C14",
+      "file": "cb-defaults",
+      "original_claim": "ST及70%负债率为统一一票否决",
+      "resolution": "改为研究政策和行业相关预警，不能冒充法规",
+      "status": "policy-reclassified",
+      "rule_id": "CREDIT-SCREEN-POLICY"
+    }
+  ]
+}
