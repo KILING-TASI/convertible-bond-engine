@@ -1,0 +1,134 @@
+{
+  "scope": "isolated directory/process/venv on existing host; not fresh OS",
+  "status": "passed",
+  "wheel_sha256": "e55c8aedaf1fb333f7036013e25da0da387d85869296ce061f05f3bef15fda13",
+  "origins": {
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "prefix": "<isolated-run>\\venv",
+    "path": [
+      "",
+      "C:\\Users\\caiqi\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip",
+      "C:\\Users\\caiqi\\AppData\\Local\\Programs\\Python\\Python312\\DLLs",
+      "C:\\Users\\caiqi\\AppData\\Local\\Programs\\Python\\Python312\\Lib",
+      "C:\\Users\\caiqi\\AppData\\Local\\Programs\\Python\\Python312",
+      "<isolated-run>\\venv",
+      "<isolated-run>\\venv\\Lib\\site-packages"
+    ],
+    "module_origin": "<isolated-run>\\venv\\Lib\\site-packages\\cbengine\\__init__.py",
+    "module_origins": {
+      "cbengine": "<isolated-run>\\venv\\Lib\\site-packages\\cbengine\\__init__.py",
+      "cbengine.engine": "<isolated-run>\\venv\\Lib\\site-packages\\cbengine\\engine.py",
+      "cbengine.preview": "<isolated-run>\\venv\\Lib\\site-packages\\cbengine\\preview.py",
+      "cbengine.crosscheck": "<isolated-run>\\venv\\Lib\\site-packages\\cbengine\\crosscheck.py",
+      "cbengine.bridge": "<isolated-run>\\venv\\Lib\\site-packages\\cbengine\\bridge.py"
+    },
+    "data": "<isolated-run>\\venv",
+    "version": "0.11.0",
+    "dependencies": {
+      "akshare": false,
+      "pypdf": false,
+      "QuantLib": false
+    },
+    "installed": {
+      "convertible-bond-engine": "0.11.0",
+      "pip": "25.0.1"
+    }
+  },
+  "removed_variable_names": [],
+  "commands": [
+    {
+      "args": [
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--no-cache-dir",
+        "<wheel-directory>\\convertible_bond_engine-0.11.0-py3-none-any.whl"
+      ],
+      "returncode": 0,
+      "stdout": "Processing c:\\users\\caiqi\\documents\\codex\\2026-10-09\\ni-k\\work\\standalone-final-20261010-dist\\convertible_bond_engine-0.11.0-py3-none-any.whl\nInstalling collected packages: convertible-bond-engine\nSuccessfully installed convertible-bond-engine-0.11.0\n",
+      "stderr": "\n[notice] A new release of pip is available: 25.0.1 -> 26.2.1\n[notice] To update, run: <isolated-run>\\venv\\Scripts\\python.exe -m pip install --upgrade pip\n"
+    },
+    {
+      "args": [
+        "-c",
+        "import json,sys,sysconfig,importlib.util,importlib.metadata as m,cbengine,cbengine.preview,cbengine.crosscheck,cbengine.bridge; print(json.dumps({'python':sys.version,'prefix':sys.prefix,'path':sys.path,'module_origin':cbengine.__file__,'module_origins':{x:sys.modules[x].__file__ for x in ['cbengine','cbengine.engine','cbengine.preview','cbengine.crosscheck','cbengine.bridge']},'data':sysconfig.get_path('data'),'version':m.version('convertible-bond-engine'),'dependencies':{x:importlib.util.find_spec(x) is not None for x in ['akshare','pypdf','QuantLib']},'installed':{d.metadata['Name']:d.version for d in m.distributions()}}))"
+      ],
+      "returncode": 0,
+      "stdout": "{\"python\": \"3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]\", \"prefix\": \"C:\\\\Users\\\\caiqi\\\\Documents\\\\Codex\\\\2026-10-09\\\\ni-k\\\\work\\\\standalone-final-20261010-run\\\\venv\", \"path\": [\"\", \"C:\\\\Users\\\\caiqi\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python312.zip\", \"C:\\\\Users\\\\caiqi\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\DLLs\", \"C:\\\\Users\\\\caiqi\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\Lib\", \"C:\\\\Users\\\\caiqi\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\", \"C:\\\\Users\\\\caiqi\\\\Documents\\\\Codex\\\\2026-10-09\\\\ni-k\\\\work\\\\standalone-final-20261010-run\\\\venv\", \"C:\\\\Users\\\\caiqi\\\\Documents\\\\Codex\\\\2026-10-09\\\\ni-k\\\\work\\\\standalone-final-20261010-run\\\\venv\\\\Lib\\\\site-packages\"], \"module_origin\": \"C:\\\\Users\\\\caiqi\\\\Documents\\\\Codex\\\\2026-10-09\\\\ni-k\\\\work\\\\standalone-final-20261010-run\\\\venv\\\\Lib\\\\site-packages\\\\cbengine\\\\__init__.py\", \"module_origins\": {\"cbengine\": \"C:\\\\Users\\\\caiqi\\\\Documents\\\\Codex\\\\2026-10-09\\\\ni-k\\\\work\\\\standalone-final-20261010-run\\\\venv\\\\Lib\\\\site-packages\\\\cbengine\\\\__init__.py\", \"cbengine.engine\": \"C:\\\\Users\\\\caiqi\\\\Documents\\\\Codex\\\\2026-10-09\\\\ni-k\\\\work\\\\standalone-final-20261010-run\\\\venv\\\\Lib\\\\site-packages\\\\cbengine\\\\engine.py\", \"cbengine.preview\": \"C:\\\\Users\\\\caiqi\\\\Documents\\\\Codex\\\\2026-10-09\\\\ni-k\\\\work\\\\standalone-final-20261010-run\\\\venv\\\\Lib\\\\site-packages\\\\cbengine\\\\preview.py\", \"cbengine.crosscheck\": \"C:\\\\Users\\\\caiqi\\\\Documents\\\\Codex\\\\2026-10-09\\\\ni-k\\\\work\\\\standalone-final-20261010-run\\\\venv\\\\Lib\\\\site-packages\\\\cbengine\\\\crosscheck.py\", \"cbengine.bridge\": \"C:\\\\Users\\\\caiqi\\\\Documents\\\\Codex\\\\2026-10-09\\\\ni-k\\\\work\\\\standalone-final-20261010-run\\\\venv\\\\Lib\\\\site-packages\\\\cbengine\\\\bridge.py\"}, \"data\": \"C:\\\\Users\\\\caiqi\\\\Documents\\\\Codex\\\\2026-10-09\\\\ni-k\\\\work\\\\standalone-final-20261010-run\\\\venv\", \"version\": \"0.11.0\", \"dependencies\": {\"akshare\": false, \"pypdf\": false, \"QuantLib\": false}, \"installed\": {\"convertible-bond-engine\": \"0.11.0\", \"pip\": \"25.0.1\"}}\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "-m",
+        "cbengine.preview",
+        "<isolated-run>\\venv\\share\\convertible-bond-engine\\examples\\demo.json",
+        "--out-dir",
+        "<isolated-run>\\run\\preview"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "-m",
+        "cbengine.preview",
+        "<isolated-run>\\venv\\share\\convertible-bond-engine\\examples\\demo.json",
+        "--out-dir",
+        "<isolated-run>\\run\\preview"
+      ],
+      "returncode": 2,
+      "stdout": "",
+      "stderr": "输出目录已存在，请选择新的目录；预览不覆盖已有文件\n"
+    },
+    {
+      "args": [
+        "-m",
+        "cbengine.crosscheck",
+        "<isolated-run>\\venv\\share\\convertible-bond-engine\\examples\\crosscheck-flat.json",
+        "--quantlib"
+      ],
+      "returncode": 2,
+      "stdout": "",
+      "stderr": "QuantLib未安装；只在独立验证环境按需安装，不是运行依赖\n"
+    },
+    {
+      "args": [
+        "-m",
+        "cbengine.crosscheck",
+        "<isolated-run>\\venv\\share\\convertible-bond-engine\\examples\\crosscheck-flat.json",
+        "--out",
+        "<isolated-run>\\run\\core-check.json"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "-m",
+        "cbengine.bridge",
+        "<isolated-run>\\venv\\share\\convertible-bond-engine\\examples\\bridge-fixed-demo.json",
+        "--out-dir",
+        "<isolated-run>\\run\\bridge"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "report_checks": {
+    "teaching": true,
+    "dirty_price": 118.5,
+    "bond_floor": 95.10939701857427,
+    "gross_yield": -0.011218746052657966,
+    "rights": "unknown",
+    "file_links": "passed"
+  },
+  "visual": "not inspected in this batch",
+  "real_network_data": "not requested",
+  "old_release": "not tested in this batch",
+  "initial_source_commit": "579febe970a2f35f9b60f3056d82cc2b00580fa6",
+  "current_test_scope": "same algorithm; pending standalone verification/docs additions in working tree"
+}

@@ -59,6 +59,8 @@ JSON 保留输入来源、假设与缺口；市场资料卡区分第三方报价
 - [事件链设计](docs/EVENT_CHAIN_DESIGN.md)：原始条款与当前状态、截止日和生效日。
 - [规则纠错登记](docs/rule-corrections.json)：14 项纠错及待核事项；规则参考核对日为 2026-10-09，未来使用需重新核对。
 
+单仓非editable安装的实际范围与限制见[独立安装验收](docs/STANDALONE_ACCEPTANCE.md)。
+
 ## 验证范围
 
 ```sh
