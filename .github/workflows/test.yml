@@ -21,3 +21,14 @@ jobs:
       - run: python -m cbengine.rules examples/rule-context-demo.json --out local-data/rules.json
       - run: cb-engine examples/demo.json --rule-context examples/rule-context-demo.json --out local-data/rule-diagnosis.json
       - run: cb-engine examples/analysis-market-demo.json --analysis-input examples/analysis-demo.json --quality-as-of 2026-10-09 --out local-data/analysis.json
+      - run: python -m cbengine.crosscheck examples/crosscheck-flat.json --out local-data/crosscheck.json
+  optional-quantlib-reference:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install . QuantLib==1.43
+      - run: python -m unittest discover -s tests -p test_crosscheck.py -v
+      - run: python -m cbengine.crosscheck examples/crosscheck-flat.json --quantlib --out local-data/quantlib-crosscheck.json

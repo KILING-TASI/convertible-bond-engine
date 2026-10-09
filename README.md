@@ -1,6 +1,18 @@
 # 可转债定价与博弈引擎
 
-独立实现的 A 股可转债研究工具。v0.9 提供 **L1诊断、独立收益率、自建观察计数、当前条款证据链、证据归档与规则参考**。离线核心不依赖行情账户；代码查询及PDF核验分别按需启用依赖。
+独立实现的 A 股可转债研究工具。v0.10 提供 **L1诊断、独立收益率、自建观察计数、条款证据链及可选固定现金流外部对照**。离线核心不依赖行情账户；代码查询及PDF核验分别按需启用依赖。
+
+## 可选外部交叉验证
+
+```sh
+python -m cbengine.crosscheck examples/crosscheck-flat.json --out local-data/check.json
+# 仅在自行准备的QuantLib验证环境中运行
+python -m cbengine.crosscheck examples/crosscheck-flat.json --quantlib --out local-data/quantlib-check.json
+```
+
+首批对齐固定税前现金流、ACT/365F、年有效复利、平坦零息率及信用口径，复用已有L1价格/久期/DV01。缺库或未运行不写成验证通过，没有新增强制依赖。实际QuantLib 1.43对照匹配，不代表中国转债含权模型已验证。FinancePy为GPL-3.0，本批仅读许可及接口，未复制、导入或运行其代码。设计、许可、差异解释与未闭环范围见[交叉验证说明](docs/EXTERNAL_CROSSCHECK.md)。
+
+L1可显式填写discount_curve_kind=zero_spot、discount_compounding=annual_effective；其他声明拒绝，旧输入未声明时保留假设警示。到期收益率曲线不能直接冒充零息曲线。
 
 ## 原始条款与当前事件链
 

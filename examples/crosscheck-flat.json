@@ -1,0 +1,32 @@
+{
+  "as_of": "2026-10-09",
+  "settlement_date": "2026-10-09",
+  "face_value": 100,
+  "day_count": "ACT/365F",
+  "compounding": "annual_effective",
+  "curve_kind": "flat_zero_spot",
+  "credit_basis": "included_in_rate",
+  "rate": 0.045,
+  "accrued_interest": 0,
+  "accrued_interest_basis": "教学：估值日即计息起始日，显式给定零应计息",
+  "source": "独立教学现金流与平坦曲线，不是真实证券或市场利率",
+  "cashflows": [
+    {
+      "date": "2027-10-09",
+      "gross_payment": 0.3
+    },
+    {
+      "date": "2028-10-09",
+      "gross_payment": 0.5
+    },
+    {
+      "date": "2029-10-09",
+      "gross_payment": 1
+    },
+    {
+      "date": "2030-10-09",
+      "gross_payment": 111.5
+    }
+  ],
+  "currency": "CNY"
+}

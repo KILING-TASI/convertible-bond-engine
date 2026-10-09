@@ -149,6 +149,10 @@ def clause_state(clause, observations, as_of):
 def diagnose(data):
     if not isinstance(data, dict):
         raise ValueError('security input must be an object')
+    if data.get('discount_curve_kind','zero_spot')!='zero_spot':
+        raise ValueError('贴现输入必须为零息曲线；不得直接使用到期收益率曲线')
+    if data.get('discount_compounding','annual_effective')!='annual_effective':
+        raise ValueError('当前贴现仅支持年有效复利，其他口径需显式转换')
     as_of = data["as_of"]
     iso_date(as_of)
     if not isinstance(data['code'], str) or not data['code'].strip():
@@ -234,6 +238,8 @@ def diagnose(data):
     warnings = ["教学数据" ] if data.get("is_demo") else []
     warnings += ["债底不是保证兑付价；本版未建模违约、流动性和转股期权。",
                  "条款计数依赖输入交易日记录完整性，本版不核验交易所日历。"]
+    if 'discount_curve_kind' not in data or 'discount_compounding' not in data:
+        warnings.append('旧曲线输入未显式声明类型/复利，暂按零息率及年有效复利解释，须核对来源。')
     if len(yields) < 3:
         warnings.append("退出场景不全，YTW仅为已提供场景最小值，不是完整最差收益率。")
     if any(not s.get("history_complete", True) for s in states.values()):
