@@ -1,0 +1,33 @@
+{
+  "checked_on": "2026-10-09",
+  "scope": "convertible only; no certification of other engines",
+  "workbench_pr": "https://github.com/KILING-TASI/research-workbench/pull/6",
+  "pr_status": "open; not merged or released",
+  "gateway_matches_committed_source": true,
+  "cases": [
+    {
+      "case": "flat",
+      "status": "native-response-preserved",
+      "nativeReturnCode": 0,
+      "workbenchCommit": "801f22404785544a1c11e7930eee30e76fbdb21c",
+      "engineCommit": "b45460847c53f0d1bedb5729c15f1e20711652b1",
+      "gatewaySourceSha256": "a2b80ecefaeaa33671c31dc2809f4c42c4739c21452117679e8bc564c4a252d3"
+    },
+    {
+      "case": "nonflat",
+      "status": "native-response-preserved",
+      "nativeReturnCode": 0,
+      "workbenchCommit": "801f22404785544a1c11e7930eee30e76fbdb21c",
+      "engineCommit": "b45460847c53f0d1bedb5729c15f1e20711652b1",
+      "gatewaySourceSha256": "a2b80ecefaeaa33671c31dc2809f4c42c4739c21452117679e8bc564c4a252d3"
+    },
+    {
+      "case": "missing-tax",
+      "status": "blocked",
+      "nativeReturnCode": 2,
+      "workbenchCommit": "801f22404785544a1c11e7930eee30e76fbdb21c",
+      "engineCommit": "b45460847c53f0d1bedb5729c15f1e20711652b1",
+      "gatewaySourceSha256": "a2b80ecefaeaa33671c31dc2809f4c42c4739c21452117679e8bc564c4a252d3"
+    }
+  ]
+}

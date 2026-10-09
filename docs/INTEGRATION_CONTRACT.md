@@ -1,6 +1,6 @@
 # 独立引擎接入契约草案 1.0
 
-状态：历史迁移契约草案；现已另实现[有界可选桥接](BOUNDED_WORKBENCH_BRIDGE.md)及当前工作台脚本同输入对照。工作台侧入口已有本地原生调用端到端回执，待其任务纳入待审PR，仍不宣称完整模块迁移。原CLI保持兼容。宿主应保存engine_version、schema_version=cb-integration-1.0、method_version、输入摘要、来源及as_of；未知状态不能转成安全结论。
+状态：历史迁移契约草案；现已另实现[有界可选桥接](BOUNDED_WORKBENCH_BRIDGE.md)及当前工作台脚本同输入对照。工作台侧入口已有本地原生调用端到端回执，入口已提交到待审PR #6，最终提交回执另存，仍不宣称完整模块迁移。原CLI保持兼容。宿主应保存engine_version、schema_version=cb-integration-1.0、method_version、输入摘要、来源及as_of；未知状态不能转成安全结论。
 
 |模块|输入/输出口径|方法版本|
 |---|---|---|
