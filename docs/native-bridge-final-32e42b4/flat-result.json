@@ -1,0 +1,145 @@
+{
+  "gatewayMethodVersion": "bounded-native-gateway-1",
+  "engine": "convertible",
+  "status": "native-response-preserved",
+  "engine_response": {
+    "type": "fixed-cashflow-bridge",
+    "schema_version": "cb-fixed-cashflow-1",
+    "method_version": "fixed-cashflow-bridge-1.0",
+    "engine_version": "0.11.0",
+    "input_sha256": "399475e419c4d6269e169067f8b54b4ff50aaab32315d3e56a9c22ca3cf67f0e",
+    "as_of": "2026-10-09",
+    "currency": "CNY",
+    "face_value": 100,
+    "is_demo": true,
+    "dirty_price": 118.5,
+    "clean_price": 116.5,
+    "accrued_interest": 2.0,
+    "price_basis": "clean",
+    "source": "独立教学现金流，非市场资料",
+    "curve_source": "教学4.5%信用包含零息率",
+    "cashflows": [
+      {
+        "date": "2027-10-09",
+        "years": 1.0,
+        "gross": 0.3,
+        "net": 0.24,
+        "spot": 0.045,
+        "pv": 0.28708133971291866,
+        "coupon_tax": 0.06,
+        "redemption_tax": 0,
+        "source": "教学金额及税额，未推断投资者身份"
+      },
+      {
+        "date": "2028-10-09",
+        "years": 2.0027397260273974,
+        "gross": 0.5,
+        "net": 0.4,
+        "spot": 0.045,
+        "pv": 0.4578097630844385,
+        "coupon_tax": 0.1,
+        "redemption_tax": 0,
+        "source": "教学金额及税额，未推断投资者身份"
+      },
+      {
+        "date": "2029-10-09",
+        "years": 3.0027397260273974,
+        "gross": 1.0,
+        "net": 0.8,
+        "spot": 0.045,
+        "pv": 0.8761909341328967,
+        "coupon_tax": 0.2,
+        "redemption_tax": 0,
+        "source": "教学金额及税额，未推断投资者身份"
+      },
+      {
+        "date": "2030-10-09",
+        "years": 4.002739726027397,
+        "gross": 111.5,
+        "net": 111.2,
+        "spot": 0.045,
+        "pv": 93.48831498164401,
+        "coupon_tax": 0.30000000000000004,
+        "redemption_tax": 0,
+        "source": "教学金额及税额，未推断投资者身份"
+      }
+    ],
+    "bond_present_value": 95.10939701857427,
+    "yield_gross": -0.011218746052657966,
+    "yield_net": -0.012654334701858191,
+    "zero_curve_parallel_duration": 3.8036714729587247,
+    "discount_weighted_average_time": 3.9748366892418665,
+    "convexity_parallel": 18.158070406714657,
+    "dv01": 0.03617649002498565,
+    "sensitivity_bps": {
+      "-200": {
+        "price": 102.70375798569991,
+        "approximation": 102.69009564905208,
+        "approximation_error": -0.013662336647826123
+      },
+      "-100": {
+        "price": 98.8150750294021,
+        "approximation": 98.813396177443,
+        "approximation_error": -0.0016788519590988926
+      },
+      "100": {
+        "price": 91.57647458822342,
+        "approximation": 91.57809817244588,
+        "approximation_error": 0.0016235842224574526
+      },
+      "200": {
+        "price": 88.20672216928318,
+        "approximation": 88.21949963905783,
+        "approximation_error": 0.012777469774647443
+      }
+    },
+    "risk_method_version": "zero-parallel-1",
+    "risk_basis": "annual-effective-zero-curve-parallel-shift",
+    "yield_basis": "annual-effective-positive-fixed-cashflow-irr",
+    "current_rights": {
+      "call": "unknown",
+      "put": "unknown",
+      "reset": "unknown",
+      "conversion_price": "unknown"
+    },
+    "actual_exit": "unknown",
+    "limitations": [
+      "Only explicit fixed cashflow mathematics; sources are caller declarations, not authenticated.",
+      "No equivalence for clause rights, issuer discretion, actual exits, conversion value or complete YTW.",
+      "Clean price/accrual remains unknown when not supplied; no tax inference or real credit calibration."
+    ]
+  },
+  "nativeReturnCode": 0,
+  "nativeError": null,
+  "inputSha256": "bcaf2b09bb517cc36cd383a5b4e5e5b039cae5354fb8ff1cd00fca4083987e84",
+  "workbenchCommit": "32e42b41a33688a47decd2540d823ff475b19b44",
+  "engineCommit": "11f66796631376f0a3ed63308131b2cb02b046e7",
+  "methodFiles": {
+    "pyproject.toml": "1a522cfe551761d0c2713670e53007d993912bb0971e7d89e5fca749f3476036",
+    "cbengine/analysis.py": "f98a1ee2f47c35db8ab990326f028b1aac5f4faba25bf8fcf7fa3a9876a402ba",
+    "cbengine/announcements.py": "fd10d1599c6cfff55044157cbb23336601c780b1aa4e73ef77ab60d10ede182c",
+    "cbengine/archive.py": "fe2ec0543b47725ee6287e409221b4b7eb3f476f2871565d00a4c8e2519ea90c",
+    "cbengine/batch.py": "cfb118b789d5cf767e25ca0c6dc8dd9407c8c83ffc64ed71bc36ddcb28006255",
+    "cbengine/bridge.py": "cc5c5f00f7e53314aa90ae1e75983981c9889d690f03a90fb46e9c050c279ff6",
+    "cbengine/cli.py": "3aa7d3c71998403078a6aa49d1f8351a53cc25f54a87ef25b50ca8cca17120d9",
+    "cbengine/coverage.py": "e3d3da35767322c75f1d9338a2f9ce3c20f3c6b4e69ea495c3a0cc6c91812e11",
+    "cbengine/crosscheck.py": "8c74f370fd3b136808e5c6ab1fb47181a495de716520be4d1d2e44c1b373a798",
+    "cbengine/engine.py": "949a0eeb8dbbce6f4aef272c183dfd22df009b775fe09645874d98f050fda59e",
+    "cbengine/event_chain.py": "722e828a235126d4df70df536d4d14f51a339e1513cead00fb4a003a157b8248",
+    "cbengine/evidence.py": "c8aeccdfd636c9c0b7210b03eed4a649bcee984ec7bdc1e0870d912e866f6f60",
+    "cbengine/market.py": "3ee72be93d70022eaf388f4d038c55d42cd50faae8b34db78694923e7b13e99f",
+    "cbengine/pdfverify.py": "15260f711f1bf56062ef43e27cbd508d72994841b09d4832dd8b43ac0546b7a7",
+    "cbengine/preview.py": "2b79c31b200151aae55cfb1459c6c1897d9462fb7ff9419baf4ff349a79c50ae",
+    "cbengine/quality.py": "19782b48560575772a13e90082e23cbcb3d2b30d1e600c46fe5c7fff2925398e",
+    "cbengine/report.py": "d76c9ce8fba8d947895d375b350216c8360557f97e124ca8891a8159e9581667",
+    "cbengine/rules.py": "870a3dbd15d3b35f6b4c94888ea4553affbbecbfae0d8a2d0365b6671b7b41ec",
+    "cbengine/validation.py": "bef901002c9abc76cafa615b9fdc3a72a60f8f8353b1314d03b159345e9e7e75",
+    "cbengine/__init__.py": "38cc5b080ddf01a5d4634557d038d3fad86d50392457910221e956ab1529a88b",
+    "cbengine/data/market_rules.json": "73a72e48b58ae4e48a253694d4ecb44d91a20eb57b4a020648390105c8514b16",
+    "scripts/compare_bridge_workbench.py": "543a2b836537558ff5ffc24ab970711fc66ceba9896e216bd7a49c658538b68d",
+    "scripts/compare_workbench.py": "ac72cce588a1df586c772dadf1ce393858797180ff4d016a6ba1c623a7cb5b7b"
+  },
+  "gatewaySourceSha256": "38123e66d683441a226987ab00ed6c25941615d222eee3f6769f871302c14945",
+  "ruleRoundtripStatus": null,
+  "scope": "原生输入与输出保留；不认证模型等价、资料完整性、账户或实际资格；不替换内置入口"
+}

@@ -1,6 +1,6 @@
 # 有界工作台可选桥接
 
-状态：引擎侧接口与当前工作台脚本同输入对照已实现；主分支增量，未发新版。工作台侧可选入口由其任务负责，本地原生调用已完成端到端验收；入口现已提交到待审PR #6（801f224），不在此仓库替换或删除内置入口。教学联调不认证真实条款或数据。
+状态：引擎侧接口与当前工作台脚本同输入对照已实现；主分支增量，未发新版。工作台侧可选入口由其任务负责，本地原生调用已完成端到端验收；入口已提交到待审PR #6（当前入口32e42b4，历史回执分别保存），不在此仓库替换或删除内置入口。教学联调不认证真实条款或数据。
 
 ## 显式接口
 
@@ -56,7 +56,7 @@ python /path/to/research-workbench/scripts/bounded_engine_gateway.py convertible
 上述是本地可选桥接验收。工作台PR #6仍由该任务提交与审核，不在此仓库合并；没有发布新版本或完整模块迁移。这里只证明原生输入/响应透传与既有数学交集，不能证明合同、数据、账户或实际退出等价。
 
 
-## 最终已提交入口联合回执
+## 历史已提交入口联合回执（801f224）
 
 此前未提交入口的回执保留为历史。本次按工作台PR #6最终提交801f22404785544a1c11e7930eee30e76fbdb21c重跑，可转债引擎调用提交b45460847c53f0d1bedb5729c15f1e20711652b1。确认工作台入口换行规范化后与该提交一致；实际加载文件字节SHA256为a2b80ecefaeaa33671c31dc2809f4c42c4739c21452117679e8bc564c4a252d3。PR状态仍OPEN，未合并、未发布。
 
@@ -66,3 +66,12 @@ python /path/to/research-workbench/scripts/bounded_engine_gateway.py convertible
 - [缺税额](native-bridge-final-801f224/missing-tax-result.json)：退出码2、blocked、原生响应null，错误未提升为成功。
 
 输入字节、gateway实际源码及bridge.py方法文件SHA均核对。仅确认可转债原生桥和此前已证数学交集，不为北交所、组合或规则引擎验收签字；非平坦透传成功仍不代表与内置单一YTM风险等价。旧回执与冻结输入未覆盖。
+
+
+## 后续入口源码更新后的可转债回执
+
+工作台提交32e42b41a33688a47decd2540d823ff475b19b44更新了入口文件的规则报告展示，实际gateway字节SHA256为38123e66d683441a226987ab00ed6c25941615d222eee3f6769f871302c14945。本次对该已提交文件重新执行可转债三组原生调用，不把前次a2b摘要当作本次源码。调用时引擎HEAD为11f66796631376f0a3ed63308131b2cb02b046e7；桥接算法未在本批修改。
+
+[新汇总](native-bridge-final-32e42b4/summary.json)：[平坦](native-bridge-final-32e42b4/flat-result.json)、[非平坦](native-bridge-final-32e42b4/nonflat-result.json)逐字段等于直接引擎响应，权利unknown保留；[缺税额](native-bridge-final-32e42b4/missing-tax-result.json)继续blocked、退出码2、响应null。输入、方法文件及入口实际字节SHA均核对。PR #6仍OPEN。
+
+旧native-bridge-final-801f224及a2b摘要只代表当时源码，保持历史冻结。此批仅确认更新入口下的可转债透传与失败保留，不对规则报告、其他引擎、合同权利或真实数据签字；不合并、不发新版。
