@@ -58,7 +58,9 @@ def compare(spec,quantlib=False):
                    'clauses':{'call':None,'put':None,'reset':None}})
     pv=local['bond_floor']+immediate; modified=local['modified_duration_parallel']*local['bond_floor']/pv
     engine={'dirty_price':pv,'clean_price':pv-accrued,'macaulay_duration':local['duration']*local['bond_floor']/pv,
-            'modified_duration':modified,'dv01':local['dv01']}
+            'modified_duration':modified,'dv01':local['dv01'],
+            'zero_curve_parallel_duration':modified,
+            'discount_weighted_average_time':local['duration']*local['bond_floor']/pv}
     controls={'same_numeric_rate_as_continuous':immediate+sum(a*math.exp(-rate*t) for t,a in flows),
               'integer_year_instead_of_actual_dates':immediate+sum(a/(1+rate)**(i+1) for i,(t,a) in enumerate(flows)),
               'note':'刻意不对齐的教学反例，不是可替代估值；整数年反例只对应此年度示例。'} if rate is not None else {'note':'非平坦节点对照，不以单一YTM久期比较曲线平移风险。'}
@@ -87,19 +89,33 @@ def compare(spec,quantlib=False):
         external={'status':'matched' if abs(external_pv-pv)<1e-8 and abs(external_duration-modified)<tolerance else 'mismatch',
                   'library':'QuantLib','version':ql.__version__,'dirty_price':external_pv,
                   'clean_price':external_pv-accrued,'modified_duration':external_duration,
+                  'zero_curve_parallel_duration':external_duration,
                   'dv01':external_pv*external_duration*.0001,
                   'price_difference':external_pv-pv,'duration_difference':external_duration-modified,
                   'tolerance':1e-8,'duration_tolerance':tolerance,
                   'risk_basis':'flat-modified-yield-duration' if rate is not None else 'annual-zero-curve-parallel-shift',
                   'adapter':'SimpleCashFlow + FlatForward/ZeroCurve + CashFlows.npv; duration or curve bump'}
-    return {'type':'fixed-cashflow-crosscheck','input_sha256':digest(spec),'inputs':spec,'engine':engine,
+    risk_conventions={
+        'method_version':'fixed-cashflow-risk-2.0',
+        'zero_curve_parallel_duration':{'basis':'annual-zero-curve-parallel-shift','unit':'per-unit-annual-rate',
+            'definition':'-1/P * dP/depsilon; all annual effective zero rates shifted by epsilon'},
+        'discount_weighted_average_time':{'basis':'zero-discount-weighted-payment-time','unit':'ACT/365F-years',
+            'definition':'sum(t_i * PV_i)/P; included same-day cash has t=0'},
+        'single_ytm_modified_duration':{'status':'not-calculated','basis':'single-annual-effective-irr',
+            'note':'Different repricing function from a nonflat zero curve; not the legacy modified_duration field.'},
+        'legacy_fields':{'modified_duration':'alias of zero_curve_parallel_duration',
+                         'macaulay_duration':'alias of discount_weighted_average_time; not YTM Macaulay duration on a nonflat curve'},
+        'flat_equivalence':'Yield duration equals zero-curve parallel duration only when YTM equals the flat annual zero rate.',
+        'dv01':'positive first-order price decrease for +1bp annual zero-curve parallel shift; P*D*0.0001'}
+    return {'schema_version':2,'method_version':'fixed-cashflow-crosscheck-2.0','risk_conventions':risk_conventions,
+            'type':'fixed-cashflow-crosscheck','input_sha256':digest(spec),'inputs':spec,'engine':engine,
             'external':external,'misaligned_controls':controls,'alignment':{'gross_cashflows':'explicit-dates-and-amounts','settlement_date':as_of,
                 'currency':spec['currency'],'face_value':100,
                 'day_count':'ACT/365F','compounding':'annual_effective','curve_kind':kind,'include_settlement_date_flows':include,
                 'credit_basis':spec['credit_basis'],'clean_price':'dirty-minus-declared-accrued-interest'},
             'limitations':['固定税前现金流算例，不覆盖转股、滚动强赎、下修、回售或发行人自由裁量。',
                            '应计息由输入声明，未验证真实票息起止；贴现率为教学假设，不是市场曲线。',
-                           '价格与修正久期口径已对齐；相符不证明源数据真实或含权价格正确。',
+                           '价格与零息曲线平移敏感度口径已对齐；相符不证明源数据真实或含权价格正确。',
                            '不构建市场曲线、不覆盖跨节点非平坦插值、到期收益率曲线转换或违约模型。']}
 
 

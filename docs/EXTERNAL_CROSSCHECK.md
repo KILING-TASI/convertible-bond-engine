@@ -47,3 +47,8 @@ python -m cbengine.crosscheck examples/crosscheck-flat.json --quantlib --out loc
 新增crosscheck-nonflat.json：各现金流日期与年有效零息节点重合，利率2%、3%、4%、5%。全价93.373343151721；QuantLib 1.43价格差0，曲线平移敏感度差约1.50e-10。只认证节点处，不认证跨节点插值。非平坦风险为全部零息率平行变动的敏感度，不是单一YTM修正久期。
 
 crosscheck-payment-boundary.json显式包含估值日2元现金流，全价95.373343151721；价格差0，敏感度差约1.47e-10。同日支付是否属于持有人须另查实际结算权利。两例净价均减输入声明的2元应计息；这不是独立的应计息算法验证。
+
+
+## 主分支风险命名补强
+
+schema_version=2、method_version=fixed-cashflow-crosscheck-2.0新增明确口径，旧键兼容保留。zero_curve_parallel_duration是零息曲线平移敏感度；discount_weighted_average_time是指定曲线下的支付期限加权平均，不把非平坦情景标为YTM久期。单一YTM久期在元信息中明确not-calculated。方法、非平坦反例和付息前后验收见[方法卡](FIXED_INCOME_METHOD_CARDS.md)。历史结果不回写。
