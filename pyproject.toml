@@ -26,7 +26,7 @@ cbengine = ["data/*.json", "data/*.js"]
 
 [tool.setuptools.data-files]
 "share/convertible-bond-engine" = ["README.md", "DISCLAIMER.md", "ROADMAP.md", "CHANGELOG.md", "LICENSE", "THIRD_PARTY_NOTICES.md"]
-"share/convertible-bond-engine/docs" = ["docs/*.md", "docs/rule-corrections.json"]
+"share/convertible-bond-engine/docs" = ["docs/*.md", "docs/rule-corrections.json", "docs/DATA_ENTRY_CATALOG.json", "docs/DATA_REUSE_CHECK.json", "docs/source-envelope-proposal.json"]
 "share/convertible-bond-engine/examples" = ["examples/*.json"]
 "share/convertible-bond-engine/scripts" = ["scripts/compare_workbench.py", "scripts/compare_bridge_workbench.py"]
 "share/convertible-bond-engine/cbengine/data" = ["cbengine/data/market_rules.json"]

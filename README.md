@@ -78,6 +78,8 @@ QuantLib 实际验证平坦曲线、非平坦零息节点及同日支付边界�
 
 见[实施路线与验收边界](ROADMAP.md)及[更新记录](CHANGELOG.md)。优先补真实数据与历史事件，再做含权模型及样本外验证。
 
+职责、交付状态、五类版本及实际数据入口统一见[数据与交付契约](docs/DATA_AND_DELIVERY_CONTRACT.md)。公共来源头当前仅为提案，未完成九仓数据统一。
+
 ## 与其他仓库的关系
 
 参考 [research-workbench](https://github.com/KILING-TASI/research-workbench) 的证据留存、版本化知识卡与数据质量分层思路，核心独立实现。[有界可选桥接与同输入联调](docs/BOUNDED_WORKBENCH_BRIDGE.md)已提供，工作台可选入口已通过最终提交的本地端到端验收，已纳入待审 PR #6；未完成完整模块迁移。本地参考脚本不代表其 GitHub 主分支。

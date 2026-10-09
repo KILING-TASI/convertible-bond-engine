@@ -1,0 +1,88 @@
+{
+  "schema_version": "cb-source-envelope-proposal-0",
+  "status": "design-only; no runtime adapter or cross-repository announcement validation",
+  "publisher": {
+    "name": "上海银行股份有限公司",
+    "basis": "caller evidence identity, not authenticity certification"
+  },
+  "acquisition": {
+    "channel": "CNInfo PDF link",
+    "library": null,
+    "retrieved_at": null
+  },
+  "identity": {
+    "instrument": "convertible-bond",
+    "code": "113042"
+  },
+  "times": {
+    "observed_at": null,
+    "published_on": "2026-06-02",
+    "effective_on": "2026-06-08",
+    "reviewed_on": "2026-10-09",
+    "historically_available_at": null,
+    "precision": {
+      "published_on": "date",
+      "effective_on": "date",
+      "historically_available_at": "unknown"
+    }
+  },
+  "artifact": {
+    "url": "https://static.cninfo.com.cn/finalpage/2026-06-02/1225343748.PDF",
+    "declared_binary_sha256": "065ffc7940ae34d5cbb47dc0988ee0a1b8fe94a9cfd07c7b231081925731ea68",
+    "input_payload_sha256": "3ef9d7f9ed49028c0fb4c84a6c758b4d1b80c076b99853326d2438d619a02533",
+    "original_version": null,
+    "supersedes": null
+  },
+  "versions": {
+    "software": null,
+    "interface": "proposal-0",
+    "rules": null,
+    "data": null,
+    "parser_method": "caller-review-fields; no parsing rerun"
+  },
+  "checks": {
+    "download": "not-rerun",
+    "original_page_location": "declared",
+    "literal_match": "historical listed-field verification only",
+    "semantic_complete": "unknown"
+  },
+  "rights": {
+    "original_redistribution": "unknown",
+    "public_fulltext_included": false
+  },
+  "professional_payload": {
+    "bond_code": "113042",
+    "announcement_url": "https://www.cninfo.com.cn/new/disclosure/detail?stockCode=601229&announcementId=1225343748&orgId=9900010207&announcementTime=2026-06-02",
+    "document_url": "https://static.cninfo.com.cn/finalpage/2026-06-02/1225343748.PDF",
+    "reviewed_on": "2026-10-09",
+    "published_on": "2026-06-02",
+    "effective_on": "2026-06-08",
+    "event_type": "conversion_price_adjustment",
+    "review_method": "人工核对公告PDF第1至2页：证券代码、调整前后转股价及实施日；不核对全部后续事件。",
+    "document_sha256": "065ffc7940ae34d5cbb47dc0988ee0a1b8fe94a9cfd07c7b231081925731ea68",
+    "facts": {
+      "old_conversion_price": 8.57,
+      "new_conversion_price": 8.35
+    },
+    "document_identity": {
+      "issuer": "上海银行股份有限公司",
+      "title": "关于根据2025年度利润分配方案调整A股可转换公司债券转股价格的公告"
+    },
+    "verification_checks": [
+      {
+        "field": "facts.old_conversion_price",
+        "page": 1,
+        "excerpt": "调整前转股价格：人民币8.57元/股",
+        "mode": "number",
+        "number_token": "8.57"
+      },
+      {
+        "field": "facts.new_conversion_price",
+        "page": 1,
+        "excerpt": "调整后转股价格：人民币8.35元/股",
+        "mode": "number",
+        "number_token": "8.35"
+      }
+    ]
+  }
+}
