@@ -1,0 +1,87 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>可转债教学结果预览</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f1f5f9;color:#17283e;font-family:'Microsoft YaHei',sans-serif;font-size:15px;line-height:1.6}main{max-width:1140px;margin:30px auto;padding:0 24px}.badge{display:inline-block;padding:5px 12px;border-radius:6px;background:#dbeafe;color:#154892;font-weight:bold}h1{font-size:28px;margin:15px 0 4px}.muted{color:#52657a}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}.card,section{background:white;border:1px solid #d8e2ee;border-radius:10px;padding:18px}.value{font-size:30px;font-weight:bold;margin:6px 0}.note{font-size:13px;color:#52657a}.unknown{color:#946000}h2{font-size:19px;margin:0 0 10px}section{margin:16px 0}table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}th,td{padding:8px 12px;text-align:right;border-bottom:1px solid #e5eaf0}th:first-child,td:first-child{text-align:left}th{background:#f1f5f9}.footer{font-size:13px}a{color:#145db1}@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}main{margin:18px auto;padding:0 12px}}</style>
+<main><span class="badge">教学算例 · 非真实证券行情</span><h1>可转债现金流与条款证据预览</h1><div class="muted">引擎 0.11.0 · 主分支演示 · 估值日 2026-10-09 · 每 100 元面值，金额单位：元</div>
+<div class="grid"><div class="card"><div>输入全价</div><div class="value">118.50</div><div class="note">使用者给定的教学全价，非市场报价。</div></div>
+<div class="card"><div>纯债现值</div><div class="value">95.1094</div><div class="note">给定现金流与 4.5% 教学曲线下的现值，不是保护承诺。</div></div>
+<div class="card"><div>到期条件年化收益率（税前）</div><div class="value">-1.1219%</div><div class="note">按教学兑付假设求 IRR；不是收益预测或完整最差收益率。</div></div>
+<div class="card"><div>当前条款权利状态</div><div class="value unknown">未知</div><div class="note">强赎、下修、回售均为 unknown；缺完整公告及法律事件证据。</div></div></div>
+<section><h2>现金流从哪里来</h2><div class="muted">来源：教学现金流：到期110不含末期息。末期 111.50 = 票息 1.50 + 兑付组件 110.00。</div><table><thead><tr><th>支付日</th><th>ACT/365F 年数</th><th>税前支付</th><th>贴现现值</th></tr></thead><tbody><tr><td>2027-10-09</td><td>1.000000</td><td>0.30</td><td>0.287081</td></tr><tr><td>2028-10-09</td><td>2.002740</td><td>0.50</td><td>0.457810</td></tr><tr><td>2029-10-09</td><td>3.002740</td><td>1.00</td><td>0.876191</td></tr><tr><td>2030-10-09</td><td>4.002740</td><td>111.50</td><td>93.488315</td></tr></tbody></table></section>
+<section><h2>价格与风险的计算范围</h2><p>年有效零息率节点 4.5%，逐实际支付日计算，跨闰年使用 ACT/365F。曲线平移修正久期 <b>3.803671</b>；纯债 DV01 <b>0.036176</b> 元 / 基点。未计算含权价或 OAS。</p><p class="note">本预览不执行外部库对照。已有 QuantLib 验证覆盖固定现金流、平坦曲线、现金流日期与非平坦节点重合处及同日支付边界；不验证跨节点插值或实际应计息。</p></section>
+<section><h2>观察结果不能替代正式权利</h2><p>教学 L1 强赎观察计数 14 / 15，只描述输入序列。独立事件链没有公告原文或完整调价历史，当前权利状态仍未知；不能据此推断发行人已执行或不会执行。</p><p class="note">缺失状态随结果保留：目录未审计、原始条款未提供、后续法律事件未覆盖。不补正式结论。</p></section>
+<section><h2>筛选已算诊断</h2><p class="note">筛选仅改变可见行，不改变计算或权利状态。净价及实际应计息未提供，输入仍为教学全价。</p>
+<label>类别 <select id="category"><option value="all">全部</option><option value="price">价格</option><option value="yield">条件收益率</option><option value="risk">纯债风险</option><option value="clause">当前条款（未知）</option></select></label>
+<label>查找 <input id="search" type="search" placeholder="诊断名称"></label><label>排序 <select id="sort"><option value="name">名称</option><option value="ascending">同单位数值升序</option><option value="descending">同单位数值降序</option></select></label>
+<p id="row-count" class="note"></p><div style="overflow-x:auto"><table><thead><tr><th>诊断</th><th>已算值</th><th>单位</th><th>状态</th></tr></thead><tbody id="diagnostics"></tbody></table></div></section>
+<section><h2>比较已有风险情景</h2><p class="note">全部数值来自 Python 核心冻结结果；选择静态情景不会重新定价。冲击只针对零息曲线平移，不是行情价格或收益率预测。</p>
+<label><input name="scenario" type="checkbox" value="0" checked>基准</label>
+<label><input name="scenario" type="checkbox" value="-200">−200 bp</label><label><input name="scenario" type="checkbox" value="-100">−100 bp</label>
+<label><input name="scenario" type="checkbox" value="100" checked>＋100 bp</label><label><input name="scenario" type="checkbox" value="200">＋200 bp</label>
+<div style="overflow-x:auto"><table><thead><tr><th>曲线冲击</th><th>核心精确重估现值</th><th>久期 / 凸性近似</th><th>近似误差</th></tr></thead><tbody id="scenario-results"></tbody></table></div><p id="scenario-empty" class="note"></p>
+<button id="save-view" type="button">另存选择、输入与方法版本（JSON）</button><p id="saved-note" class="note">另存新文件，不写回历史结果；保留全部原结果、来源、输入摘要和未知状态。</p>
+<noscript>交互需要 JavaScript；上方冻结诊断和输入链接仍可阅读。</noscript></section><p class="footer">可追溯文件：<a href="input.json">教学输入</a> · <a href="result.json">完整结果与事件链</a>。仅供学习与研究，不构成投资建议；本预览没有使用第三方真实数据。</p></main><script id="frozen-report" type="application/json">{"inputs": {"code": "DEMO", "is_demo": true, "as_of": "2026-10-09", "dirty_price": 118.5, "stock_price": 21.04, "conversion_price": 20, "coupon_tax_rate": 0.2, "cashflow_source": "教学现金流：到期110不含末期息", "curve_source": "教学平坦曲线4.5%，非市场报价", "discount_curve": [[0.01, 0.045], [10, 0.045]], "cashflows": [{"date": "2027-10-09", "coupon": 0.3, "redemption": 0, "redemption_tax": 0}, {"date": "2028-10-09", "coupon": 0.5, "redemption": 0, "redemption_tax": 0}, {"date": "2029-10-09", "coupon": 1, "redemption": 0, "redemption_tax": 0}, {"date": "2030-10-09", "coupon": 1.5, "redemption": 110, "redemption_tax": 0}], "clauses": {"call": {"source": "教学条款，非真实募集说明书", "window": 30, "count": 15, "ratio": 1.3, "direction": "above", "rolling": true, "active_from": "2026-01-01", "active_until": "2030-10-09", "reset_on": [], "inclusive": true}, "put": {"source": "教学条款，非真实募集说明书", "window": 30, "count": 30, "ratio": 0.7, "direction": "below", "rolling": true, "active_from": "2029-10-09", "active_until": "2030-10-09", "reset_on": [], "inclusive": false}, "reset": {"source": "教学条款，非真实募集说明书", "window": 30, "count": 15, "ratio": 0.85, "direction": "below", "rolling": true, "active_from": "2026-01-01", "active_until": "2030-10-09", "reset_on": [], "inclusive": false}}, "observations": [{"date": "2026-09-10", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-11", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-12", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-13", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-14", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-15", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-16", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-17", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-18", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-19", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-20", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-21", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-22", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-23", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-24", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-25", "stock_price": 21.04, "conversion_price": 20}, {"date": "2026-09-26", "stock_price": 27, "conversion_price": 20}, {"date": "2026-09-27", "stock_price": 27, "conversion_price": 20}, {"date": "2026-09-28", "stock_price": 27, "conversion_price": 20}, {"date": "2026-09-29", "stock_price": 27, "conversion_price": 20}, {"date": "2026-09-30", "stock_price": 27, "conversion_price": 20}, {"date": "2026-10-01", "stock_price": 27, "conversion_price": 20}, {"date": "2026-10-02", "stock_price": 27, "conversion_price": 20}, {"date": "2026-10-03", "stock_price": 27, "conversion_price": 20}, {"date": "2026-10-04", "stock_price": 27, "conversion_price": 20}, {"date": "2026-10-05", "stock_price": 27, "conversion_price": 20}, {"date": "2026-10-06", "stock_price": 27, "conversion_price": 20}, {"date": "2026-10-07", "stock_price": 27, "conversion_price": 20}, {"date": "2026-10-08", "stock_price": 27, "conversion_price": 20}, {"date": "2026-10-09", "stock_price": 27, "conversion_price": 20}], "reset_floor_inputs": {"source": "教学假设，适用下限需逐只核对", "applicable_floors": [8, 8.2, 9.5, 1]}}, "result": {"report_schema_version": 1, "method_version": "dated-cashflow-1+zero-parallel-1+evidence-clause-1", "interaction_method_version": "frozen-selection-1", "type": "teaching-preview", "engine_version": "0.11.0", "preview_status": "main-branch-demo; not included in v0.11.0 tag", "is_demo": true, "as_of": "2026-10-09", "input_sha256": "44f3c176a421252e88e5203793c3eba1681b5330a452fa1b9cdce14011a89eb7", "diagnosis": {"code": "DEMO", "as_of": "2026-10-09", "model_level": "L1", "conventions": "每100元面值；输入全价；ACT/365F；年复利；利率为小数", "cashflow_source": "教学现金流：到期110不含末期息", "curve_source": "教学平坦曲线4.5%，非市场报价", "dirty_price": 118.5, "bond_floor": 95.10939701857427, "conversion_value": 105.2, "bond_premium": 0.24593366917106718, "conversion_premium": 0.12642585551330798, "distance_to_floor": 0.19738905469557577, "duration": 3.9748366892418665, "modified_duration_parallel": 3.8036714729587247, "convexity_parallel": 18.158070406714657, "dv01": 0.03617649002498565, "sensitivity_bps": {"-200": {"price": 102.70375798569991, "approximation": 102.69009564905208, "approximation_error": -0.013662336647826123}, "-100": {"price": 98.8150750294021, "approximation": 98.813396177443, "approximation_error": -0.0016788519590988926}, "100": {"price": 91.57647458822342, "approximation": 91.57809817244588, "approximation_error": 0.0016235842224574526}, "200": {"price": 88.20672216928318, "approximation": 88.21949963905783, "approximation_error": 0.012777469774647443}}, "cashflows": [{"date": "2027-10-09", "years": 1.0, "gross": 0.3, "net": 0.24, "spot": 0.045, "pv": 0.28708133971291866}, {"date": "2028-10-09", "years": 2.0027397260273974, "gross": 0.5, "net": 0.4, "spot": 0.045, "pv": 0.4578097630844385}, {"date": "2029-10-09", "years": 3.0027397260273974, "gross": 1.0, "net": 0.8, "spot": 0.045, "pv": 0.8761909341328967}, {"date": "2030-10-09", "years": 4.002739726027397, "gross": 111.5, "net": 111.2, "spot": 0.045, "pv": 93.48831498164401}], "yields": {"maturity": {"gross": -0.011218746052657966, "net": -0.012654334701858191}}, "minimum_provided_yield": {"gross": -0.011218746052657966, "net": -0.012654334701858191}, "clauses": {"call": {"count": 14, "required": 15, "window": 30, "observations": 30, "trigger_condition_met": false, "status": "condition_not_met", "active": true, "latest_observation": "2026-10-09", "history_current": true, "history_complete": true, "comparison": ">=", "comparison_basis": "explicit", "days_to_fill_window": 0, "oldest_observation": "2026-09-10", "next_observation_expels_oldest": true, "source": "教学条款，非真实募集说明书", "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"}, "put": {"count": 0, "required": 30, "window": 30, "observations": 0, "trigger_condition_met": false, "status": "inactive", "active": false, "latest_observation": null, "history_current": false, "history_complete": false, "comparison": "\u003c", "comparison_basis": "explicit", "days_to_fill_window": 30, "oldest_observation": null, "next_observation_expels_oldest": false, "source": "教学条款，非真实募集说明书", "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"}, "reset": {"count": 0, "required": 15, "window": 30, "observations": 30, "trigger_condition_met": false, "status": "condition_not_met", "active": true, "latest_observation": "2026-10-09", "history_current": true, "history_complete": true, "comparison": "\u003c", "comparison_basis": "explicit", "days_to_fill_window": 0, "oldest_observation": "2026-09-10", "next_observation_expels_oldest": true, "source": "教学条款，非真实募集说明书", "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"}}, "no_call_until": null, "no_call_source": null, "reset_floor": {"minimum_conversion_price": 9.5, "parity_if_reset_to_floor": 221.47368421052633, "reduction_possible": true, "source": "教学假设，适用下限需逐只核对"}, "warnings": ["教学数据", "债底不是保证兑付价；本版未建模违约、流动性和转股期权。", "条款计数依赖输入交易日记录完整性，本版不核验交易所日历。", "旧曲线输入未显式声明类型/复利，暂按零息率及年有效复利解释，须核对来源。", "退出场景不全，YTW仅为已提供场景最小值，不是完整最差收益率。", "条款窗口历史不足，未达门槛不能据此认定未触发。"]}, "event_chain": {"as_of": "2026-10-09", "status": "partial", "directory_coverage": {"status": "not-audited", "legal_event_coverage": "unknown"}, "original_terms": {"available": false, "scope": null, "source_url": null, "matched_fields": []}, "events": [], "conversion_history_candidates": [], "excluded_events": [], "current_state": {"conversion_price": "unknown", "call": "unknown", "no_call": "unknown", "reset": "unknown", "put": "unknown"}, "gaps": ["公告目录和指定字段匹配不能证明所有后续变更、承诺与计数重置已覆盖。", "当前权利状态仍未知；未发现公告不代表不强赎、不下修或无回售风险。"], "note": "保留原始条款与当前状态的区别；只提供证据链，不自动改写价格历史或激活权利。"}}, "result_sha256": "2bdc5cd635c59fbc5bc9080044fe11b0dea44a5471d7ef8258fa8bfb93e70aea"}</script><script>// Original report interaction: select frozen core results; never reprice in-browser.
+(() => {
+  'use strict';
+  const data = JSON.parse(document.getElementById('frozen-report').textContent);
+  const d = data.result.diagnosis;
+  const rows = [
+    {group:'price', label:'输入全价', value:d.dirty_price, unit:'元 / 100 面值', status:'教学输入'},
+    {group:'price', label:'纯债现值', value:d.bond_floor, unit:'元 / 100 面值', status:'假设曲线'},
+    {group:'risk', label:'曲线平移修正久期', value:d.modified_duration_parallel, unit:'年', status:'固定现金流'},
+    {group:'risk', label:'纯债 DV01', value:d.dv01, unit:'元 / 基点', status:'固定现金流'},
+    ...Object.entries(d.yields).flatMap(([name, x]) => ['gross','net'].map(tax => ({group:'yield',label:`${name} · ${tax === 'gross' ? '税前' : '税后'}条件收益率`,value:x[tax] ?? null,unit:'年有效小数',status:'教学现金流'}))),
+    ...Object.entries(data.result.event_chain.current_state).map(([name, state]) => ({group:'clause',label:`当前条款 · ${name}`,value:null,unit:'无数值',status:state}))
+  ];
+  const controls = ['category','search','sort'];
+  const get = id => document.getElementById(id);
+  function parameters() {
+    return {category:get('category').value,search:get('search').value,sort:get('sort').value,
+      scenarios:[...document.querySelectorAll('[name="scenario"]:checked')].map(x=>x.value)};
+  }
+  function selectedRows(p) {
+    const filtered=rows.filter(r=>(p.category==='all'||r.group===p.category)&&r.label.toLowerCase().includes(p.search.toLowerCase()));
+    filtered.sort((a,b)=>{
+      if(p.sort==='name')return a.label.localeCompare(b.label,'zh-CN');
+      if(a.value===null || b.value===null)return a.value===null ? (b.value===null?a.label.localeCompare(b.label):1):-1;
+      // Different units are grouped, never ranked as comparable values.
+      const unit=a.unit.localeCompare(b.unit,'zh-CN');
+      return unit || (p.sort==='ascending'?a.value-b.value:b.value-a.value) || a.label.localeCompare(b.label);
+    });
+    return filtered;
+  }
+  function cells(tbody, values) {
+    const tr=document.createElement('tr');
+    for(const value of values){const td=document.createElement('td');td.textContent=String(value);tr.appendChild(td);}
+    tbody.appendChild(tr);
+  }
+  function scenarios(p) {
+    return p.scenarios.map(key=>key==='0'?{bps:0,price:d.bond_floor,approximation:d.bond_floor,approximation_error:0}: {bps:Number(key),...d.sensitivity_bps[key]});
+  }
+  function render() {
+    const p=parameters(),visible=selectedRows(p);
+    get('diagnostics').replaceChildren();
+    for(const row of visible)cells(get('diagnostics'),[row.label,row.value===null?'未知 / 无数值':row.value.toFixed(8),row.unit,row.status]);
+    get('row-count').textContent=`显示 ${visible.length} 项。未知没有变成 0；数值排序先按单位分组。`;
+    get('scenario-results').replaceChildren();
+    for(const row of scenarios(p))cells(get('scenario-results'),[`${row.bps>0?'+':''}${row.bps} bp`,row.price.toFixed(6),row.approximation.toFixed(6),row.approximation_error.toFixed(6)]);
+    get('scenario-empty').textContent=p.scenarios.length?'':'尚未选择情景。';
+  }
+  controls.forEach(id=>get(id).addEventListener('input',render));
+  document.querySelectorAll('[name="scenario"]').forEach(x=>x.addEventListener('change',render));
+  get('save-view').addEventListener('click',()=>{
+    const p=parameters();
+    const output={type:'frozen-report-selection',schema_version:1,method_version:data.result.method_version,
+      interaction_method_version:data.result.interaction_method_version,
+      engine_version:data.result.engine_version,report_schema_version:data.result.report_schema_version,
+      as_of:data.result.as_of,is_demo:true,input_sha256:data.result.input_sha256,result_sha256:data.result_sha256,
+      parameters:p,inputs:data.inputs,source_result:data.result,
+      visible_diagnostics:selectedRows(p),selected_scenarios:scenarios(p),
+      calculation_mode:'select-precomputed-core-results; no browser repricing',
+      limits:['教学全价；净价和实际应计息未提供','条件现金流收益率，不是预测','当前条款未知；无完整法律事件证据']};
+    const blob=new Blob([JSON.stringify(output,null,2)+'\n'],{type:'application/json;charset=utf-8'});
+    const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;
+    link.download=`cb-selection-${data.result.as_of}-${Date.now()}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    get('saved-note').textContent='已请求另存新 JSON 文件；原输入与结果保持冻结。浏览器负责最终下载位置。';
+  });
+  render();
+})();
+</script></html>

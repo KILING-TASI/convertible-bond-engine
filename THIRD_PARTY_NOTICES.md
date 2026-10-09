@@ -8,7 +8,7 @@
 | --- | --- |
 | cbengine/*.py、scripts/*.py、tests/*.py | 本项目独立编写的实现，按根 MIT 许可；未发现外部实现复制，检查不等于穷尽权利认证 |
 | 原创说明及教学示例 | 有权授权的原创表达、教学输入和生成的教学报告按 MIT；引用原文、第三方标记与来源材料除外 |
-| docs/preview/report.png、report.html、input.json、result.json | 自编教学数据、原创 HTML；真实浏览器渲染，无第三方行情、公告全文或账户资料；不附字体文件 |
+| docs/preview/ 与 docs/interactive-preview/ 的 report.png、report.html、input.json、result.json | 自编教学数据、原创 HTML；真实浏览器渲染，无第三方行情、公告全文或账户资料；不附字体文件 |
 | examples/terms-113042.json、notice-review-113042.json | 原创核验结构含公告事实、短摘录、来源链接、页码及哈希；原公告及摘录不整体授予 MIT，未取得原文再分发授权；仓库没有附 PDF 全文 |
 | cbengine/data/market_rules.json、docs/rule-corrections.json | 独立重写的事实整理、检查逻辑及来源链接；没有上传规则包代码或 Skill 指令。引用规则和原材料的权利不因整理改变 |
 | 东方财富、集思录、巨潮等来源 | 数据及原文适用各提供方权利与服务条款；MIT 不授予抓取、商业使用或再分发权，来源链接不是授权证明 |

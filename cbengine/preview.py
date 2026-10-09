@@ -7,9 +7,10 @@ from pathlib import Path
 from .engine import diagnose
 from .event_chain import build
 from .validation import load, digest
+from importlib.resources import files
 
 
-def generate(input_path, out_dir):
+def generate(input_path, out_dir, interactive=False):
     spec=load(input_path)
     if spec.get('is_demo') is not True:
         raise ValueError('此预览只接受明确标记is_demo=true的教学输入')
@@ -19,7 +20,7 @@ def generate(input_path, out_dir):
     chain=build({'code':spec['code']},spec['as_of'])
     try:engine_version=version('convertible-bond-engine')
     except PackageNotFoundError:engine_version='0.11.0'
-    bundle={'type':'teaching-preview','engine_version':engine_version,'preview_status':'main-branch-demo; not included in v0.11.0 tag',
+    bundle={'report_schema_version':1,'method_version':'dated-cashflow-1+zero-parallel-1+evidence-clause-1', 'interaction_method_version':'frozen-selection-1' if interactive else None,'type':'teaching-preview','engine_version':engine_version,'preview_status':'main-branch-demo; not included in v0.11.0 tag',
             'is_demo':True,'as_of':spec['as_of'],'input_sha256':digest(spec),'diagnosis':result,'event_chain':chain}
     e=html.escape
     rows=''.join(f"<tr><td>{e(c['date'])}</td><td>{c['years']:.6f}</td><td>{c['gross']:.2f}</td><td>{c['pv']:.6f}</td></tr>" for c in result['cashflows'])
@@ -41,6 +42,21 @@ def generate(input_path, out_dir):
 <section><h2>价格与风险的计算范围</h2><p>年有效零息率节点 {e(curve_rates)}，逐实际支付日计算，跨闰年使用 ACT/365F。曲线平移修正久期 <b>{result['modified_duration_parallel']:.6f}</b>；纯债 DV01 <b>{result['dv01']:.6f}</b> 元 / 基点。未计算含权价或 OAS。</p><p class="note">本预览不执行外部库对照。已有 QuantLib 验证覆盖固定现金流、平坦曲线、现金流日期与非平坦节点重合处及同日支付边界；不验证跨节点插值或实际应计息。</p></section>
 <section><h2>观察结果不能替代正式权利</h2><p>教学 L1 强赎观察计数 {e(call_count)}，只描述输入序列。独立事件链没有公告原文或完整调价历史，当前权利状态仍未知；不能据此推断发行人已执行或不会执行。</p><p class="note">缺失状态随结果保留：目录未审计、原始条款未提供、后续法律事件未覆盖。不补正式结论。</p></section>
 <p class="footer">可追溯文件：<a href="input.json">教学输入</a> · <a href="result.json">完整结果与事件链</a>。仅供学习与研究，不构成投资建议；本预览没有使用第三方真实数据。</p></main></html>"""
+    if interactive:
+        payload=json.dumps({'inputs':spec,'result':bundle,'result_sha256':digest(bundle)},ensure_ascii=False,allow_nan=False).replace('<', '\\u003c').replace('&', '\\u0026')
+        script=files('cbengine').joinpath('data/preview.js').read_text(encoding='utf-8')
+        ui="""<section><h2>筛选已算诊断</h2><p class="note">筛选仅改变可见行，不改变计算或权利状态。净价及实际应计息未提供，输入仍为教学全价。</p>
+<label>类别 <select id="category"><option value="all">全部</option><option value="price">价格</option><option value="yield">条件收益率</option><option value="risk">纯债风险</option><option value="clause">当前条款（未知）</option></select></label>
+<label>查找 <input id="search" type="search" placeholder="诊断名称"></label><label>排序 <select id="sort"><option value="name">名称</option><option value="ascending">同单位数值升序</option><option value="descending">同单位数值降序</option></select></label>
+<p id="row-count" class="note"></p><div style="overflow-x:auto"><table><thead><tr><th>诊断</th><th>已算值</th><th>单位</th><th>状态</th></tr></thead><tbody id="diagnostics"></tbody></table></div></section>
+<section><h2>比较已有风险情景</h2><p class="note">全部数值来自 Python 核心冻结结果；选择静态情景不会重新定价。冲击只针对零息曲线平移，不是行情价格或收益率预测。</p>
+<label><input name="scenario" type="checkbox" value="0" checked>基准</label>
+<label><input name="scenario" type="checkbox" value="-200">−200 bp</label><label><input name="scenario" type="checkbox" value="-100">−100 bp</label>
+<label><input name="scenario" type="checkbox" value="100" checked>＋100 bp</label><label><input name="scenario" type="checkbox" value="200">＋200 bp</label>
+<div style="overflow-x:auto"><table><thead><tr><th>曲线冲击</th><th>核心精确重估现值</th><th>久期 / 凸性近似</th><th>近似误差</th></tr></thead><tbody id="scenario-results"></tbody></table></div><p id="scenario-empty" class="note"></p>
+<button id="save-view" type="button">另存选择、输入与方法版本（JSON）</button><p id="saved-note" class="note">另存新文件，不写回历史结果；保留全部原结果、来源、输入摘要和未知状态。</p>
+<noscript>交互需要 JavaScript；上方冻结诊断和输入链接仍可阅读。</noscript></section>"""
+        page=page.replace('<p class="footer">',ui+'<p class="footer">').replace('</main></html>',f'</main><script id="frozen-report" type="application/json">{payload}</script><script>{script}</script></html>')
     out_dir.mkdir(parents=True,exist_ok=False)
     (out_dir/'input.json').write_text(json.dumps(spec,ensure_ascii=False,indent=2,allow_nan=False)+'\n',encoding='utf-8')
     (out_dir/'result.json').write_text(json.dumps(bundle,ensure_ascii=False,indent=2,allow_nan=False)+'\n',encoding='utf-8')
@@ -50,9 +66,10 @@ def generate(input_path, out_dir):
 
 def main():
     parser=argparse.ArgumentParser(description='教学结果预览；新目录输出，不覆盖')
+    parser.add_argument('--interactive',action='store_true',help='筛选和比较已计算结果，不在浏览器重新定价');
     parser.add_argument('input',type=Path);parser.add_argument('--out-dir',type=Path,required=True)
     args=parser.parse_args()
-    try:generate(args.input,args.out_dir)
+    try:generate(args.input,args.out_dir,args.interactive)
     except (ValueError,KeyError,TypeError,OSError) as exc:parser.exit(2,str(exc)+'\n')
 
 if __name__=='__main__':main()

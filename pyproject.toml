@@ -22,7 +22,7 @@ cb-engine = "cbengine.cli:main"
 include = ["cbengine*"]
 
 [tool.setuptools.package-data]
-cbengine = ["data/*.json"]
+cbengine = ["data/*.json", "data/*.js"]
 
 [tool.setuptools.data-files]
 "share/convertible-bond-engine" = ["README.md", "DISCLAIMER.md", "ROADMAP.md", "CHANGELOG.md", "LICENSE", "THIRD_PARTY_NOTICES.md"]
@@ -32,3 +32,4 @@ cbengine = ["data/*.json"]
 "share/convertible-bond-engine/cbengine/data" = ["cbengine/data/market_rules.json"]
 "share/convertible-bond-engine/docs/preview" = ["docs/preview/*.json", "docs/preview/*.html", "docs/preview/*.png"]
 "share/convertible-bond-engine/licenses" = ["licenses/*.txt", "licenses/sources.json"]
+"share/convertible-bond-engine/docs/interactive-preview" = ["docs/interactive-preview/*.json", "docs/interactive-preview/*.html", "docs/interactive-preview/*.png"]
