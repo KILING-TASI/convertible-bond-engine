@@ -34,7 +34,12 @@ def build(snapshot,as_of):
         if a['price']!=b['old_price']: gaps.append('相邻调价候选不能衔接，可能缺公告或存在更正。')
     gaps += ['公告目录和指定字段匹配不能证明所有后续变更、承诺与计数重置已覆盖。',
              '当前权利状态仍未知；未发现公告不代表不强赎、不下修或无回售风险。']
-    return {'as_of':cutoff,'status':'partial','original_terms':{
+    audit=snapshot.get('directory_coverage')
+    return {'as_of':cutoff,'status':'partial','directory_coverage':{
+                'status':audit['status'],'query_start':audit['request']['start'],'query_end':audit['request']['end'],
+                'pages_observed':len(audit['pages']),'returned_records':audit['returned_records'],
+                'legal_event_coverage':'unknown'} if audit else {'status':'not-audited','legal_event_coverage':'unknown'},
+            'original_terms':{
                 'available':bool(original),'scope':original.get('scope') if original else None,
                 'source_url':original.get('document_url') if original else None,
                 'matched_fields':[f['field'] for f in original.get('pdf_verification',{}).get('fields',[])] if original else []},

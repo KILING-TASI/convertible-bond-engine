@@ -92,6 +92,9 @@ def enrich(snapshot,spec):
             if halted:
                 s.update(count=None,conditional_observed_result=None,trigger_condition_met=None,status='unknown',
                          evidence_status='halt-count-policy-unverified')
+            if s['status']!='unknown':
+                s.setdefault('conditional_observed_result',s['trigger_condition_met'])
+                s.update(trigger_condition_met=None,status='unknown',evidence_status='declared-coverage-not-certified')
             states[name]=s
         findings['clauses']={'states':states,'observations':merged,
                              'calendar_status':'matched-to-supplied-calendar','source':spec['observation_source'],

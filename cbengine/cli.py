@@ -14,6 +14,7 @@ from .archive import append
 from .rules import evaluate
 from .analysis import enrich
 from .event_chain import build as build_event_chain
+from .coverage import attach as attach_coverage
 
 
 def main():
@@ -34,6 +35,7 @@ def main():
     parser.add_argument('--max-lag-days',type=int,default=3,help='历史行情最大日历天滞后，默认3')
     parser.add_argument('--rule-context',type=Path,help='明确市场、板块、阶段与权限的规则检查JSON')
     parser.add_argument('--analysis-input',type=Path,help='独立收益率/正股条款计数底稿JSON')
+    parser.add_argument('--directory-audit',type=Path,help='附加原始分页响应与查询区间证据JSON')
     parser.add_argument("--out", type=Path)
     parser.add_argument('--mode', choices=['diagnose','screen','portfolio'], default='diagnose')
     parser.add_argument('--max-price', type=float)
@@ -88,6 +90,7 @@ def main():
                     entry=next(n for n in data['announcements']['entries'] if n['source_url']==reviews[0]['announcement_url'])
                     entry['pdf_verification']=verification
         if market:
+            if args.directory_audit: data=attach_coverage(data,load(args.directory_audit))
             if args.analysis_input: data=enrich(data,load(args.analysis_input))
             data=dict(data,data_quality=assess(data,args.quality_as_of,args.max_lag_days))
             data['event_chain']=build_event_chain(data,data['data_quality']['as_of'])
@@ -97,7 +100,7 @@ def main():
                     raise ValueError('规则上下文代码/截止日须与当前诊断一致')
                 data['rule_checks']=evaluate(context)
             if args.store: data['archive_receipt']=append(args.store,data,documents)
-        elif args.store or args.quality_as_of or args.analysis_input or args.max_lag_days!=3:
+        elif args.store or args.quality_as_of or args.analysis_input or args.directory_audit or args.max_lag_days!=3:
             raise ValueError('归档和质量检查参数只支持市场快照')
         if market and args.mode != 'diagnose': raise ValueError('市场资料不具备现金流及条款证据，不能用于筛选或组合定价')
         if market: result=data

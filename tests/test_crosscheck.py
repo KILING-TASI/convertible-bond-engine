@@ -39,6 +39,24 @@ class CrosscheckTests(unittest.TestCase):
         d=load(Path(__file__).parents[1]/'examples/demo.json')
         with self.assertRaises(ValueError): diagnose(dict(d,discount_curve_kind='yield_to_maturity'))
         with self.assertRaises(ValueError): diagnose(dict(d,discount_compounding='continuous'))
+
+    def test_payment_date_inclusion_is_explicit(self):
+        s=copy.deepcopy(self.spec);s['cashflows'].insert(0,{'date':s['as_of'],'gross_payment':2})
+        s['include_settlement_date_flows']=False;a=compare(s)['engine']
+        s['include_settlement_date_flows']=True;b=compare(s)['engine']
+        self.assertAlmostEqual(b['dirty_price']-a['dirty_price'],2)
+        self.assertAlmostEqual(a['dv01'],b['dv01'])
+
+    def test_nonflat_missing_cashflow_node_rejected(self):
+        s=load(Path(__file__).parents[1]/'examples/crosscheck-nonflat.json');s['curve_nodes'].pop()
+        with self.assertRaises(ValueError): compare(s)
+
+    @unittest.skipUnless(importlib.util.find_spec('QuantLib'),'optional external comparison')
+    def test_nonflat_parallel_risk_and_payment_boundary_match(self):
+        for name in ('crosscheck-nonflat.json','crosscheck-payment-boundary.json'):
+            r=compare(load(Path(__file__).parents[1]/'examples'/name),True)
+            self.assertEqual(r['external']['status'],'matched')
+            self.assertEqual(r['external']['risk_basis'],'annual-zero-curve-parallel-shift')
         s=copy.deepcopy(self.spec);s['cashflows'][0]['date']=s['as_of']
         with self.assertRaises(ValueError):compare(s)
 

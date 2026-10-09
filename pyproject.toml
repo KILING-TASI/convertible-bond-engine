@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "convertible-bond-engine"
-version = "0.10.0"
+version = "0.11.0"
 description = "Auditable A-share convertible bond cashflows and clause diagnostics"
 requires-python = ">=3.10"
 license = {text = "MIT"}

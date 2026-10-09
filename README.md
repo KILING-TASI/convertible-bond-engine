@@ -212,3 +212,7 @@ v0.6证据和质量流程参考[research-workbench](https://github.com/KILING-TA
 ## 免责声明
 
 本项目仅供学习与研究，不构成投资建议或交易指令，不保证收益或结果准确性。请在使用前阅读[免责声明与使用边界](DISCLAIMER.md)，并结合本次数据来源、假设与缺口独立判断。代码许可不包含第三方数据使用授权。
+
+### v0.11 证据与对照
+
+见[公告覆盖](docs/DIRECTORY_COVERAGE.md)、[外部对照](docs/EXTERNAL_CROSSCHECK.md)、[接入契约草案](docs/INTEGRATION_CONTRACT.md)。目录分页一致仍不认证全部条款事件。

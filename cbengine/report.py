@@ -123,6 +123,8 @@ def render(snapshot, format='markdown'):
                     '正式状态未知' if s['status']=='unknown' else '基于所提供历史和日历')))
     if snapshot.get('event_chain'):
         lines.append(('当前有效条款事件链','部分证据；当前权利状态未知'))
+    if snapshot.get('directory_coverage'):
+        c=snapshot['directory_coverage'];lines.append(('公告目录分页证据',f'{len(c["pages"])}页/{c["returned_records"]}条；法律事件覆盖仍未知'))
     gaps = snapshot.get('gaps',[]) + snapshot.get('errors',[])
     if snapshot.get('event_chain'): gaps.extend(snapshot['event_chain']['gaps'])
     if analysis.get('yield'):
