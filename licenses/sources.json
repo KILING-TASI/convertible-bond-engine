@@ -1,0 +1,37 @@
+{
+  "checked_on": "2026-10-09",
+  "licenses": [
+    {
+      "component": "AKShare",
+      "repository": "akfamily/akshare",
+      "commit": "fac1e50ebf9b907960d6aab4c3df658559689f39",
+      "source": "https://github.com/akfamily/akshare/blob/fac1e50ebf9b907960d6aab4c3df658559689f39/LICENSE",
+      "sha256": "d1c84fbaccd5fdbc75cd12ab9a05f4f791d89ee266569bc976c8b0befafc2d65",
+      "scope": "upstream license text only; no component implementation or binary vendored"
+    },
+    {
+      "component": "pypdf",
+      "repository": "py-pdf/pypdf",
+      "commit": "0309ab701a192fbd3228701a44dd009765a1629b",
+      "source": "https://github.com/py-pdf/pypdf/blob/0309ab701a192fbd3228701a44dd009765a1629b/LICENSE",
+      "sha256": "a97ac230e5f33ef10a5367a850eb01f91f1a0b064e34742c7794d2294557f524",
+      "scope": "upstream license text only; no component implementation or binary vendored"
+    },
+    {
+      "component": "requests",
+      "repository": "psf/requests",
+      "commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+      "source": "https://github.com/psf/requests/blob/611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60/LICENSE",
+      "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b",
+      "scope": "upstream license text only; no component implementation or binary vendored"
+    },
+    {
+      "component": "QuantLib",
+      "repository": "lballabio/QuantLib",
+      "commit": "966a4cc101049ca36a888b2ce223aa96d3f3b22d",
+      "source": "https://github.com/lballabio/QuantLib/blob/966a4cc101049ca36a888b2ce223aa96d3f3b22d/LICENSE.TXT",
+      "sha256": "a0f9ffa00d1f9d1388fd2e3390729667f78b41f1a4d4b13df441c9d16103eba9",
+      "scope": "upstream license text only; no component implementation or binary vendored"
+    }
+  ]
+}

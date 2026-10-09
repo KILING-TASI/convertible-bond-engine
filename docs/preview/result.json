@@ -1,0 +1,196 @@
+{
+  "type": "teaching-preview",
+  "engine_version": "0.11.0",
+  "preview_status": "main-branch-demo; not included in v0.11.0 tag",
+  "is_demo": true,
+  "as_of": "2026-10-09",
+  "input_sha256": "44f3c176a421252e88e5203793c3eba1681b5330a452fa1b9cdce14011a89eb7",
+  "diagnosis": {
+    "code": "DEMO",
+    "as_of": "2026-10-09",
+    "model_level": "L1",
+    "conventions": "每100元面值；输入全价；ACT/365F；年复利；利率为小数",
+    "cashflow_source": "教学现金流：到期110不含末期息",
+    "curve_source": "教学平坦曲线4.5%，非市场报价",
+    "dirty_price": 118.5,
+    "bond_floor": 95.10939701857427,
+    "conversion_value": 105.2,
+    "bond_premium": 0.24593366917106718,
+    "conversion_premium": 0.12642585551330798,
+    "distance_to_floor": 0.19738905469557577,
+    "duration": 3.9748366892418665,
+    "modified_duration_parallel": 3.8036714729587247,
+    "convexity_parallel": 18.158070406714657,
+    "dv01": 0.03617649002498565,
+    "sensitivity_bps": {
+      "-200": {
+        "price": 102.70375798569991,
+        "approximation": 102.69009564905208,
+        "approximation_error": -0.013662336647826123
+      },
+      "-100": {
+        "price": 98.8150750294021,
+        "approximation": 98.813396177443,
+        "approximation_error": -0.0016788519590988926
+      },
+      "100": {
+        "price": 91.57647458822342,
+        "approximation": 91.57809817244588,
+        "approximation_error": 0.0016235842224574526
+      },
+      "200": {
+        "price": 88.20672216928318,
+        "approximation": 88.21949963905783,
+        "approximation_error": 0.012777469774647443
+      }
+    },
+    "cashflows": [
+      {
+        "date": "2027-10-09",
+        "years": 1.0,
+        "gross": 0.3,
+        "net": 0.24,
+        "spot": 0.045,
+        "pv": 0.28708133971291866
+      },
+      {
+        "date": "2028-10-09",
+        "years": 2.0027397260273974,
+        "gross": 0.5,
+        "net": 0.4,
+        "spot": 0.045,
+        "pv": 0.4578097630844385
+      },
+      {
+        "date": "2029-10-09",
+        "years": 3.0027397260273974,
+        "gross": 1.0,
+        "net": 0.8,
+        "spot": 0.045,
+        "pv": 0.8761909341328967
+      },
+      {
+        "date": "2030-10-09",
+        "years": 4.002739726027397,
+        "gross": 111.5,
+        "net": 111.2,
+        "spot": 0.045,
+        "pv": 93.48831498164401
+      }
+    ],
+    "yields": {
+      "maturity": {
+        "gross": -0.011218746052657966,
+        "net": -0.012654334701858191
+      }
+    },
+    "minimum_provided_yield": {
+      "gross": -0.011218746052657966,
+      "net": -0.012654334701858191
+    },
+    "clauses": {
+      "call": {
+        "count": 14,
+        "required": 15,
+        "window": 30,
+        "observations": 30,
+        "trigger_condition_met": false,
+        "status": "condition_not_met",
+        "active": true,
+        "latest_observation": "2026-10-09",
+        "history_current": true,
+        "history_complete": true,
+        "comparison": ">=",
+        "comparison_basis": "explicit",
+        "days_to_fill_window": 0,
+        "oldest_observation": "2026-09-10",
+        "next_observation_expels_oldest": true,
+        "source": "教学条款，非真实募集说明书",
+        "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"
+      },
+      "put": {
+        "count": 0,
+        "required": 30,
+        "window": 30,
+        "observations": 0,
+        "trigger_condition_met": false,
+        "status": "inactive",
+        "active": false,
+        "latest_observation": null,
+        "history_current": false,
+        "history_complete": false,
+        "comparison": "<",
+        "comparison_basis": "explicit",
+        "days_to_fill_window": 30,
+        "oldest_observation": null,
+        "next_observation_expels_oldest": false,
+        "source": "教学条款，非真实募集说明书",
+        "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"
+      },
+      "reset": {
+        "count": 0,
+        "required": 15,
+        "window": 30,
+        "observations": 30,
+        "trigger_condition_met": false,
+        "status": "condition_not_met",
+        "active": true,
+        "latest_observation": "2026-10-09",
+        "history_current": true,
+        "history_complete": true,
+        "comparison": "<",
+        "comparison_basis": "explicit",
+        "days_to_fill_window": 0,
+        "oldest_observation": "2026-09-10",
+        "next_observation_expels_oldest": true,
+        "source": "教学条款，非真实募集说明书",
+        "note": "滚动窗口满后每日移出最旧记录；满足条件不代表发行人已行使权利。"
+      }
+    },
+    "no_call_until": null,
+    "no_call_source": null,
+    "reset_floor": {
+      "minimum_conversion_price": 9.5,
+      "parity_if_reset_to_floor": 221.47368421052633,
+      "reduction_possible": true,
+      "source": "教学假设，适用下限需逐只核对"
+    },
+    "warnings": [
+      "教学数据",
+      "债底不是保证兑付价；本版未建模违约、流动性和转股期权。",
+      "条款计数依赖输入交易日记录完整性，本版不核验交易所日历。",
+      "旧曲线输入未显式声明类型/复利，暂按零息率及年有效复利解释，须核对来源。",
+      "退出场景不全，YTW仅为已提供场景最小值，不是完整最差收益率。",
+      "条款窗口历史不足，未达门槛不能据此认定未触发。"
+    ]
+  },
+  "event_chain": {
+    "as_of": "2026-10-09",
+    "status": "partial",
+    "directory_coverage": {
+      "status": "not-audited",
+      "legal_event_coverage": "unknown"
+    },
+    "original_terms": {
+      "available": false,
+      "scope": null,
+      "source_url": null,
+      "matched_fields": []
+    },
+    "events": [],
+    "conversion_history_candidates": [],
+    "excluded_events": [],
+    "current_state": {
+      "conversion_price": "unknown",
+      "call": "unknown",
+      "no_call": "unknown",
+      "reset": "unknown",
+      "put": "unknown"
+    },
+    "gaps": [
+      "公告目录和指定字段匹配不能证明所有后续变更、承诺与计数重置已覆盖。",
+      "当前权利状态仍未知；未发现公告不代表不强赎、不下修或无回售风险。"
+    ],
+    "note": "保留原始条款与当前状态的区别；只提供证据链，不自动改写价格历史或激活权利。"
+  }
+}

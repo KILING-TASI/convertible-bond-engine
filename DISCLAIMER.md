@@ -16,6 +16,8 @@
 
 代码许可证仅说明代码与说明的使用条件，不授予第三方行情、公告、研报、商标或其他资料的使用权；免责声明也不替代仓库现有许可证。相关权利和责任以适用法律、有效约定及许可证为准，本声明不试图排除依法不能排除的责任。
 
+第三方组件、引用材料和数据的具体范围见[许可范围与第三方清单](THIRD_PARTY_NOTICES.md)。原创代码的 MIT 许可不改变第三方原许可或资料权利。
+
 ## English summary
 
 This project is for education and research only, not investment advice or a trading instruction. Data, calculations and models may be incomplete or incorrect; historical or simulated results do not guarantee future performance. Review the stated scope and limitations, independently verify material inputs, and respect applicable rules and third-party data rights.

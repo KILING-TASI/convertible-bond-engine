@@ -1,4 +1,6 @@
 include README.md DISCLAIMER.md ROADMAP.md CHANGELOG.md LICENSE
-recursive-include docs *.md *.json
+recursive-include docs *.md *.json *.html *.png
 recursive-include examples *.json
 recursive-include scripts *.py
+include THIRD_PARTY_NOTICES.md
+recursive-include licenses *.txt *.json

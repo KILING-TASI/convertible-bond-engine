@@ -2,30 +2,26 @@
 
 独立实现的 A 股可转债研究工具，用于可审计现金流、收益率、条款观察与证据诊断。
 
-## 当前版本
+## 结果预览与最短演示
 
-已发布 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)，源码要求 Python 3.10+。当前主分支另含说明整理与打包元信息维护，版本号仍为 0.11.0。原设计中的含权定价与博弈模型尚未实现。
+![教学结果：全价118.50元、纯债现值95.1094元、到期条件收益率-1.1219%、当前条款未知](docs/preview/report.png)
 
-## 快速使用
+截图来自[实际生成的 HTML 报告](docs/preview/report.html)，对应[教学输入](docs/preview/input.json)和[完整结果](docs/preview/result.json)。估值日为 2026-10-09，金额按每 100 元面值；纯债现值取决于假设曲线，条件收益率不是预测，条款缺证据保持未知。未使用第三方真实行情。
 
-在仓库根目录运行；计算核心无第三方运行依赖。
+Python 3.10+，在仓库根目录运行；离线演示没有第三方运行依赖：
 
 ```sh
 python -m pip install .
-cb-engine examples/demo.json --out local-data/result.json
-cb-engine examples/market-demo.json --format html --out local-data/demo-card.html
+python -m cbengine.preview examples/demo.json --out-dir local-data/preview-first-run
 ```
 
-以上均为离线教学输入，不是真实行情。也可用 `python -m cbengine.cli` 替代 `cb-engine`。完整诊断输出 JSON；市场快照支持 Markdown 和中文 HTML 资料卡。
+打开 `local-data/preview-first-run/report.html`，同时生成 `input.json` 和 `result.json`。输出目录已存在会拒绝运行，请换一个新目录；不会覆盖旧结果。应看到全价 **118.50 元**、纯债现值 **95.1094 元**、税前到期条件年化收益率 **-1.1219%** 和当前条款 **未知**。见[生成与截图说明](docs/RESULT_PREVIEW.md)。
 
-显式联网查询需可选依赖，接口可用性与证券存续状态须自行核对：
+## 当前版本与其他入口
 
-```sh
-python -m pip install ".[market]"
-cb-engine --code 113042 --out local-data/snapshot.json
-```
+已发布 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)。上述教学预览入口是主分支新增演示，尚未进入该发布标签；版本号仍为 0.11.0。原设计中的含权定价与博弈模型尚未实现。
 
-113042 是历史验收代码，不代表当前仍存续。网络失败会记录来源与缺口，不以缺失数据推断安全。更多操作见[使用与验收详解](docs/USAGE_AND_EVIDENCE.md)。
+已有 `cb-engine examples/demo.json --out local-data/result.json` 输出完整 L1 JSON；市场快照支持 Markdown 和中文 HTML 资料卡。显式联网查询需 `python -m pip install ".[market]"`，再运行 `cb-engine --code 113042 --out local-data/snapshot.json`。113042 为历史验收代码，不代表当前仍存续；接口失败保留来源和缺口。更多操作见[使用与验收详解](docs/USAGE_AND_EVIDENCE.md)。
 
 ## 已实现与边界
 
@@ -86,7 +82,7 @@ QuantLib 实际验证平坦曲线、非平坦零息节点及同日支付边界�
 
 ## 许可与第三方数据
 
-本仓库沿用 [MIT 许可](LICENSE)。第三方组件分别遵循各自许可，行情、公告和 PDF 的使用权由提供方决定；代码许可不授予第三方数据使用权。仓库不分发用户原设计或真实 PDF，本地归档分享前须核对资料权限。
+本仓库原创代码及有权授权的原创说明沿用 [MIT 许可](LICENSE)。[许可范围与第三方清单](THIRD_PARTY_NOTICES.md)单列外部依赖、公告短摘录、规则事实与数据来源；它们未被整体重新授权。第三方组件分别遵循各自许可，行情、公告和 PDF 的使用权由提供方决定；代码许可不授予第三方数据使用权。仓库不分发用户原设计或真实 PDF，本地归档分享前须核对资料权限。
 
 ## 免责声明
 
