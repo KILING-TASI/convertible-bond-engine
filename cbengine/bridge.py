@@ -78,7 +78,7 @@ def calculate(spec):
     for cf,row,net in zip(cfs,core['cashflows'],nets):
         rows.append(dict(row,net=net,coupon_tax=cf['coupon_tax'],redemption_tax=cf['redemption_tax'],source=cf['source']))
     try:engine_version=version('convertible-bond-engine')
-    except PackageNotFoundError:engine_version='0.12.0'
+    except PackageNotFoundError:engine_version='0.12.1'
     return {'type':'fixed-cashflow-bridge','schema_version':SCHEMA,'method_version':'fixed-cashflow-bridge-1.0',
       'engine_version':engine_version,'input_sha256':digest(spec),'as_of':as_of,'currency':'CNY','face_value':100,
       'is_demo':spec.get('is_demo',False),'dirty_price':dirty,'clean_price':clean,'accrued_interest':accrued,

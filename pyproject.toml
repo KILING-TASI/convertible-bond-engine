@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "convertible-bond-engine"
-version = "0.12.0"
+version = "0.12.1"
 description = "Auditable A-share convertible bond cashflows and clause diagnostics"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -16,6 +16,7 @@ market = ["akshare>=1.17,<2"]
 evidence = ["pypdf>=5,<7"]
 
 [project.scripts]
+convertible-bond-engine = "cbengine._entry:main"
 cb-engine = "cbengine.cli:main"
 
 [tool.setuptools.packages.find]
