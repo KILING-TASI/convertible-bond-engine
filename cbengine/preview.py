@@ -2,6 +2,7 @@
 import argparse
 import html
 import json
+import sys
 from importlib.metadata import version, PackageNotFoundError
 from pathlib import Path
 from .engine import diagnose
@@ -19,7 +20,7 @@ def generate(input_path, out_dir, interactive=False):
     result=diagnose(spec)
     chain=build({'code':spec['code']},spec['as_of'])
     try:engine_version=version('convertible-bond-engine')
-    except PackageNotFoundError:engine_version='0.11.0'
+    except PackageNotFoundError:engine_version='0.12.0'
     bundle={'report_schema_version':1,'method_version':'dated-cashflow-1+zero-parallel-1+evidence-clause-1', 'interaction_method_version':'frozen-selection-1' if interactive else None,'type':'teaching-preview','engine_version':engine_version,'preview_status':'main-branch-demo; not included in v0.11.0 tag',
             'is_demo':True,'as_of':spec['as_of'],'input_sha256':digest(spec),'diagnosis':result,'event_chain':chain}
     e=html.escape
@@ -69,7 +70,22 @@ def main():
     parser.add_argument('--interactive',action='store_true',help='筛选和比较已计算结果，不在浏览器重新定价');
     parser.add_argument('input',type=Path);parser.add_argument('--out-dir',type=Path,required=True)
     args=parser.parse_args()
-    try:generate(args.input,args.out_dir,args.interactive)
-    except (ValueError,KeyError,TypeError,OSError) as exc:parser.exit(2,str(exc)+'\n')
+    output_existed=args.out_dir.exists()
+    try:
+        generate(args.input,args.out_dir,args.interactive)
+    except (ValueError,KeyError,TypeError,OSError) as exc:
+        if output_existed or isinstance(exc,FileExistsError):
+            hint='输出目录已存在；请换一个新目录，例如 local-data/preview-second-run。不会覆盖旧文件。'
+        elif isinstance(exc,OSError):
+            hint='输入读取或结果写入失败；请核对输入路径、目录权限及可用空间，再用新目录重试。'
+        elif isinstance(exc,KeyError):
+            key=exc.args[0] if exc.args else None
+            allowed={'code','as_of','cashflows','date','coupon','redemption','redemption_tax','dirty_price','stock_price','conversion_price','coupon_tax_rate','discount_curve','clauses'}
+            hint=('缺少字段 '+key+'；' if isinstance(key,str) and key in allowed else '输入字段不完整；')+'请参照 examples/demo.json 核对教学标识、现金流、日期及曲线。'
+        else:
+            hint='输入无效；请参照 examples/demo.json 核对 JSON 格式、is_demo=true、未来现金流日期、金额和曲线节点。'
+        parser.exit(2,hint+'\n')
+    print('已生成教学预览（非真实行情）。结果目录：'+str(args.out_dir.resolve()),file=sys.stderr)
+    print('请打开：'+str((args.out_dir/'report.html').resolve())+'；输入与完整结果另存为 input.json / result.json。',file=sys.stderr)
 
 if __name__=='__main__':main()

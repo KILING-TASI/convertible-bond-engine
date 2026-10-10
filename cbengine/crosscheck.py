@@ -67,7 +67,7 @@ def compare(spec,quantlib=False):
     external={'status':'not-run','reason':'未请求可选QuantLib对照；不构成外部验证通过。'}
     if quantlib:
         try: import QuantLib as ql
-        except ImportError: raise ValueError('QuantLib未安装；只在独立验证环境按需安装，不是运行依赖') from None
+        except ImportError: raise ValueError('QuantLib未安装；如需外部验证，请在独立验证环境运行 python -m pip install QuantLib==1.43 后重试。离线核心无需此依赖；也可去掉 --quantlib。') from None
         def qdate(text):
             y,m,d=map(int,text.split('-'));return ql.Date(d,m,y)
         ref=qdate(as_of); dc=ql.Actual365Fixed()
