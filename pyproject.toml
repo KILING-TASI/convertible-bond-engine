@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "convertible-bond-engine"
-version = "0.12.5"
+version = "0.12.6"
 description = "Auditable A-share convertible bond cashflows and clause diagnostics"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -26,7 +26,7 @@ include = ["cbengine*"]
 cbengine = ["data/*.json", "data/*.js"]
 
 [tool.setuptools.data-files]
-"share/convertible-bond-engine" = ["AUDIT_SCOPE.md", "REPORT_GUIDE.md", "BEGINNER.md", "SKILL.md", "README.md", "DISCLAIMER.md", "ROADMAP.md", "CHANGELOG.md", "LICENSE", "THIRD_PARTY_NOTICES.md"]
+"share/convertible-bond-engine" = ["README.en.md", "CHANGELOG.md", "AUDIT_SCOPE.md", "REPORT_GUIDE.md", "BEGINNER.md", "SKILL.md", "README.md", "DISCLAIMER.md", "ROADMAP.md", "CHANGELOG.md", "LICENSE", "THIRD_PARTY_NOTICES.md"]
 "share/convertible-bond-engine/docs" = ["docs/*.md", "docs/rule-corrections.json", "docs/DATA_ENTRY_CATALOG.json", "docs/DATA_REUSE_CHECK.json", "docs/source-envelope-proposal.json", "docs/STANDALONE_ACCEPTANCE.json", "docs/STANDALONE_CI_ACCEPTANCE.json", "docs/SCENARIO_ACCEPTANCE.json", "docs/CN_SCENARIO_SOURCES.json", "docs/CN_SCENARIO_ACCEPTANCE.json"]
 "share/convertible-bond-engine/examples" = ["examples/*.json", "examples/README.md"]
 "share/convertible-bond-engine/scripts" = ["scripts/compare_workbench.py", "scripts/compare_bridge_workbench.py", "scripts/verify_standalone.py"]

@@ -22,7 +22,7 @@ def generate(input_path, out_dir, interactive=False):
     result=diagnose(spec)
     chain=build({'code':spec['code']},spec['as_of'])
     try:engine_version=version('convertible-bond-engine')
-    except PackageNotFoundError:engine_version='0.12.5'
+    except PackageNotFoundError:engine_version='0.12.6'
     bundle={'report_schema_version':1,'method_version':'dated-cashflow-1+zero-parallel-1+evidence-clause-1', 'interaction_method_version':'frozen-selection-1' if interactive else None,'type':'teaching-preview','engine_version':engine_version,'preview_status':'main-branch-demo; not included in v0.11.0 tag',
             'is_demo':True,'as_of':spec['as_of'],'input_sha256':digest(spec),'diagnosis':result,'event_chain':chain}
     e=html.escape
