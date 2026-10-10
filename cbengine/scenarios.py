@@ -101,7 +101,69 @@ def run(examples,out):
     (out/'index.html').write_text('<!doctype html><meta charset="utf-8"><title>教学情景验收</title><h1>教学情景验收 · 非真实覆盖</h1><p>静态已跑CLI结果，不重新定价；未知保持未知。</p><table>'+rows+'</table><p><a href="condition-met-rights-unknown/report.html">条款缺证据实际资料卡</a></p><p><a href="summary.json">方法版本和未覆盖范围</a></p>',encoding='utf-8')
     return summary
 
+
+def run_cn(examples,out):
+    if out.exists():raise ValueError('scenario output directory exists; choose a new directory')
+    base=load(examples/'bridge-fixed-demo.json');snapshot=load(examples/'analysis-market-demo.json')
+    out.mkdir(parents=True,exist_ok=False);cases=[]
+    try:software_version=version('convertible-bond-engine')
+    except PackageNotFoundError:software_version='0.11.0'
+    def call(name,spec,module,expected,check=None,error=None,analysis=None):
+        folder=out/name;folder.mkdir();input_file=folder/'input.json'
+        input_file.write_text(json.dumps(spec,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+        args=[sys.executable,'-m',module,str(input_file)]
+        actual_file=folder/'native/result.json' if module=='cbengine.bridge' else folder/'actual.json'
+        args+=['--out-dir',str(folder/'native')] if module=='cbengine.bridge' else ['--out',str(actual_file)]
+        if analysis is not None:
+            f=folder/'analysis.json';f.write_text(json.dumps(analysis,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+            args+=['--analysis-input',str(f),'--quality-as-of','2026-06-08']
+        r=subprocess.run(args,capture_output=True,text=True,encoding='utf-8',env=dict(os.environ,PYTHONIOENCODING='utf-8'),timeout=30)
+        assert r.returncode==(2 if error else 0),(name,r.stderr)
+        actual=load(actual_file) if actual_file.exists() else None
+        if error:assert error in r.stderr and actual is None,(name,r.stderr)
+        else:check(actual)
+        receipt={'case':name,'is_demo':True,'input_file':'input.json','analysis_file':'analysis.json' if analysis else None,
+            'input_sha256':digest(spec),'analysis_sha256':digest(analysis) if analysis else None,
+            'expected':expected,'actual':actual,'returncode':r.returncode,'error':r.stderr or None,'status':'passed',
+            'software_version':software_version,'method_version':'cn-scenario-acceptance-1','scope':'selected official facts plus synthetic prices/calendar; no live coverage'}
+        (folder/'receipt.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+        cases.append(receipt)
+        if actual and module=='cbengine.cli':
+            render=subprocess.run([sys.executable,'-m','cbengine.cli',str(actual_file),'--format','html','--quality-as-of','2026-06-08','--out',str(folder/'report.html')],capture_output=True,text=True,encoding='utf-8',timeout=30)
+            assert render.returncode==0,render.stderr
+    unit=copy.deepcopy(base);unit.update(price_basis='dirty',price=118.5,trading_quantity=10,conversion_shares=119)
+    call('quantity-unit-not-supported',unit,'cbengine.bridge',{'basis':'SSE2025 arts5/6/13 plus issuer prospectus p20: quote price/face trading amount/conversion shares different','expected':'reject operational quantity fields, not silently price as another unit'},error='unsupported bridge fields')
+    snapshot=copy.deepcopy(snapshot);snapshot.update(quote_time='2026-06-08',fetched_at='2026-06-08T00:00:00+08:00',name='CN教学窗口：非真实市场价格')
+    evidence={'code':'DEMO','as_of':'2026-06-08','stock_price_basis':'unadjusted','observation_source':'教学10.86元/股，不是实际行情',
+      'calendar_source':'教学仅列两日，不认证完整沪市日历','calendar_complete':False,'conversion_history_source':'借公告所选8.57/8.35字段演示，不还原完整历史','conversion_history_complete':False,
+      'trading_days':['2026-06-05','2026-06-08'],'observations':[{'date':'2026-06-05','stock_price':10.86},{'date':'2026-06-08','stock_price':10.86}],
+      'conversion_history':[{'effective_on':'2026-06-05','price':8.57,'source':'教学窗口起始延用原文旧价；不声明真实首次生效日'}, {'effective_on':'2026-06-08','price':8.35,'source':'公告2026-06-02原文字面实施日与新价，未认证全部更正'}],
+      'clauses':{'call':{'source':'上银原募集说明书窗口参考，未确认当前有效承诺/重置；教学观察','window':30,'count':15,'ratio':1.3,'direction':'above','inclusive':True,'rolling':True,'active_from':'2021-07-29','active_until':'2027-01-24','reset_on':[]}}}
+    def history_check(r):
+        c=r['independent_analysis']['clauses'];state=c['states']['call']
+        assert [o['conversion_price'] for o in c['observations']]==[8.57,8.35]
+        assert state['count']==1 and state['status']=='unknown' and state['trigger_condition_met'] is None
+        assert all(v=='unknown' for v in r['event_chain']['current_state'].values())
+    call('effective-price-window',snapshot,'cbengine.cli',{'basis':'10.86 < 8.57*1.3=11.141;10.86 >= 8.35*1.3=10.855; no current-price backfill','count':1,'formal_rights':'unknown'},history_check,analysis=evidence)
+    halted=copy.deepcopy(evidence);halted['halted_days']=[{'date':'2026-06-05','source':'教学假设交易停牌，不是该公告的暂停转股','reason':'实际计数政策未核实'}];halted['observations']=halted['observations'][1:]
+    def halted_check(r):
+        s=r['independent_analysis']['clauses']['states']['call']
+        assert s['count'] is None and s['status']=='unknown' and s['evidence_status']=='halt-count-policy-unverified'
+    call('halt-count-unknown',snapshot,'cbengine.cli',{'count':None,'basis':'unknown trading halt count policy; do not silently delete/fill day'},halted_check,analysis=halted)
+    conflicting=copy.deepcopy(halted);conflicting['observations']=copy.deepcopy(evidence['observations'])
+    call('halt-with-quote-conflict',snapshot,'cbengine.cli',{'basis':'declared trading halt cannot carry tradable close; conversion suspension is a different event'},error='已声明停牌日不能同时提供',analysis=conflicting)
+    fee=copy.deepcopy(base);fee.update(fees=3,cash_arrival_date='2030-10-10')
+    call('fee-arrival-not-supported',fee,'cbengine.bridge',{'basis':'issuer prospectus p20 distinguishes interest obligation/payment window and holder tax; not guessed arrival or uniform tax/fees','expected':'unsupported operational fields rejected'},error='unsupported bridge fields')
+    summary={'method_version':'cn-scenario-acceptance-1','status':'passed','is_demo':True,'groups':4,'cli_cases':5,
+      'cases':[{'case':c['case'],'status':c['status'],'expected':c['expected']} for c in cases],
+      'official_basis':'selected SSE2025 articles5/6/13 and historical113042 announcement/prospectus fields; not global rule defaults',
+      'not_covered':['real calendar/halt policy','actual cash arrival/tax/fees','current legal rights','order/conversion execution','live market/visual/option models']}
+    (out/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    rows=''.join('<li><a href="'+c['case']+'/receipt.json">'+html.escape(c['case'])+'</a>：教学通过</li>' for c in cases)
+    (out/'index.html').write_text('<!doctype html><meta charset="utf-8"><h1>CN转债情景：教学与官方所选字段分开</h1><p>报价/现金流按每100面值，单位人民币；时间为输入日期或教学北京时间，不是真实可得时刻。</p><ul>'+rows+'</ul><a href="effective-price-window/report.html">调价窗口资料卡</a><p><a href="summary.json">范围与未覆盖</a></p>',encoding='utf-8')
+    return summary
+
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--example-dir',type=Path,required=True);p.add_argument('--out-dir',type=Path,required=True);a=p.parse_args()
-    try:r=run(a.example_dir.resolve(),a.out_dir.resolve());print(json.dumps({'status':r['status'],'cases':len(r['cases'])}))
+    p=argparse.ArgumentParser();p.add_argument('--cn-only',action='store_true');p.add_argument('--example-dir',type=Path,required=True);p.add_argument('--out-dir',type=Path,required=True);a=p.parse_args()
+    try:r=(run_cn if a.cn_only else run)(a.example_dir.resolve(),a.out_dir.resolve());print(json.dumps({'status':r['status'],'cases':len(r['cases'])}))
     except (ValueError,OSError,AssertionError,subprocess.TimeoutExpired) as e:p.exit(2,str(e)+'\n')

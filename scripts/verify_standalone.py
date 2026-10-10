@@ -49,6 +49,9 @@ def verify(wheel,destination):
     run(['-m','cbengine.scenarios','--example-dir',examples,'--out-dir',cwd/'scenarios'])
     scenario_summary=json.loads((cwd/'scenarios/summary.json').read_text(encoding='utf-8'))
     assert scenario_summary['status']=='passed' and len(scenario_summary['cases'])==12
+    run(['-m','cbengine.scenarios','--cn-only','--example-dir',examples,'--out-dir',cwd/'cn-scenarios'])
+    cn_summary=json.loads((cwd/'cn-scenarios/summary.json').read_text(encoding='utf-8'))
+    assert cn_summary['status']=='passed' and cn_summary['groups']==4 and cn_summary['cli_cases']==5
     import re
     for name in ('input.json','result.json'):
         assert (cwd/'preview'/name).is_file()

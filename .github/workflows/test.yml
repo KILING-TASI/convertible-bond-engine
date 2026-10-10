@@ -54,3 +54,4 @@ jobs:
           path: |
             ${{ runner.temp }}/cb-standalone/acceptance.json
             ${{ runner.temp }}/cb-standalone/run/scenarios
+            ${{ runner.temp }}/cb-standalone/run/cn-scenarios

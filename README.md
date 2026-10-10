@@ -21,6 +21,8 @@ python -m cbengine.preview examples/demo.json --out-dir local-data/preview-first
 
 情景实例短入口：`python -m cbengine.scenarios --example-dir examples --out-dir local-data/scenarios-first-run`。打开生成的index.html，预期所有教学场景通过；[场景索引、依据和边界](docs/SCENARIOS.md)保留每项输入/预期/实际/方法版本。
 
+CN补充批使用同一入口加 `--cn-only`，另存新目录，覆盖单位边界、调价生效和停牌/到账缺口；官方依据与教学区别见同一[场景索引](docs/SCENARIOS.md)。
+
 ## 当前版本与其他入口
 
 已发布 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)。上述教学预览入口是主分支新增演示，尚未进入该发布标签；版本号仍为 0.11.0。原设计中的含权定价与博弈模型尚未实现。

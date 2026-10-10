@@ -1,0 +1,70 @@
+{
+  "checked_on": "2026-10-10",
+  "scope": "selected official facts, not generic rule catalog update or current issuer legal certification",
+  "sources": [
+    {
+      "id": "SSE-CB-20250328",
+      "publisher": "上海证券交易所",
+      "official_url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/bond/convertible/trading/c/c_20250606_10782995.shtml",
+      "attachment_url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/bond/convertible/trading/c/10782995/files/0cd49df084af4d6c913313fa4d3df3ad.docx",
+      "source_version": "2025年3月修订，上证发〔2025〕42号",
+      "published_on": "2025-03-28",
+      "effective_on": "2025-03-28",
+      "page_status": "官方页面核对时标示现行有效",
+      "acquired_at": null,
+      "acquired_reason": "本批已取得公开附件但下载当时未另记时刻，不用文件mtime反推",
+      "attachment_sha256": "d82d396cda489247898e66af340cff1ab647a6230ab943bbd70234ae54b63630",
+      "parser": "DOCX word/document.xml text extraction",
+      "selected_articles": {
+        "5": "交易/转让使用全价申报",
+        "6": "报价每百元面额，100元面额为一张",
+        "13": "向不特定对象发行、匹配成交的申报数量1000元面额或整数倍"
+      },
+      "support_conditions": [
+        "仅所列沪市规则及相应交易类型",
+        "转股操作不由交易数量条款推导"
+      ],
+      "original_in_public_package": false
+    },
+    {
+      "id": "SHBANK-20260602",
+      "publisher": "上海银行股份有限公司",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2026-06-02/1225343748.PDF",
+      "source_version": "公告编号临2026-025；CNInfo标识1225343748另列",
+      "document_sha256": "065ffc7940ae34d5cbb47dc0988ee0a1b8fe94a9cfd07c7b231081925731ea68",
+      "selected_pages": [
+        1,
+        2
+      ],
+      "selected_facts": {
+        "old_conversion_price": 8.57,
+        "new_conversion_price": 8.35,
+        "effective_on": "2026-06-08",
+        "published_on": "2026-06-02",
+        "event_scope": "转股价与转股暂停/恢复，不直接认定正股交易停牌"
+      },
+      "historically_available_at": null,
+      "availability_reason": "仅日期及既存原件，不认证首个历史可得时刻",
+      "original_in_public_package": false
+    },
+    {
+      "id": "SHBANK-PROSPECTUS-2021",
+      "publisher": "上海银行股份有限公司",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2021-01-21/1209154427.PDF",
+      "source_version": "原始募集说明书，不认证现行全量条款",
+      "document_sha256": "95fef024bdce692d21fe457803991e3b21ac7c077eb09bf508772b8853b14c95",
+      "selected_pages": [
+        20
+      ],
+      "selected_facts": [
+        "申请转股票面总金额/当日有效转股价，去尾取整数股",
+        "付息登记、支付窗口与转股后利息归属分开",
+        "利息税项由持有人承担，不能推导统一税率"
+      ],
+      "support_conditions": [
+        "只证明原始选定条文，不认证后续修订/当前资格/实际到账"
+      ],
+      "original_in_public_package": false
+    }
+  ]
+}
