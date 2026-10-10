@@ -6,9 +6,9 @@
 
 ## 安装和首次试用
 
-本轮对应[发布页](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.1)；下载时以实际上传的完整源码、wheel、sdist 与校验清单为准。源码按下面步骤安装；下载 wheel 后，将安装命令末尾的 `.` 换成该 wheel 文件路径。pip 安装不会自动注册 AI 工具中的 Skill。
+本轮对应[发布页](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.2)；下载时以实际上传的完整源码、wheel、sdist 与校验清单为准。源码按下面步骤安装；下载 wheel 后，将安装命令末尾的 `.` 换成该 wheel 文件路径。pip 安装不会自动注册 AI 工具中的 Skill。
 
-本轮源码版本为 `0.12.1`。统一安装入口需要 Python 3.10 或以上。在完整源码目录新建自己的 Python 环境，下面的 Windows 命令不需要激活脚本：
+本轮源码版本为 `0.12.2`。统一安装入口需要 Python 3.10 或以上。在完整源码目录新建自己的 Python 环境，下面的 Windows 命令不需要激活脚本：
 
 ```powershell
 python -m venv .venv
@@ -105,3 +105,13 @@ python -m pip install .\convertible_bond_engine-0.12.0-py3-none-any.whl
 - [后续路线](ROADMAP.md)与[更新记录](CHANGELOG.md)：已完成与后续能力分别说明。
 
 原创代码及有权授权的原创说明采用 [MIT 许可](LICENSE)。第三方库、公告、行情及引用材料的权利独立于代码许可，详见[第三方范围清单](THIRD_PARTY_NOTICES.md)。仅供学习和研究，不构成投资建议；使用前请阅读[免责声明](DISCLAIMER.md)，结合来源、假设和未核事项判断结果。
+
+## 历史快照复跑与示例入口
+
+`--quality-as-of` 默认是北京时间今日，用来评估资料截至今天的陈旧程度，不自动跟随 `quote_time`。复跑历史快照时须显式指定质量评估截止日，并核对规则上下文的代码与该日一致；收益率底稿的代码及估值日另须与行情快照匹配。
+
+```powershell
+python -m cbengine.cli examples/analysis-market-demo.json --analysis-input examples/analysis-demo.json --quality-as-of 2026-10-09
+```
+
+这是教学收益率情景，不是当日真实行情。`analysis-demo.json` 是附加底稿，不能直接交给 `preview`。全部示例的类型和入口见[示例索引](examples/README.md)。年有效收益率由现金流IRR求得；ACT/365F表示计年方式，并不表示单利年化。
