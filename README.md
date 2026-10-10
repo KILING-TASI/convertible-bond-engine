@@ -19,6 +19,10 @@ python -m cbengine.preview examples/demo.json --out-dir local-data/preview-first
 
 新增[交互报告](docs/interactive-preview/report.html)：按类别筛选、同单位排序，比较冻结的曲线风险情景并另存参数及版本。见[交互说明](docs/INTERACTIVE_PREVIEW.md)，不在浏览器重新定价。
 
+情景实例短入口：`python -m cbengine.scenarios --example-dir examples --out-dir local-data/scenarios-first-run`。打开生成的index.html，预期所有教学场景通过；[场景索引、依据和边界](docs/SCENARIOS.md)保留每项输入/预期/实际/方法版本。
+
+CN补充批使用同一入口加 `--cn-only`，另存新目录，覆盖单位边界、调价生效和停牌/到账缺口；官方依据与教学区别见同一[场景索引](docs/SCENARIOS.md)。
+
 ## 当前版本与其他入口
 
 已发布 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)。上述教学预览入口是主分支新增演示，尚未进入该发布标签；版本号仍为 0.11.0。原设计中的含权定价与博弈模型尚未实现。
@@ -59,6 +63,8 @@ JSON 保留输入来源、假设与缺口；市场资料卡区分第三方报价
 - [事件链设计](docs/EVENT_CHAIN_DESIGN.md)：原始条款与当前状态、截止日和生效日。
 - [规则纠错登记](docs/rule-corrections.json)：14 项纠错及待核事项；规则参考核对日为 2026-10-09，未来使用需重新核对。
 
+单仓非editable安装的实际范围与限制见[独立安装验收](docs/STANDALONE_ACCEPTANCE.md)。
+
 ## 验证范围
 
 ```sh
@@ -78,6 +84,8 @@ QuantLib 实际验证平坦曲线、非平坦零息节点及同日支付边界�
 
 见[实施路线与验收边界](ROADMAP.md)及[更新记录](CHANGELOG.md)。优先补真实数据与历史事件，再做含权模型及样本外验证。
 
+职责、交付状态、五类版本及实际数据入口统一见[数据与交付契约](docs/DATA_AND_DELIVERY_CONTRACT.md)。公共来源头当前仅为提案，未完成九仓数据统一。
+
 ## 与其他仓库的关系
 
 参考 [research-workbench](https://github.com/KILING-TASI/research-workbench) 的证据留存、版本化知识卡与数据质量分层思路，核心独立实现。[有界可选桥接与同输入联调](docs/BOUNDED_WORKBENCH_BRIDGE.md)已提供，工作台可选入口已通过最终提交的本地端到端验收，已纳入待审 PR #6；未完成完整模块迁移。本地参考脚本不代表其 GitHub 主分支。
@@ -86,7 +94,7 @@ QuantLib 实际验证平坦曲线、非平坦零息节点及同日支付边界�
 
 ## 许可与第三方数据
 
-本仓库原创代码及有权授权的原创说明沿用 [MIT 许可](LICENSE)。[许可范围与第三方清单](THIRD_PARTY_NOTICES.md)单列外部依赖、公告短摘录、规则事实与数据来源；它们未被整体重新授权。第三方组件分别遵循各自许可，行情、公告和 PDF 的使用权由提供方决定；代码许可不授予第三方数据使用权。仓库不分发用户原设计或真实 PDF，本地归档分享前须核对资料权限。
+本仓库原创代码及有权授权的原创说明沿用 [MIT 许可](LICENSE)，版权注明 KILING-TASI 并保留原 contributors 声明。[许可范围与第三方清单](THIRD_PARTY_NOTICES.md)单列外部依赖、公告短摘录、规则事实与数据来源；它们未被整体重新授权。第三方组件分别遵循各自许可，行情、公告和 PDF 的使用权由提供方决定；代码许可不授予第三方数据使用权。仓库不分发用户原设计或真实 PDF，本地归档分享前须核对资料权限。
 
 ## 免责声明
 

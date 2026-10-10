@@ -1,6 +1,6 @@
 # 许可范围与第三方材料
 
-核对日期：2026-10-09。沿用根 LICENSE 的现有版权行：`Copyright (c) 2026 convertible-bond-engine contributors`，未新增或改写权利人身份。
+核对日期：2026-10-10。根据仓库所有者授权，根 LICENSE 补充 `Copyright (c) 2026 KILING-TASI`，保留原有 `Copyright (c) 2026 convertible-bond-engine contributors`。MIT 正文及第三方原许可不变；授权范围仍限原创代码和有权授权的原创说明。
 
 ## 范围清单
 

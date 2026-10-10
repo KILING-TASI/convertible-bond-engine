@@ -1,0 +1,57 @@
+{
+  "method_version": "cn-scenario-acceptance-1",
+  "status": "passed",
+  "is_demo": true,
+  "groups": 4,
+  "cli_cases": 5,
+  "cases": [
+    {
+      "case": "quantity-unit-not-supported",
+      "status": "passed",
+      "expected": {
+        "basis": "SSE2025 arts5/6/13 plus issuer prospectus p20: quote price/face trading amount/conversion shares different",
+        "expected": "reject operational quantity fields, not silently price as another unit"
+      }
+    },
+    {
+      "case": "effective-price-window",
+      "status": "passed",
+      "expected": {
+        "basis": "10.86 < 8.57*1.3=11.141;10.86 >= 8.35*1.3=10.855; no current-price backfill",
+        "count": 1,
+        "formal_rights": "unknown"
+      }
+    },
+    {
+      "case": "halt-count-unknown",
+      "status": "passed",
+      "expected": {
+        "count": null,
+        "basis": "unknown trading halt count policy; do not silently delete/fill day"
+      }
+    },
+    {
+      "case": "halt-with-quote-conflict",
+      "status": "passed",
+      "expected": {
+        "basis": "declared trading halt cannot carry tradable close; conversion suspension is a different event"
+      }
+    },
+    {
+      "case": "fee-arrival-not-supported",
+      "status": "passed",
+      "expected": {
+        "basis": "issuer prospectus p20 distinguishes interest obligation/payment window and holder tax; not guessed arrival or uniform tax/fees",
+        "expected": "unsupported operational fields rejected"
+      }
+    }
+  ],
+  "official_basis": "selected SSE2025 articles5/6/13 and historical113042 announcement/prospectus fields; not global rule defaults",
+  "not_covered": [
+    "real calendar/halt policy",
+    "actual cash arrival/tax/fees",
+    "current legal rights",
+    "order/conversion execution",
+    "live market/visual/option models"
+  ]
+}

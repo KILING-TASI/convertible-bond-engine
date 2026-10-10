@@ -1,0 +1,29 @@
+{
+  "checked_on": "2026-10-10",
+  "method": "recheck frozen input bytes, canonical payload digest and retained failure/unknown; no new fetch or replay claims",
+  "cases": [
+    {
+      "sample": "flat",
+      "input_byte_sha256": "bcaf2b09bb517cc36cd383a5b4e5e5b039cae5354fb8ff1cd00fca4083987e84",
+      "retained_status": "native-response-preserved",
+      "scope": "fixed cashflow native bridge only"
+    },
+    {
+      "sample": "nonflat",
+      "input_byte_sha256": "3c7f667c8333f2501918f9e2e11443c29fb7f861dfc7a58284c624872c562750",
+      "retained_status": "native-response-preserved",
+      "scope": "fixed cashflow native bridge only"
+    },
+    {
+      "sample": "missing-tax",
+      "input_byte_sha256": "0d9ba4e183859b1090f62fbddf9f3bd3932a80714a2c7bfebe0f042aa40db0a3",
+      "retained_status": "blocked",
+      "scope": "fixed cashflow native bridge only"
+    }
+  ],
+  "unverified": [
+    "cross-repository announcement envelope",
+    "cross-repository quote/calendar contract",
+    "NAV/dividend and macro revision chains not implemented here"
+  ]
+}
