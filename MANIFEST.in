@@ -7,3 +7,5 @@ recursive-include licenses *.txt *.json
 recursive-include cbengine/data *.js
 
 include examples/README.md
+
+include SKILL.md

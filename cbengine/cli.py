@@ -114,7 +114,7 @@ def main():
                 raise ValueError('规则上下文代码/截止日须与诊断一致')
             result['rule_checks']=evaluate(context)
         if args.format != 'json' and not market:
-            raise ValueError('中文卡片格式当前仅支持市场快照')
+            raise ValueError('中文卡片格式当前仅支持市场快照；单债诊断请用 --format json，HTML 报告请用 python -m cbengine.preview INPUT.json --out-dir 新目录')
         output = json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False) if args.format=='json' else render(result,args.format)
         if args.out:
             args.out.parent.mkdir(parents=True, exist_ok=True)

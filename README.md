@@ -17,7 +17,7 @@ python -m venv .venv
 .\.venv\Scripts\convertible-bond-engine.exe demo --out-dir reports/demo --auto-name
 ```
 
-工具名与仓库名相同；在已激活的环境中可以直接输入工具名。Linux/macOS 使用 `.venv/bin/python` 和 `.venv/bin/convertible-bond-engine`。教学结果写入当前工作目录；`--auto-name` 自动另选新名字，旧结果保留。不加该参数时，教学入口拒绝已有目录。`convertible-bond-engine run --help` 查看原生参数，原来的命令继续兼容。本仓是独立 CLI，不提供可直接发现的 Skill 安装入口。安装可能需要联网获取普通构建依赖；教学离线。下面保留原生入口及此前发行记录，本轮安装和版本以本节为准。
+工具名与仓库名相同；在已激活的环境中可以直接输入工具名。Linux/macOS 使用 `.venv/bin/python` 和 `.venv/bin/convertible-bond-engine`。教学结果写入当前工作目录；`--auto-name` 自动另选新名字，旧结果保留。不加该参数时，教学入口拒绝已有目录。`convertible-bond-engine run --help` 查看原生参数，原来的命令继续兼容。本仓提供独立 CLI，并新增 [Skill 调用指引](SKILL.md)；Skill 使用须保留完整仓库资源，pip 不会自动注册。安装可能需要联网获取普通构建依赖；教学离线。下面保留原生入口及此前发行记录，本轮安装和版本以本节为准。
 
 ## 最短试用
 
@@ -70,7 +70,7 @@ python -m cbengine.scenarios --example-dir examples --out-dir local-data/scenari
 
 ## 独立使用与项目关系
 
-这是独立的 **Python 命令行工具和库，不是 Codex Skill**。仓库没有 `SKILL.md`；包名是 `convertible-bond-engine`，命令名是 `cb-engine`。例如，`cb-engine examples/demo.json` 会输出 JSON。不需要安装 research-workbench 才能运行。
+本仓提供独立 **Python 命令行工具和库**及 [Skill 调用指引](SKILL.md)；包名是 `convertible-bond-engine`，命令名是 `cb-engine`。例如，`cb-engine examples/demo.json` 会输出 JSON。不需要安装 research-workbench 才能运行。
 
 工作台可以选择调用本引擎做固定现金流计算。双方已经验证的相同口径、不能直接比较的字段及历史调用记录见[工作台调用说明](docs/BOUNDED_WORKBENCH_BRIDGE.md)。公司经营分析和综合判断由工作台负责，本引擎不会据资料卡给出交易指令。
 
@@ -115,3 +115,7 @@ python -m cbengine.cli examples/analysis-market-demo.json --analysis-input examp
 ```
 
 这是教学收益率情景，不是当日真实行情。`analysis-demo.json` 是附加底稿，不能直接交给 `preview`。全部示例的类型和入口见[示例索引](examples/README.md)。年有效收益率由现金流IRR求得；ACT/365F表示计年方式，并不表示单利年化。
+
+## 自然语言使用
+
+向已注册本仓 Skill 的助手直接提问。助手整理输入、调用计算并先回答能确定的部分，再解释依据和缺口；无需安装工作台。新增指引在当前 main，旧发行包保持原样，未包含这次 Skill 文件。
