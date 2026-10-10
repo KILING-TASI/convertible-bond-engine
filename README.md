@@ -26,7 +26,7 @@
 
 ## 安装和首次试用
 
-安装包见[发布页](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.4)；下载时以实际上传的完整源码、wheel、sdist 与校验清单为准。源码按下面步骤安装；下载 wheel 后，将安装命令末尾的 `.` 换成该 wheel 文件路径。pip 安装不会自动注册 AI 工具中的 Skill。
+安装包见[发布页](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.4)，提供完整源码、wheel、sdist 和校验清单。源码按下面步骤安装；下载 wheel 后，将安装命令末尾的 `.` 换成该 wheel 文件路径。pip 安装不会自动注册 AI 工具中的 Skill。
 
 安装包版本为 `0.12.4`。统一安装入口需要 Python 3.10 或以上。在完整源码目录新建自己的 Python 环境，下面的 Windows 命令不需要激活脚本：
 
@@ -39,24 +39,6 @@ python -m venv .venv
 
 工具名与仓库名相同；在已激活的环境中可以直接输入工具名。Linux/macOS 使用 `.venv/bin/python` 和 `.venv/bin/convertible-bond-engine`。教学结果写入当前工作目录；`--auto-name` 自动另选新名字，旧结果保留。不加该参数时，教学入口拒绝已有目录。`convertible-bond-engine run --help` 查看原生参数，原来的命令继续兼容。本仓提供独立 CLI，并新增 [Skill 调用指引](SKILL.md)；Skill 使用须保留完整仓库资源，pip 不会自动注册。安装可能需要联网获取普通构建依赖；教学离线。下面保留原生入口及此前发行记录，安装步骤和对应版本以本节为准。
 
-## 最短试用
-
-需要 **Python 3.10+**。从当前 main 克隆仓库后，在仓库根目录运行。下面的教学演示无需联网取数，也不需要其他自家项目；安装时 pip 可能联网获取声明的构建依赖。
-
-```powershell
-python -m pip install .
-python -m cbengine.preview examples/demo.json --out-dir local-data/preview-first-run
-```
-
-打开 `local-data/preview-first-run/report.html`。同一目录还会保存输入和完整 JSON 结果。若目录已存在，把名字改成 `preview-second-run` 再运行，工具不会覆盖旧结果。建议在独立虚拟环境中安装。
-
-想看不同边界条件，可运行已有情景实例：
-
-```powershell
-python -m cbengine.scenarios --example-dir examples --out-dir local-data/scenarios-first-run
-```
-
-打开生成的 `index.html`。加上 `--cn-only` 可运行 A 股转债的单位、调价生效日和停牌计数情景；同样需要换一个新输出目录。输入、预期结果、实际结果和未核事项见[场景索引](docs/SCENARIOS.md)。
 
 ## 实际结果示例
 
