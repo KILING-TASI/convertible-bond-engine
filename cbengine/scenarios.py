@@ -12,7 +12,7 @@ def run(examples,out):
     nonflat=load(examples/'crosscheck-nonflat.json');snapshot=load(examples/'analysis-market-demo.json')
     out.mkdir(parents=True,exist_ok=False);cases=[]
     try:software_version=version('convertible-bond-engine')
-    except PackageNotFoundError:software_version='0.11.0'
+    except PackageNotFoundError:software_version='0.12.0'
     def execute(name,spec,module,expected,check,error=None,analysis=None):
         folder=out/name;folder.mkdir();input_file=folder/'input.json'
         input_file.write_text(json.dumps(spec,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
@@ -107,7 +107,7 @@ def run_cn(examples,out):
     base=load(examples/'bridge-fixed-demo.json');snapshot=load(examples/'analysis-market-demo.json')
     out.mkdir(parents=True,exist_ok=False);cases=[]
     try:software_version=version('convertible-bond-engine')
-    except PackageNotFoundError:software_version='0.11.0'
+    except PackageNotFoundError:software_version='0.12.0'
     def call(name,spec,module,expected,check=None,error=None,analysis=None):
         folder=out/name;folder.mkdir();input_file=folder/'input.json'
         input_file.write_text(json.dumps(spec,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

@@ -35,7 +35,7 @@ def verify(wheel,destination):
         assert (packaged/file).is_file(),file
     run(['-m','cbengine.preview',examples/'demo.json','--out-dir',cwd/'preview'])
     result=json.loads((cwd/'preview/result.json').read_text(encoding='utf-8'))
-    assert result['is_demo'] and result['engine_version']=='0.11.0'
+    assert result['is_demo'] and result['engine_version']==origins['version']
     d=result['diagnosis'];assert d['dirty_price']==118.5 and abs(d['bond_floor']-95.10939701857427)<1e-10
     assert abs(d['yields']['maturity']['gross']-(-.011218746052657966))<1e-12
     assert all(v=='unknown' for v in result['event_chain']['current_state'].values())

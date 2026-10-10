@@ -68,11 +68,19 @@ python -m cbengine.scenarios --example-dir examples --out-dir local-data/scenari
 
 这些是按需安装的普通第三方组件，不会自动安装其他自家专业库。联网与 PDF 操作的命令见使用详解；核心输出缺证据时不会自动换口径或填零。
 
-## 当前源码与旧 Release
+## 当前源码与发布候选
 
-main 已集成现金流计算、资料卡、情景实例、独立安装验收和数据职责说明，可按本页命令从源码安装。软件版本字段仍为 **0.11.0**，精确内容需同时看提交；它已经包含该版本标签之后的新增能力。
+main 已集成现金流计算、资料卡、情景实例、独立安装验收和数据职责说明。本分支准备 **v0.12.0** 候选，补入已审预览提示与错误指引；候选尚未发布，资产不能称为已下载可用。合并后的源码可按本页命令安装，接口、规则和计算方法版本各按自身契约保留。
 
-最新旧发布标签仍为 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)，不含后来增加的教学预览、情景入口和工作台调用接口。本次没有发布新版本，也没有替换旧资产。预览提示的易用性改进另在[PR #2](https://github.com/KILING-TASI/convertible-bond-engine/pull/2)审阅，不影响上面的已有命令。
+现有 Release 仍是 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)，不含后来增加的教学预览、情景入口和工作台调用接口。旧标签、资产和历史验收记录不变。经总调度正式发布后，新的版本入口将是 [v0.12.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.0)。
+
+候选提供源码 ZIP、wheel 和源码分发包。正式发布后的 Windows wheel 安装方式如下；需先从对应 Release 下载到当前目录，当前不要把此命令当作资产已存在的证明：
+
+```powershell
+python -m pip install .\convertible_bond_engine-0.12.0-py3-none-any.whl
+```
+
+源码 ZIP/sdist 解压后可在包含 pyproject.toml 的根目录运行最短试用命令。wheel 安装后的教学输入位于 `share/convertible-bond-engine/examples`（相对 Python 环境根目录），也可继续使用源码目录内的 examples。候选和正式资产都不会自动安装其他自家库。
 
 ## 验证、来源和许可
 
