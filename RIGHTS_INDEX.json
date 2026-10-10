@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "research-rights-index/1",
+  "repository": "convertible-bond-engine",
+  "originalCodeLicense": "MIT",
+  "noticeFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "2c0c183eda8bb07544c9a00290c460c62ecb5a611554b329aab94dd4e448f8d7"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "sha256": "8f54c149cb6761f0fcf8317395c353128b1a08392ff6ef7da33d552b9746b0ce"
+    },
+    {
+      "path": "examples/notice-review-113042.json",
+      "sha256": "2cd2432058644fa599cdd884e2722552a7fba02fc71e1a5604e31f0a7cfa6ae6"
+    }
+  ],
+  "dataRights": "Source-specific; not granted by code MIT",
+  "methodReferences": "See repository method documents; citations do not convey text or data redistribution rights",
+  "scope": "Notice-file inventory and hashes, not an authorization or legal compliance certificate",
+  "hashFormat": "utf-8-lf"
+}
