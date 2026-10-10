@@ -1,101 +1,84 @@
 # 可转债定价与博弈引擎
 
-独立实现的 A 股可转债研究工具，用于可审计现金流、收益率、条款观察与证据诊断。
+按给定价格、现金流和公告资料，计算可转债的纯债现值与条件收益率，核对转股价变化和条款观察结果。当前重点是现金流和证据核对，尚未实现完整的含权定价或发行人博弈模型。
 
-## 结果预览与最短演示
+[![原创代码 MIT](https://img.shields.io/badge/%E5%8E%9F%E5%88%9B%E4%BB%A3%E7%A0%81-MIT-blue)](LICENSE)
 
-![教学结果：全价118.50元、纯债现值95.1094元、到期条件收益率-1.1219%、当前条款未知](docs/preview/report.png)
+## 最短试用
 
-截图来自[实际生成的 HTML 报告](docs/preview/report.html)，对应[教学输入](docs/preview/input.json)和[完整结果](docs/preview/result.json)。估值日为 2026-10-09，金额按每 100 元面值；纯债现值取决于假设曲线，条件收益率不是预测，条款缺证据保持未知。未使用第三方真实行情。
+需要 **Python 3.10+**。从当前 main 克隆仓库后，在仓库根目录运行。下面的教学演示无需联网取数，也不需要其他自家项目；安装时 pip 可能联网获取声明的构建依赖。
 
-Python 3.10+，在仓库根目录运行；离线演示没有第三方运行依赖：
-
-```sh
+```powershell
 python -m pip install .
 python -m cbengine.preview examples/demo.json --out-dir local-data/preview-first-run
 ```
 
-打开 `local-data/preview-first-run/report.html`，同时生成 `input.json` 和 `result.json`。输出目录已存在会拒绝运行，请换一个新目录；不会覆盖旧结果。应看到全价 **118.50 元**、纯债现值 **95.1094 元**、税前到期条件年化收益率 **-1.1219%** 和当前条款 **未知**。见[生成与截图说明](docs/RESULT_PREVIEW.md)。
+打开 `local-data/preview-first-run/report.html`。同一目录还会保存输入和完整 JSON 结果。若目录已存在，把名字改成 `preview-second-run` 再运行，工具不会覆盖旧结果。建议在独立虚拟环境中安装。
 
-新增[交互报告](docs/interactive-preview/report.html)：按类别筛选、同单位排序，比较冻结的曲线风险情景并另存参数及版本。见[交互说明](docs/INTERACTIVE_PREVIEW.md)，不在浏览器重新定价。
+想看不同边界条件，可运行已有情景实例：
 
-情景实例短入口：`python -m cbengine.scenarios --example-dir examples --out-dir local-data/scenarios-first-run`。打开生成的index.html，预期所有教学场景通过；[场景索引、依据和边界](docs/SCENARIOS.md)保留每项输入/预期/实际/方法版本。
-
-CN补充批使用同一入口加 `--cn-only`，另存新目录，覆盖单位边界、调价生效和停牌/到账缺口；官方依据与教学区别见同一[场景索引](docs/SCENARIOS.md)。
-
-## 当前版本与其他入口
-
-已发布 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)。上述教学预览入口是主分支新增演示，尚未进入该发布标签；版本号仍为 0.11.0。原设计中的含权定价与博弈模型尚未实现。
-
-已有 `cb-engine examples/demo.json --out local-data/result.json` 输出完整 L1 JSON；市场快照支持 Markdown 和中文 HTML 资料卡。显式联网查询需 `python -m pip install ".[market]"`，再运行 `cb-engine --code 113042 --out local-data/snapshot.json`。113042 为历史验收代码，不代表当前仍存续；接口失败保留来源和缺口。更多操作见[使用与验收详解](docs/USAGE_AND_EVIDENCE.md)。
-
-## 已实现与边界
-
-| 已实现 | 使用边界 |
-| --- | --- |
-| 按日期现金流的纯债现值、税前/税后收益率、条件退出收益率 | 显式现金流与税额；已提供情景最小收益率不等于完整 YTW |
-| 转股价值、溢价率、曲线平移久期、DV01、凸性与重估 | 债底取决于给定信用曲线及兑付假设，不承诺本金或流动性保护 |
-| 批量筛选、排除原因与持仓汇总 | 需要完整 L1 输入；市场快照不能直接代替定价输入 |
-| 原始条款、公告候选、正文底稿、PDF 字段匹配与本地档案 | 字面匹配及摘要不认证原文真实性或完整法律解释 |
-| 自建条款观察、事件链与公告分页证据 | 条件计数与正式权利分离；自声明完整不能确认当前条款状态 |
-| 可选 QuantLib 固定现金流对照 | 不包含中国转债含权模型；非平坦只验证现金流与零息节点重合处 |
-
-尚未实现含权理论价、OAS、BS Greeks、隐含波动率、评级迁移、Merton PD、LSM、交易回测或交易执行。实际应计息、完整调价链与停牌计数约定仍待核验。
-
-## 输入与关键口径
-
-完整字段见[教学单债输入](examples/demo.json)和[接入契约草案](docs/INTEGRATION_CONTRACT.md)。
-
-- 金额按每 100 元面值；`dirty_price` 为全价。净价必须加显式应计息，不能把第三方报价自动视为已核实全价。
-- 利率、收益率与溢价率参数用小数，例如 `0.045` 为 4.5%。现金流按实际支付日和 ACT/365F 计算；日期统一 `YYYY-MM-DD`。
-- `coupon` 与 `redemption` 不得重复含息。例如含末期息 4 元的总兑付 112 元，应拆为 4＋108，而非 4＋112。税率及税额由调用者明确提供。
-- L1 曲线为包含信用因素的年有效零息曲线，逐期限线性插值、拒绝外推；未经转换的到期收益率曲线不能直接替代。独立现金流 IRR 不需要曲线。
-- 条款逐只提供来源、有效期、窗口、门槛、严格或含等号比较及历史有效转股价，不使用通用默认阈值。强赎条件满足不等于发行人已执行。
-- 公告日、生效日、行情日、取得日和评估截止日分别保留。缺交易日、未核实调价历史或停牌约定时，不补价、不补正式权利结论。
-
-## 输出、来源与缺失状态
-
-JSON 保留输入来源、假设与缺口；市场资料卡区分第三方报价/估值、人工底稿、实际 PDF 字段检查和自建观察。`unknown` 不等于安全，`partial` 不等于完整覆盖。目录 `pagination_observed` 只说明本次发行人和区间的返回分页一致，法律事件覆盖仍可能未知。
-
-市场查询失败返回退出码 3，本地无效输入返回 2；具体模块的拒绝条件见详解。JSON 拒绝重复键、NaN、Infinity 及溢出。归档摘要用于检测内容一致性，没有外部签名或可信时间戳。
-
-- [公告分页覆盖](docs/DIRECTORY_COVERAGE.md)：请求区间、逐页原始响应、数量及失败记录。
-- [事件链设计](docs/EVENT_CHAIN_DESIGN.md)：原始条款与当前状态、截止日和生效日。
-- [规则纠错登记](docs/rule-corrections.json)：14 项纠错及待核事项；规则参考核对日为 2026-10-09，未来使用需重新核对。
-
-单仓非editable安装的实际范围与限制见[独立安装验收](docs/STANDALONE_ACCEPTANCE.md)。
-
-## 验证范围
-
-```sh
-python -m unittest discover -s tests -v
-python -m cbengine.crosscheck examples/crosscheck-flat.json --out local-data/check.json
+```powershell
+python -m cbengine.scenarios --example-dir examples --out-dir local-data/scenarios-first-run
 ```
 
-v0.11.0 本地 90 项测试通过；GitHub 检查覆盖 Python 3.10、3.12、3.13，另设可选 QuantLib 1.43 检查。核心未安装 QuantLib 时外部测试跳过，未运行的对照标记为 `not-run`。
+打开生成的 `index.html`。加上 `--cn-only` 可运行 A 股转债的单位、调价生效日和停牌计数情景；同样需要换一个新输出目录。输入、预期结果、实际结果和未核事项见[场景索引](docs/SCENARIOS.md)。
 
-QuantLib 实际验证平坦曲线、非平坦零息节点及同日支付边界；应计息仍为输入声明。FinancePy 仅读取许可和公开接口，未复制、导入或执行其代码。见[外部交叉验证说明](docs/EXTERNAL_CROSSCHECK.md)。
+## 实际结果示例
 
-2026-10-09 上银真实样本曾取得公告 69 条、3 页，核对两份实际 PDF 的指定字段；这不代表全量条款、其他证券或接口长期可用。详细日期、数值与限制保留在[验收详解](docs/USAGE_AND_EVIDENCE.md)。
+下面是程序生成的**教学结果，不是真实行情**。估值日为 2026-10-09，金额按每 100 元面值。
 
-方法口径与边界验收见[固定收益方法卡](docs/FIXED_INCOME_METHOD_CARDS.md)。
+| 结果 | 教学数值 | 怎么理解 |
+| --- | --- | --- |
+| 输入全价 | 118.50 元 | 由样本给定，不是市场报价 |
+| 纯债现值 | 95.1094 元 | 按样本现金流及 4.5% 教学曲线贴现，不是兑付保证 |
+| 税前到期条件年化收益率 | −1.1219% | 假设现金流兑现时的计算结果，不是收益预测 |
+| 当前条款权利 | 未知 | 观察计数不能代替完整公告和合同依据 |
 
-## 后续路线
+![教学结果：价格、纯债现值、条件收益率与条款未知状态](docs/preview/report.png)
 
-见[实施路线与验收边界](ROADMAP.md)及[更新记录](CHANGELOG.md)。优先补真实数据与历史事件，再做含权模型及样本外验证。
+截图对应[HTML 报告](docs/preview/report.html)、[教学输入](docs/preview/input.json)和[完整结果](docs/preview/result.json)。也可查看[交互报告](docs/interactive-preview/report.html)，筛选已有诊断、比较已计算的曲线情景并另存选择；切换页面选项不会重新定价。
 
-职责、交付状态、五类版本及实际数据入口统一见[数据与交付契约](docs/DATA_AND_DELIVERY_CONTRACT.md)。公共来源头当前仅为提案，未完成九仓数据统一。
+## 能做什么，暂不支持什么
 
-## 与其他仓库的关系
+| 能做什么 | 使用前提或限制 |
+| --- | --- |
+| 计算纯债现值、税前／税后收益率和给定退出条件下的收益率 | 支付日期、含息口径和税额要明确；部分退出情景不等于完整最差收益率 |
+| 计算转股价值、溢价率、久期、DV01、凸性及曲线变动结果 | 使用声明清楚的零息曲线；非平坦曲线风险不能直接当作单一收益率久期 |
+| 筛选给定债券、汇总给定持仓 | 需要完整计算输入，不能拿缺字段的行情快照直接定价 |
+| 展示行情资料、公告线索和转股价变化记录 | 保留数据日期、来源与缺口；没找到公告不等于没有风险 |
+| 检查本地 PDF 的摘要、指定页码和字段，保存核对档案 | 字面匹配不能认证原件来源或完整法律含义；原文不随包分发 |
+| 按历史有效转股价做条款观察计数 | 缺调价链、交易日或停牌处理依据时，正式结论保持未知 |
 
-参考 [research-workbench](https://github.com/KILING-TASI/research-workbench) 的证据留存、版本化知识卡与数据质量分层思路，核心独立实现。[有界可选桥接与同输入联调](docs/BOUNDED_WORKBENCH_BRIDGE.md)已提供，工作台可选入口已通过最终提交的本地端到端验收，已纳入待审 PR #6；未完成完整模块迁移。本地参考脚本不代表其 GitHub 主分支。
+**暂不支持**完整含权理论价、OAS、隐含波动率、发行人决策概率、交易回测或交易执行。真实信用曲线、实际应计息和最终到账也需要另行核实。强赎价格条件满足，不代表发行人已经决定或执行赎回。
 
-研究参考包括 [QuantLib](https://github.com/lballabio/QuantLib)、[AKShare](https://github.com/akfamily/akshare) 和 [sw1507/convertibleBond](https://github.com/sw1507/convertibleBond)，不表示兼容其全部能力。
+金额、日期、净全价和含末息拆分的详细说明统一见[使用与验收详解](docs/USAGE_AND_EVIDENCE.md)；计算方法见[固定收益方法卡](docs/FIXED_INCOME_METHOD_CARDS.md)。
 
-## 许可与第三方数据
+## 独立使用与项目关系
 
-本仓库原创代码及有权授权的原创说明沿用 [MIT 许可](LICENSE)，版权注明 KILING-TASI 并保留原 contributors 声明。[许可范围与第三方清单](THIRD_PARTY_NOTICES.md)单列外部依赖、公告短摘录、规则事实与数据来源；它们未被整体重新授权。第三方组件分别遵循各自许可，行情、公告和 PDF 的使用权由提供方决定；代码许可不授予第三方数据使用权。仓库不分发用户原设计或真实 PDF，本地归档分享前须核对资料权限。
+这是独立的 **Python 命令行工具和库，不是 Codex Skill**。仓库没有 `SKILL.md`；包名是 `convertible-bond-engine`，命令名是 `cb-engine`。例如，`cb-engine examples/demo.json` 会输出 JSON。不需要安装 research-workbench 才能运行。
 
-## 免责声明
+工作台可以选择调用本引擎做固定现金流计算。双方已经验证的相同口径、不能直接比较的字段及历史调用记录见[工作台调用说明](docs/BOUNDED_WORKBENCH_BRIDGE.md)。公司经营分析和综合判断由工作台负责，本引擎不会据资料卡给出交易指令。
 
-仅供学习与研究，不构成投资建议或交易指令，不保证收益或准确性。请阅读[免责声明与使用边界](DISCLAIMER.md)，结合来源、假设与缺口独立判断。
+| 额外用途 | 安装前提 |
+| --- | --- |
+| 离线计算、教学预览和情景实例 | 核心没有第三方运行依赖 |
+| 显式联网查询行情 | `python -m pip install ".[market]"`，接口不保证持续可用 |
+| 读取本地 PDF 核对字段 | `python -m pip install ".[evidence]"`，扫描件需另行人工复核 |
+| 可选 QuantLib 数值对照 | 在独立验证环境安装 `QuantLib==1.43`，不是核心必需项 |
+
+这些是按需安装的普通第三方组件，不会自动安装其他自家专业库。联网与 PDF 操作的命令见使用详解；核心输出缺证据时不会自动换口径或填零。
+
+## 当前源码与旧 Release
+
+main 已集成现金流计算、资料卡、情景实例、独立安装验收和数据职责说明，可按本页命令从源码安装。软件版本字段仍为 **0.11.0**，精确内容需同时看提交；它已经包含该版本标签之后的新增能力。
+
+最新旧发布标签仍为 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)，不含后来增加的教学预览、情景入口和工作台调用接口。本次没有发布新版本，也没有替换旧资产。预览提示的易用性改进另在[PR #2](https://github.com/KILING-TASI/convertible-bond-engine/pull/2)审阅，不影响上面的已有命令。
+
+## 验证、来源和许可
+
+- [独立安装验收](docs/STANDALONE_ACCEPTANCE.md)：单仓 wheel、新虚拟环境、模块来源、实际输出和失败例；不等于新系统、自然语言发现或视觉验收。
+- [外部数值对照](docs/EXTERNAL_CROSSCHECK.md)：QuantLib 固定现金流的实际范围；FinancePy 未运行，缺库或未执行不算通过。
+- [数据与交付契约](docs/DATA_AND_DELIVERY_CONTRACT.md)：职责、版本、数据入口、真实样本范围及剩余缺口。CI 通过不认证真实资料或投资有效性。
+- [后续路线](ROADMAP.md)与[更新记录](CHANGELOG.md)：已完成与后续能力分别说明。
+
+原创代码及有权授权的原创说明采用 [MIT 许可](LICENSE)。第三方库、公告、行情及引用材料的权利独立于代码许可，详见[第三方范围清单](THIRD_PARTY_NOTICES.md)。仅供学习和研究，不构成投资建议；使用前请阅读[免责声明](DISCLAIMER.md)，结合来源、假设和未核事项判断结果。
