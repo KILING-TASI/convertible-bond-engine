@@ -6,3 +6,9 @@ build/
 dist/
 .env
 local-data/
+
+# Local Python installation/build outputs
+.venv/
+build/
+dist/
+*.egg-info/

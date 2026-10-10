@@ -1,8 +1,24 @@
 # 可转债定价与博弈引擎
 
+
+
 按给定价格、现金流和公告资料，计算可转债的纯债现值与条件收益率，核对转股价变化和条款观察结果。当前重点是现金流和证据核对，尚未实现完整的含权定价或发行人博弈模型。
 
 [![原创代码 MIT](https://img.shields.io/badge/%E5%8E%9F%E5%88%9B%E4%BB%A3%E7%A0%81-MIT-blue)](LICENSE)
+
+## 统一安装与启动
+
+本轮源码版本为 `0.12.1`。统一安装入口需要 Python 3.10 或以上。在完整源码目录新建自己的 Python 环境，下面的 Windows 命令不需要激活脚本：
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install .
+.\.venv\Scripts\convertible-bond-engine.exe --help
+.\.venv\Scripts\convertible-bond-engine.exe demo --out-dir reports/demo --auto-name
+```
+
+九个仓库都用仓库名启动；在已激活的环境中可以直接输入工具名。Linux/macOS 使用 `.venv/bin/python` 和 `.venv/bin/convertible-bond-engine`。教学结果写入当前工作目录；`--auto-name` 自动另选新名字，旧结果保留。不加该参数时，教学入口拒绝已有目录。`convertible-bond-engine run --help` 查看原生参数，原来的命令继续兼容。本仓是独立 CLI，不提供可直接发现的 Skill 安装入口。安装可能需要联网获取普通构建依赖；教学离线。下面保留原生入口及此前发行记录，本轮安装和版本以本节为准。
+
 
 ## 最短试用
 
