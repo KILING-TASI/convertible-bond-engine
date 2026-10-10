@@ -2,20 +2,22 @@
 
 独立实现的 A 股可转债研究工具，用于可审计现金流、收益率、条款观察与证据诊断。
 
+本仓库是独立 Python CLI／库，**不是可直接安装的 Codex Skill**，没有 SKILL.md 或对应 frontmatter name。`convertible-bond-engine` 是包名，`cb-engine` 是命令名；工作台可选调用不意味着依赖工作台。
+
 ## 结果预览与最短演示
 
 ![教学结果：全价118.50元、纯债现值95.1094元、到期条件收益率-1.1219%、当前条款未知](docs/preview/report.png)
 
 截图来自[实际生成的 HTML 报告](docs/preview/report.html)，对应[教学输入](docs/preview/input.json)和[完整结果](docs/preview/result.json)。估值日为 2026-10-09，金额按每 100 元面值；纯债现值取决于假设曲线，条件收益率不是预测，条款缺证据保持未知。未使用第三方真实行情。
 
-Python 3.10+，在仓库根目录运行；离线演示没有第三方运行依赖：
+Python 3.10+，在仓库根目录运行；离线演示没有第三方运行依赖。推荐使用独立虚拟环境；第三方构建依赖由 pip 按 pyproject 声明安装，运行不需要其他自家专业仓：
 
 ```sh
 python -m pip install .
 python -m cbengine.preview examples/demo.json --out-dir local-data/preview-first-run
 ```
 
-打开 `local-data/preview-first-run/report.html`，同时生成 `input.json` 和 `result.json`。输出目录已存在会拒绝运行，请换一个新目录；不会覆盖旧结果。应看到全价 **118.50 元**、纯债现值 **95.1094 元**、税前到期条件年化收益率 **-1.1219%** 和当前条款 **未知**。见[生成与截图说明](docs/RESULT_PREVIEW.md)。
+成功提示写入 stderr，说明结果目录和打开文件，stdout保持为空；默认JSON诊断等机器入口不变。打开 `local-data/preview-first-run/report.html`，同时生成 `input.json` 和 `result.json`。输出目录已存在会拒绝运行，请换一个新目录；不会覆盖旧结果。应看到全价 **118.50 元**、纯债现值 **95.1094 元**、税前到期条件年化收益率 **-1.1219%** 和当前条款 **未知**。见[生成与截图说明](docs/RESULT_PREVIEW.md)。
 
 新增[交互报告](docs/interactive-preview/report.html)：按类别筛选、同单位排序，比较冻结的曲线风险情景并另存参数及版本。见[交互说明](docs/INTERACTIVE_PREVIEW.md)，不在浏览器重新定价。
 
@@ -28,6 +30,10 @@ CN补充批使用同一入口加 `--cn-only`，另存新目录，覆盖单位边
 已发布 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)。上述教学预览入口是主分支新增演示，尚未进入该发布标签；版本号仍为 0.11.0。原设计中的含权定价与博弈模型尚未实现。
 
 已有 `cb-engine examples/demo.json --out local-data/result.json` 输出完整 L1 JSON；市场快照支持 Markdown 和中文 HTML 资料卡。显式联网查询需 `python -m pip install ".[market]"`，再运行 `cb-engine --code 113042 --out local-data/snapshot.json`。113042 为历史验收代码，不代表当前仍存续；接口失败保留来源和缺口。更多操作见[使用与验收详解](docs/USAGE_AND_EVIDENCE.md)。
+
+可选依赖：联网行情用 `python -m pip install ".[market]"`；本地PDF核验用 `python -m pip install ".[evidence]"`；QuantLib仅独立外部验证时用 `python -m pip install QuantLib==1.43`，不是market/evidence extra，也不是离线必需项。未安装可选库不应被称为该项验证通过。
+
+Windows安装后可以直接复制 `python -m cbengine.preview examples/demo.json --out-dir local-data/preview-first-run`，无需改执行策略或依赖命令进入PATH；已验证的包内资源和独立安装范围见[安装验收](docs/STANDALONE_ACCEPTANCE.md)。输出目录存在请改成新名字，缺字段/格式请对照教学输入，不提供force或自动安装。
 
 ## 已实现与边界
 
