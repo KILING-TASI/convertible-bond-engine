@@ -4,11 +4,15 @@
 
 [![原创代码 MIT](https://img.shields.io/badge/%E5%8E%9F%E5%88%9B%E4%BB%A3%E7%A0%81-MIT-blue)](LICENSE)
 
+当前版本：[v0.12.3](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.3)。完整源码、wheel、sdist 和校验清单在同一发布页；历史报告及旧下载包按各自版本阅读。
+
+自然语言使用：保留完整仓库资源，按 [Skill 指引](SKILL.md)注册到支持本地 Skill 的助手；CLI 安装与 Skill 注册分别完成。可以独立使用，无需工作台。
+
 ## 安装和首次试用
 
-本轮对应[发布页](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.2)；下载时以实际上传的完整源码、wheel、sdist 与校验清单为准。源码按下面步骤安装；下载 wheel 后，将安装命令末尾的 `.` 换成该 wheel 文件路径。pip 安装不会自动注册 AI 工具中的 Skill。
+本轮对应[发布页](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.3)；下载时以实际上传的完整源码、wheel、sdist 与校验清单为准。源码按下面步骤安装；下载 wheel 后，将安装命令末尾的 `.` 换成该 wheel 文件路径。pip 安装不会自动注册 AI 工具中的 Skill。
 
-本轮源码版本为 `0.12.2`。统一安装入口需要 Python 3.10 或以上。在完整源码目录新建自己的 Python 环境，下面的 Windows 命令不需要激活脚本：
+本轮源码版本为 `0.12.3`。统一安装入口需要 Python 3.10 或以上。在完整源码目录新建自己的 Python 环境，下面的 Windows 命令不需要激活脚本：
 
 ```powershell
 python -m venv .venv
@@ -83,9 +87,12 @@ python -m cbengine.scenarios --example-dir examples --out-dir local-data/scenari
 
 这些是按需安装的普通第三方组件，不会自动安装其他自家专业库。联网与 PDF 操作的命令见使用详解；核心输出缺证据时不会自动换口径或填零。
 
-## 当前源码与下载版本
+<details>
+<summary>历史版本与下载记录</summary>
 
-当前源码与最新发行版为 **v0.12.0**，包含现金流计算、资料卡、情景实例、独立安装验收、工作台可选调用，以及已审预览提示与错误指引。接口、规则和计算方法版本各按自身契约保留。
+## 历史版本记录
+
+此前 v0.12.0 发行版，包含现金流计算、资料卡、情景实例、独立安装验收、工作台可选调用，以及已审预览提示与错误指引。接口、规则和计算方法版本各按自身契约保留。
 
 [v0.12.0 发布页](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.0)提供[完整源码 ZIP](https://github.com/KILING-TASI/convertible-bond-engine/releases/download/v0.12.0/convertible-bond-engine-0.12.0-source.zip)、[wheel](https://github.com/KILING-TASI/convertible-bond-engine/releases/download/v0.12.0/convertible_bond_engine-0.12.0-py3-none-any.whl)、[sdist](https://github.com/KILING-TASI/convertible-bond-engine/releases/download/v0.12.0/convertible_bond_engine-0.12.0.tar.gz)及[SHA256 校验文件](https://github.com/KILING-TASI/convertible-bond-engine/releases/download/v0.12.0/SHA256SUMS.txt)。资产从提交 `0be3649c3e616704e5fbd3686009ddc74b7cc361` 构建；包内候选文字是打包时的记录。旧 [v0.11.0](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.11.0)及历史验收保持，不含后续全部能力。
 
@@ -96,6 +103,8 @@ python -m pip install .\convertible_bond_engine-0.12.0-py3-none-any.whl
 ```
 
 源码 ZIP/sdist 解压后可在包含 pyproject.toml 的根目录运行最短试用命令。wheel 安装后的教学输入位于 `share/convertible-bond-engine/examples`（相对 Python 环境根目录），也可继续使用源码目录内的 examples。安装包不会自动安装其他自家库。
+
+</details>
 
 ## 验证、来源和许可
 
@@ -118,4 +127,4 @@ python -m cbengine.cli examples/analysis-market-demo.json --analysis-input examp
 
 ## 自然语言使用
 
-向已注册本仓 Skill 的助手直接提问。助手整理输入、调用计算并先回答能确定的部分，再解释依据和缺口；无需安装工作台。新增指引在当前 main，旧发行包保持原样，未包含这次 Skill 文件。
+向已注册本仓 Skill 的助手直接提问。助手整理输入、调用计算并先回答能确定的部分，再解释依据和缺口；无需安装工作台。新增指引自 v0.12.3 随包提供；更早的发行包保持原样。
