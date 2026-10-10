@@ -14,6 +14,13 @@ class PreviewTest(unittest.TestCase):
             before=(out/'result.json').read_bytes()
             with self.assertRaises(ValueError):generate(Path('examples/demo.json'),out)
             self.assertEqual(before,(out/'result.json').read_bytes())
+    def test_analysis_attachment_gets_specific_guidance(self):
+        with tempfile.TemporaryDirectory() as d:
+            out=Path(d)/"preview"
+            with self.assertRaisesRegex(ValueError,"--analysis-input"):
+                generate(Path("examples/analysis-demo.json"),out)
+            self.assertFalse(out.exists())
+
     def test_real_data_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             path=Path(d)/'input.json';path.write_text(json.dumps({'is_demo':False}),encoding='utf-8')

@@ -13,6 +13,8 @@ from importlib.resources import files
 
 def generate(input_path, out_dir, interactive=False):
     spec=load(input_path)
+    if isinstance(spec,dict) and 'price_basis' in spec and 'dirty_price' not in spec:
+        raise ValueError('这是收益率底稿，不能单独作为教学定价预览；见 examples/README.md，用主入口 --analysis-input 配合匹配的市场快照')
     if spec.get('is_demo') is not True:
         raise ValueError('此预览只接受明确标记is_demo=true的教学输入')
     if out_dir.exists():
@@ -78,6 +80,8 @@ def main():
             hint='输出目录已存在；请换一个新目录，例如 local-data/preview-second-run。不会覆盖旧文件。'
         elif isinstance(exc,OSError):
             hint='输入读取或结果写入失败；请核对输入路径、目录权限及可用空间，再用新目录重试。'
+        elif isinstance(exc,ValueError) and '收益率底稿' in str(exc):
+            hint=str(exc)
         elif isinstance(exc,KeyError):
             key=exc.args[0] if exc.args else None
             allowed={'code','as_of','cashflows','date','coupon','redemption','redemption_tax','dirty_price','stock_price','conversion_price','coupon_tax_rate','discount_curve','clauses'}

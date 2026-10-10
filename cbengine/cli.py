@@ -31,7 +31,7 @@ def main():
     parser.add_argument('--terms-pdf',type=Path,help='实际募集说明书PDF，与--terms一起提供')
     parser.add_argument('--notice-pdf',type=Path,help='实际公告PDF；当前仅支持一份正文底稿')
     parser.add_argument('--store',type=Path,help='独立本地证据目录，追加版本及已核验PDF')
-    parser.add_argument('--quality-as-of',help='质量评估截止日YYYY-MM-DD，默认北京时间今日')
+    parser.add_argument('--quality-as-of',help='质量评估截止日YYYY-MM-DD，默认北京时间今日（不跟随快照）；历史复跑须显式填写并与规则上下文一致')
     parser.add_argument('--max-lag-days',type=int,default=3,help='历史行情最大日历天滞后，默认3')
     parser.add_argument('--rule-context',type=Path,help='明确市场、板块、阶段与权限的规则检查JSON')
     parser.add_argument('--analysis-input',type=Path,help='独立收益率/正股条款计数底稿JSON')
@@ -97,7 +97,7 @@ def main():
             if args.rule_context:
                 context=load(args.rule_context)
                 if context.get('code')!=data['code'] or context.get('as_of')!=data['data_quality']['as_of']:
-                    raise ValueError('规则上下文代码/截止日须与当前诊断一致')
+                    raise ValueError('规则上下文代码/截止日须与当前诊断一致；历史复跑显式填写 --quality-as-of YYYY-MM-DD，默认是北京时间今日而非快照日')
                 data['rule_checks']=evaluate(context)
             if args.store: data['archive_receipt']=append(args.store,data,documents)
         elif args.store or args.quality_as_of or args.analysis_input or args.directory_audit or args.max_lag_days!=3:
