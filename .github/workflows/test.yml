@@ -51,4 +51,6 @@ jobs:
         if: always()
         with:
           name: standalone-wheel-acceptance
-          path: ${{ runner.temp }}/cb-standalone/acceptance.json
+          path: |
+            ${{ runner.temp }}/cb-standalone/acceptance.json
+            ${{ runner.temp }}/cb-standalone/run/scenarios

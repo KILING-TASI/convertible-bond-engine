@@ -25,7 +25,7 @@ def verify(wheel,destination):
         if r.returncode!=expected:raise RuntimeError('unexpected command result: '+str(commands[-1]))
         return r
     run(['-m','pip','install','--no-deps','--no-cache-dir',wheel])
-    probe=run(['-c',"import json,sys,sysconfig,importlib.util,importlib.metadata as m,cbengine,cbengine.preview,cbengine.crosscheck,cbengine.bridge; print(json.dumps({'python':sys.version,'prefix':sys.prefix,'path':sys.path,'module_origin':cbengine.__file__,'module_origins':{x:sys.modules[x].__file__ for x in ['cbengine','cbengine.engine','cbengine.preview','cbengine.crosscheck','cbengine.bridge']},'data':sysconfig.get_path('data'),'version':m.version('convertible-bond-engine'),'dependencies':{x:importlib.util.find_spec(x) is not None for x in ['akshare','pypdf','QuantLib']},'installed':{d.metadata['Name']:d.version for d in m.distributions()}}))"])
+    probe=run(['-c',"import json,sys,sysconfig,importlib.util,importlib.metadata as m,cbengine,cbengine.preview,cbengine.crosscheck,cbengine.bridge,cbengine.scenarios; print(json.dumps({'python':sys.version,'prefix':sys.prefix,'path':sys.path,'module_origin':cbengine.__file__,'module_origins':{x:sys.modules[x].__file__ for x in ['cbengine','cbengine.engine','cbengine.preview','cbengine.crosscheck','cbengine.bridge','cbengine.scenarios']},'data':sysconfig.get_path('data'),'version':m.version('convertible-bond-engine'),'dependencies':{x:importlib.util.find_spec(x) is not None for x in ['akshare','pypdf','QuantLib']},'installed':{d.metadata['Name']:d.version for d in m.distributions()}}))"])
     origins=json.loads(probe.stdout)
     assert all(Path(origin).resolve().is_relative_to(virtual) for origin in origins['module_origins'].values())
     assert not any('research-workbench' in p.lower() for p in origins['path'])
@@ -46,6 +46,9 @@ def verify(wheel,destination):
     run(['-m','cbengine.crosscheck',examples/'crosscheck-flat.json','--out',cwd/'core-check.json'])
     assert json.loads((cwd/'core-check.json').read_text(encoding='utf-8'))['external']['status']=='not-run'
     run(['-m','cbengine.bridge',examples/'bridge-fixed-demo.json','--out-dir',cwd/'bridge'])
+    run(['-m','cbengine.scenarios','--example-dir',examples,'--out-dir',cwd/'scenarios'])
+    scenario_summary=json.loads((cwd/'scenarios/summary.json').read_text(encoding='utf-8'))
+    assert scenario_summary['status']=='passed' and len(scenario_summary['cases'])==12
     import re
     for name in ('input.json','result.json'):
         assert (cwd/'preview'/name).is_file()
