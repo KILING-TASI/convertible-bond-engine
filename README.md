@@ -144,7 +144,6 @@ python -m cbengine.cli examples/analysis-market-demo.json --analysis-input examp
 源码教学启动、软件环境查询和安装后教学入口分别验证；软件就绪不等于真实资料已取得。中文问答需要助手按本仓Skill准备已声明输入，没有宣称任意自然语言自动发现或全市场数据闭环。旧报告、历史tag与案例证据保留。
 
 
-[15类使用者的任务路径、术语口径与验收边界](USER_SCENARIOS.md)。
 
 
 HTML报告增加“指标怎么读、金额怎么核”，先看结论和缺口，再展开口径。见 [REPORT_GUIDE.md](REPORT_GUIDE.md)。
