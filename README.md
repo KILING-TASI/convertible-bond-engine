@@ -2,7 +2,11 @@
 
 计算纯债现值和条件收益率，核对转股价与赎回、回售等条款。
 
-[![原创代码 MIT](https://img.shields.io/badge/原创代码-MIT-green)](LICENSE) · [当前发行版 v0.12.9](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.9) · [运行检查](https://github.com/KILING-TASI/convertible-bond-engine/actions)
+[原创代码 MIT](LICENSE) · [发行说明](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.9) · [运行检查](https://github.com/KILING-TASI/convertible-bond-engine/actions) · [English](README.en.md)
+
+当前发布：**v0.12.9 · 普通发行版**。Python **3.10+**；基础功能只需 Python，无第三方运行依赖。
+
+[快速开始](#快速开始) · [使用自己的资料](#使用自己的资料) · [能力与边界](#能力与边界) · [文档与维护](#文档与维护)
 
 ## 能解决什么问题
 
@@ -10,30 +14,50 @@
 
 独立维护可转债现金流和条款计算；采集和资料组织可以使用其他工具，也可自行准备。
 
+| 需要准备 | 会得到什么 |
+|---|---|
+| 债券现金流、价格、转股价、条款日期及明确的利率和税费假设。 | 纯债现值、条件收益率、敏感性及条款计数与证据缺口。 |
+
 ## 快速开始
 
-从[发行页](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.9)下载完整源码并解压，需要 Python 3.10 或以上。在源码目录执行：
+1. 安装 Python 3.10 或以上版本。
+2. 下载[完整源码 ZIP](https://github.com/KILING-TASI/convertible-bond-engine/releases/download/v0.12.9/convertible-bond-engine-v0.12.9-source.zip)并解压，进入包含 `try_demo.py` 的目录。
+3. 在该目录打开终端，运行：
 
-```text
+```console
 python try_demo.py --no-open --out-dir reports/first-demo
 ```
 
-按提示打开新生成的 HTML。Windows 也可双击 `Start-Demo.cmd`，Linux/macOS 可用 `sh Start-Demo.sh`。教学使用原创模拟资料，不自动取真实数据；重复运行使用新目录，历史结果保留。
+按终端给出的路径打开 HTML。也可以在源码目录双击 `Start-Demo.cmd`（Windows），或运行 `sh Start-Demo.sh`（Linux/macOS）。教学使用原创模拟资料，不自动取得真实数据。
 
-[查看已保存的报告示例](docs/preview/report.html)。HTML请随完整源码下载后打开；示例按自身生成日期和口径阅读。
+使用 Git 时，先运行 `git clone https://github.com/KILING-TASI/convertible-bond-engine.git`，再运行 `cd convertible-bond-engine`，随后执行上面的教学命令。重复运行请指定新目录，历史结果会保留。
+
+[报告示例源码](docs/preview/report.html)：GitHub 会展示 HTML 源码，请下载完整源码后在浏览器中打开。
 
 ## 使用自己的资料
 
-先按[资料准备](BEGINNER.md)填写输入，再看[详细命令与方法](USAGE.md)。需要安装CLI时，在自己的Python环境运行：
+先按[资料准备与排错](BEGINNER.md)整理来源、日期、单位和必要字段，再按[使用说明](USAGE.md)选择对应入口。以下两种使用方式分别配置。
 
-```text
+**命令行（CLI）**：在源码目录安装本仓，然后查看可用命令：
+
+```console
 python -m pip install .
 convertible-bond-engine --help
 ```
 
-仓库、Python发行包、安装命令及Skill注册名均为 `convertible-bond-engine`。CLI安装和Skill注册是两个步骤：自然语言调用按[SKILL.md](SKILL.md)配置，保留完整资源；不必安装全部仓库。安装普通构建依赖可能联网，教学流程不需要作者缓存。
+可选组件按需要安装：`market`、`evidence`。例如 `python -m pip install ".[market]"`；依赖范围见 [使用说明](USAGE.md)。安装时下载构建工具或可选依赖可能需要联网。
 
-## 结果范围
+**助手 Skill**：按 [SKILL.md](SKILL.md) 配置，保留完整目录及其引用资源。安装 CLI 不会自动注册 Skill，也不表示已在第三方技能市场上架。
+
+| 身份 | 名称 |
+|---|---|
+| GitHub 仓库 / Python 发行包 | `convertible-bond-engine` |
+| 主要命令 | `convertible-bond-engine` |
+| SKILL.md 中的名称 | `convertible-bond-engine` |
+
+本仓可单独使用。需要跨工具功能时，再按说明安装并明确配置对应工具的位置。
+
+## 能力与边界
 
 当前不是完整含权定价或发行人博弈模型；未知条款、行权和实际到账不能填成确定结果。
 
@@ -43,15 +67,11 @@ convertible-bond-engine --help
 
 - [详细命令与方法](USAGE.md)
 - [资料准备与排错](BEGINNER.md)
-- [Skill调用指引](SKILL.md)
+- [Skill 调用指引](SKILL.md)
 - [版本记录](CHANGELOG.md)
 - [许可与第三方范围](THIRD_PARTY_NOTICES.md)
 - [审计范围](AUDIT_SCOPE.md)
 
-[贡献说明](CONTRIBUTING.md) · [安全反馈](SECURITY.md) · [更新与清理](LIFECYCLE.md) · [English](README.en.md)
+[贡献说明](CONTRIBUTING.md) · [安全反馈](SECURITY.md) · [更新与清理](LIFECYCLE.md)
 
-[按问题选择其他工具](https://github.com/KILING-TASI/research-workbench/blob/main/references/tool-navigation.md)。共12个活跃仓，资料契约校验已并入[数据仓](https://github.com/KILING-TASI/cn-data-adapters/blob/main/CONTRACT_MIGRATION.md)。各仓分别发布；main的后续文档整理不改写旧发行包和冻结结果。
-
-## 安装与结果状态
-
-可单独安装本仓，无需工作台。生成报告表示本流程已运行，不表示资料完整或原文已经认证；来源、口径和缺口按报告说明复查。命令行安装与助手Skill注册是两个步骤。
+[按问题选择其他工具](https://github.com/KILING-TASI/research-workbench/blob/main/references/tool-navigation.md)；资料契约校验已并入[数据仓](https://github.com/KILING-TASI/cn-data-adapters/blob/main/CONTRACT_MIGRATION.md)。默认分支的文档整理不改写已发布的源码包和历史结果；版本变化见 [CHANGELOG.md](CHANGELOG.md)。
