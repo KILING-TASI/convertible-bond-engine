@@ -14,7 +14,7 @@ from importlib.resources import files
 def generate(input_path, out_dir, interactive=False):
     spec=load(input_path)
     if isinstance(spec,dict) and 'price_basis' in spec and 'dirty_price' not in spec:
-        raise ValueError('这是收益率底稿，不能单独作为教学定价预览；见 examples/README.md，用主入口 --analysis-input 配合匹配的市场快照')
+        raise ValueError('这是收益率底稿，不能单独作为教学定价预览；见 examples/README.md，使用 cb-engine 市场快照.json --analysis-input 收益率底稿.json，或 python -m cbengine.cli 市场快照.json --analysis-input 收益率底稿.json；工作台 run 不接受此参数')
     if spec.get('is_demo') is not True:
         raise ValueError('此预览只接受明确标记is_demo=true的教学输入')
     if out_dir.exists():

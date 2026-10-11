@@ -2,7 +2,7 @@
 name: convertible-bond-engine
 description: 用户询问中国可转债价格、转股溢价、到期现金流或条款风险时使用。调用本仓计算，先解释结果与缺口；不执行交易。
 metadata:
-  version: 0.12.8
+  version: 0.12.9
 license: MIT
 ---
 

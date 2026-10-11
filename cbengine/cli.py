@@ -119,6 +119,7 @@ def main():
         if args.out:
             args.out.parent.mkdir(parents=True, exist_ok=True)
             args.out.write_text(output+"\n", encoding="utf-8")
+            print('已保存结果：'+str(args.out.resolve())+'；请结合结果中的缺口和资料核验状态阅读。',file=__import__('sys').stderr)
     except (ValueError, KeyError, TypeError, OSError) as exc:
         parser.exit(2, f"输入错误：{exc}\n")
     if not args.out:

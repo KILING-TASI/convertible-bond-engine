@@ -3,3 +3,6 @@ licenses/*.txt -text
 Start-Demo.sh text eol=lf
 
 Start-Demo.cmd text eol=crlf
+
+# Preserve CRLF bytes in git clones and automatic source archives.
+Start-Demo.cmd -text eol=crlf whitespace=cr-at-eol

@@ -2,7 +2,7 @@
 
 计算纯债现值和条件收益率，核对转股价与赎回、回售等条款。
 
-[![原创代码 MIT](https://img.shields.io/badge/原创代码-MIT-green)](LICENSE) · [当前发行版 v0.12.8](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.8) · [运行检查](https://github.com/KILING-TASI/convertible-bond-engine/actions)
+[![原创代码 MIT](https://img.shields.io/badge/原创代码-MIT-green)](LICENSE) · [当前发行版 v0.12.9](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.9) · [运行检查](https://github.com/KILING-TASI/convertible-bond-engine/actions)
 
 ## 能解决什么问题
 
@@ -12,7 +12,7 @@
 
 ## 快速开始
 
-从[发行页](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.8)下载完整源码并解压，需要 Python 3.10 或以上。在源码目录执行：
+从[发行页](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.9)下载完整源码并解压，需要 Python 3.10 或以上。在源码目录执行：
 
 ```text
 python try_demo.py --no-open --out-dir reports/first-demo
