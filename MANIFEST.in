@@ -27,3 +27,5 @@ include CONTRIBUTING.md SECURITY.md LIFECYCLE.md
 global-exclude *.xls
 
 include RIGHTS_INDEX.json
+
+include USAGE.md
