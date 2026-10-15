@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "fixed-shared-components/1",
+  "hashFormat": "UTF-8 with LF newlines; BOM ignored",
+  "components": [
+    {
+      "localPath": "tools/verify_public_validation.py",
+      "normalizedTextSha256": "70fd731cb66bc999d5f16b45ef410f1d92993e9cdbc424e8616b6c49da08c799",
+      "canonicalRepository": "cn-data-adapters",
+      "canonicalPath": "tools/verify_public_validation.py",
+      "syncPolicy": "fixed-with-distribution; no runtime dependency on sibling repositories",
+      "licenseScope": "original MIT; public data and references retain their own rights"
+    }
+  ]
+}

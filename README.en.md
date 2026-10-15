@@ -2,13 +2,13 @@
 
 Review declared cash flows, yields, curve sensitivity and clause evidence. This is not a complete option-adjusted convertible pricing or trading engine.
 
-[中文说明](README.md) · [Release v0.12.9](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.9) · [Skill instructions](SKILL.md) · [Input preparation](BEGINNER.md)
+[中文说明](README.md) · [Release v0.12.10](https://github.com/KILING-TASI/convertible-bond-engine/releases/tag/v0.12.10) · [Skill instructions](SKILL.md) · [Input preparation](BEGINNER.md)
 
-Current release: **v0.12.9 · regular release**. Python **3.10+**. Base runtime dependencies: none. Optional extras: `market`, `evidence`. See [USAGE.md](USAGE.md) for scope.
+Current release: **v0.12.10 · regular release**. Python **3.10+**. Base runtime dependencies: none. Optional extras: `market`, `evidence`. See [USAGE.md](USAGE.md) for scope.
 
 ## First run
 
-Download the [complete source ZIP](https://github.com/KILING-TASI/convertible-bond-engine/releases/download/v0.12.9/convertible-bond-engine-v0.12.9-source.zip), extract it and enter the directory containing `try_demo.py`:
+Download the [complete source ZIP](https://github.com/KILING-TASI/convertible-bond-engine/releases/download/v0.12.10/convertible-bond-engine-v0.12.10-source.zip), extract it and enter the directory containing `try_demo.py`:
 
 ```console
 python try_demo.py --no-open --out-dir reports/first-demo

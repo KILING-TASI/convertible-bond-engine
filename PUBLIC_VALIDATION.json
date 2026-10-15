@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "public-validation/1",
+  "repository": "convertible-bond-engine",
+  "registeredOn": "2026-10-15",
+  "hashFormat": "UTF-8 with LF newlines; BOM ignored; original response hashes remain in original receipts",
+  "coverage": "limited-public-inputs",
+  "sourceAuthenticityCertified": false,
+  "evidence": [
+    {
+      "path": "examples/terms-113042.json",
+      "kind": "public-facts",
+      "normalizedSha256": "e1f86308e5271a8c808abab1ed50fa183eed3253892c2efb058ebd1ffdd59537",
+      "sourceUrls": [
+        "https://static.cninfo.com.cn/finalpage/2021-01-21/1209154427.PDF"
+      ]
+    }
+  ],
+  "checkFiles": [
+    "test_rules.py",
+    "test_evidence.py"
+  ],
+  "gaps": [
+    "原始发行条款不是当前全部有效状态",
+    "完整含权、信用与实际到账未认证"
+  ],
+  "limits": "registry and selected counterexamples; no new original-document authentication or investment-effect certification"
+}
